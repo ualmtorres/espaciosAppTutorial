@@ -1,0 +1,3893 @@
+////
+NO CAMBIAR!!
+Codificación, idioma, tabla de contenidos, tipo de documento
+////
+:encoding: utf-8
+:lang: es
+:toc: right
+:toc-title: Tabla de contenidos
+:doctype: book
+:imagesdir: ./images
+:linkattrs:
+:toclevels: 4
+////
+Nombre y título del trabajo
+////
+# Gestión de espacios. Desarrollo de una aplicación en Angular (Tutorial en curso)
+Servicio de las Tecnologías de la Información y las Comunicaciones - Universidad de Almería
+
+image::logocloudstic.png[]
+
+// NO CAMBIAR!! (Entrar en modo no numerado de apartados)
+:numbered!: 
+
+
+[abstract]
+== Resumen
+////
+COLOCA A CONTINUACION EL RESUMEN
+////
+xxx
+
+////
+COLOCA A CONTINUACION LOS OBJETIVOS
+////
+.Objetivos
+* xxx
+
+[TIP]
+====
+Disponibles los repositorios usados en este tutorial.
+
+* xxx
+====
+
+// Entrar en modo numerado de apartados
+:numbered:
+
+## Introducción
+
+## Creación de la aplicación
+
+El objetivo inicial es tener creado el proyecto con las librerías que vaya a usar.
+
+### Creación de la aplicación con el CLI de Angular
+
+Comenzamos creando la aplicación con el CLI de Angular.
+
+[source, bash]
+----
+$ ng new angular-espacios
+
+? Would you like to add Angular routing? Yes <1>
+? Which stylesheet format would you like to use? CSS
+----
+<1> Indicamos que queremos que genere el archivo de routing.
+
+.El archivo `app.routing.module.ts`
+****
+Podemos crear la aplicación de Angular para que ya tenga configurado un archivo para las rutas principales de la aplicación. Las rutas indican a `Router` la pantalla que hay que mostrar cuando un usuario selecciona ir a la ruta indicada, bien porque hay un enlace en la aplicación que lleva ahí (p.e. un elemento del menú), o bien cualquier link o botón de la aplicación.
+
+Las rutas las definiremos en la constante `routes` que aparece en el código siguiente. El código que se muestra es el archivo `app.routing.module.ts`, que es el que el CLI de Angular crea cuando aceptamos la opción _Angular routing_ al crear el proyecto.
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = []; <1>
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+----
+<1> Array donde guardaremos las rutas principales admitidas por la aplicación y la pantalla que mostrará. 
+****
+
+### Instalación de librerías
+
+En este proyecto usaremos:
+
+* https://material.angular.io/[Angular Material] como librería de componentes. Nos proporcionará botones, tarjetas, desplegables para selección de fechas (_date-pickers_), y demás.
+* https://github.com/angular/flex-layout[Angular Flex-Layout] es una librería para la organización de componentes.
+
+[NOTE]
+====
+Usaremos Angular Flex-Layout para la organización de componentes porque es lo que usa http://angular-material.fusetheme.com/[Fuse Angular], el template que se usa actualmente para el desarrollo de las aplicaciones de STIC.
+====
+
+
+Instalación de Angular Material con las opciones predeterminadas
+
+[source, bash]
+----
+$ ng add @angular/material
+
+Would you like to proceed? Yes
+✔ Package successfully installed.
+? Choose a prebuilt theme name, or "custom" for a custom theme: Indigo/Pink        [ Preview: https://material.a
+ngular.io?theme=indigo-pink ]
+? Set up global Angular Material typography styles? Yes
+? Set up browser animations for Angular Material? Yes
+----
+
+Elegiremos las opciones por defecto, salvo en la de los tipos que seleccionaremos que sí para elegir los estilos tipográficos de Angular.
+
+
+Instalación de Angular Flex-Layout
+
+[source, bash]
+----
+$ npm i -s @angular/flex-layout @angular/cdk
+----
+
+[NOTE]
+====
+Plugin de Angular Flex-Layout para Visual Studio: https://marketplace.visualstudio.com/items?itemName=1tontech.angular-material
+====
+
+## Creación del scaffolding de la aplicación
+
+En esta sección crearemos todos los módulos, componentes y rutas que tendrá la aplicación. La aplicación constará de una barra lateral a la izquierda, un pie inferior y una zona central donde ser presentarán las pantallas de la aplicación. La figura siguiente ilustra la disposición de estos elementos.
+
+### Creación del módulo `shared`
+
+Comenzaremos creando un módulo al que denominaremos  `shared` donde incluiremos todos los componentes compartidos de la aplicación, como son las dos barras laterales. En breve crearemos los componentes de las barras.
+
+[source, bash]
+----
+$ ng g module shared
+----
+
+### Actualización de los módulos de `app.module.ts`
+
+Como el módulo `shared` es un módulo transversal a la aplicación, lo incluiremos en `app.module.ts`. También incluiremos ahí el módulo de Flex-Layout que usaremos para la distribución de elementos en las pantallas de la aplicación. A continuación se muestran los cambios introducidos en `app.module.ts` para importar `SharedModule` y `FlexLayoutModule`
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SharedModule } from './shared/shared.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    AppRoutingModule, <1>
+    BrowserAnimationsModule, <2>
+    FlexLayoutModule, <2>
+    SharedModule, <3>
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+
+----
+<1> Módulo incluido automáticamente por el CLI de Angular al crear el proyecto con la opción de _Angular routing_.
+<2> Módulo de efectos visuales introducido por nuestras nuevas librerías
+<3> Módulo de Flex-Layout 
+<4> Módulo `shared`
+
+.Angular Flex-Layout
+****
+Angular Flex-Layout es una librería de layout para la distribución de elementos en la interfaz de usuario. En este tutorial nos ajustaremos al funcionamiento básico:
+
+En una etiqueta `<div>` incluiremos `fxLayout="row"` si queremos que los componentes que hay dentro del `div` se alineen uniformemente en horizontal (en una fila -`row`) o incluiremos `fxLayout="column"` si queremos que los componentes que hay dentro del `div` se alineen uniformemente en vertical (en una columna -`column`).
+
+La distribución interna dentro del `div` la haremos con `fxLayoutAlign`, que admite 2 parámetros. El primero representa a la dirección usada en xLayout
+` (horizontal o vertical) y el segundo representa a su perpendicular. Es decir:
+
+* Con `fxLayout="row"`, `fxLayoutAlign="<row-alignment> <column-alignment>"`
+* Con `fxLayout="column"`, `fxLayoutAlign="<column-alignment> <row-alignment>"`
+
+Los valores predeterminados son
+
+* `start` (distribución desde el inicio, uno a continuación del otro) para la primera componente
+* `stretch` (estirar ocupando todo) para la componente contraria (la perpendicular)
+
+
+Consultar estos enlaces para más información:
+
+* https://www.excellarate.com/blogs/getting-started-with-angular-flex-layout/[Getting started with Angular Flex-Layout]
+* https://tburleson-layouts-demos.firebaseapp.com/#/docs[Layout Demos]
+****
+
+### Creación de las barras laterales
+
+Para cada barra, crearemos un componente, y lo incluiremos dentro del componente `shared`.
+
+[source, bash]
+----
+$ ng g component shared/sidebar
+$ ng g component shared/footbar
+----
+
+Al crear los componentes dentro de la carpeta del módulo `shared`, el CLI de Angular incluirá los componentes en `declarations`, indicando que son componentes del módulo y que podrán referenciarse entre ellos. Sin embargo, dichos compomentes aún no podrán ser utilizados por otros componentes o por otros módulos aunque incluyan al módulo `shared`. 
+
+[IMPORTANT]
+====
+Para que un componente pueda ser usado fuera del módulo en el que está definido, debe incluirse en el módulo `exports` del módulo. Los módulos que importen dichjo módulo ya sí podrán tener acceso a dichos componentes.
+====
+
+A continuación, modificaremos el módulo `shared`  `shared/shared.module.ts` para exportar los componentes de las barras laterales y de pie, y que se puedan usar fuera de su módulo.
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { FootbarComponent } from './footbar/footbar.component';
+
+@NgModule({
+  declarations: [SidebarComponent, FootbarComponent],
+  imports: [CommonModule],
+  exports: [SidebarComponent, FootbarComponent], <1>
+})
+export class SharedModule {}
+----
+<1> Incluir los componentes en el módulo para que puedan ser usados por otros módulos
+
+### Configuración del layout de la aplicación
+
+Crearemos un layout típico como el siguiente en el que tenemos una disposición horizontal con la barra laterial la izquierda y un bloque de dos componentes verticales a continuación.
+
+$$$$$$$
+
+Preparación de `app.component.html`
+
+[source, html]
+----
+<div fxLayout="row" fxLayoutAlign="start stretch" fxFill> <1>
+  <div>
+    <app-sidebar></app-sidebar>
+  </div>
+  <div fxFlex fxLayout="column">
+    <div fxFlex>
+      <router-outlet></router-outlet>
+    </div>
+    <div>
+      <app-footbar></app-footbar>
+    </div>
+  </div>
+</div>
+----
+<1> Disposición en filas y alineación desde el inicio en horizontal y ocupando todo en vertical
+
+### Creación de un módulo para los módulos de Angular Material
+
+La aplicación de este tutorial usa varios componentes de Angular, como botones, un módulo _steeper_ para crear un asistente con varios pasos, un módulo de calendario, y demás. Lo más adecuado y eficiente es hacer que cada módulo de la aplicación sólo importe los módulos de los componentes que va a utilizar. Sin embargo, en este tutorial, por comodidad y facilidad crearemos un módulo que denominaremos `Material` que exportará todos los módulos de componentes de Angular Material que va a usar la aplicación en su conjunto. Posteriormente, importaremos este módulo desde el resto de módulos de la aplicación. Habrá módulos que necesiten todos los módulos de nuestro módulo `Material`. Sin embargo, habrá otros que quizá no los usen todos.
+
+Para crear el módulo `Material` ejecutaremos
+
+[source, bash]
+----
+$ ng g module material
+----
+.Módulos de Angular Material
+****
+
+Para saber los módulos que tenemos que importar para usar un componente de Angular Material, en la sección de componentes de la https://material.angular.io/[documentación oficial de Angular Material] seleccionaremos el componente deseado, y en la pestaña `API` se indica el módulo que hay que importar para usar el componente de Material.
+
+La figura siguiente ilustra el módulo para usar un botón Material.
+
+image::MatButtonModule.png[]
+
+****
+
+A continuación se indican los componentes Material que usará la aplicación de este tutorial:
+
+* `Button` para los botones de la aplicación.
+* `Card` para agrupar elementos en tarjetas.
+* `DatePicker` para la selección de fechas. 
+* `Dialog` para cuadros de diálogo
+* `Form field` para los campos de los formularios
+* `Icon` para uso de iconos Material
+* `Input` para elementos `input` de los formularios
+* `List` para la creación de listas
+* `Select` para listas desplegables
+* `Snackbar` para barra de mensajes
+* `Steeper` para definir un asistente con pasos
+* `Table` para presentación de datos en tablas
+
+También incluiremos el módulo de `Flex-Layout` para la distribución de elementos en la pantalla.
+
+Incluiremos estos módulos en nuestro módulo `angular/angular.module.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { FlexLayoutModule } from '@angular/flex-layout';
+
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTableModule } from '@angular/material/table';
+
+@NgModule({
+  declarations: [],
+  imports: [CommonModule],
+  exports: [ <1>
+    FlexLayoutModule,  <2>
+
+    MatButtonModule, <3>
+    MatCardModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatSnackBarModule,
+    MatStepperModule,
+    MatTableModule,
+  ],
+})
+export class MaterialModule {}
+
+----
+<1> Lista de módulos Material exportados 
+<2> Módulo de Flex-Layout
+<3> Módulos Material para nuestra aplicación
+
+[TIP]
+====
+Para una mayor legibilidad del código, se recomienda dejar ordenada las listas de `imports` y `exports` . También se recomienda usar grupos de `imports` y `exports`  (p.e. separando los módulos de Angular, de los genéricos de nuestra aplicación y otro bloque para los específicos).
+====
+
+### Creación de los módulos de la aplicación
+
+A partir de la organización o descomposición funcional a un primer nivel de la aplicación crearemos los módulos de la aplicación Angular. En el caso de este tutorial, la aplicación va a estar formada funcionalmente por un módulo de solicitudes y un módulo de espacios. Además, se crerá un módulo `home`
+
+* El módulo de solicitudes permitirá listar, crear, modificar y eliminar solitudes de espacios. 
+* El módulo de espacios permitirá realizar consultas sobre ocupación de espacios.
+* El módulo `home` incluye el componente de inicio de la aplicación, que se mostrará al inicio o al tratar de ir a una ruta no disponible.
+
+Para reducir el tiempo y el tamaño de la carga inicial de la aplicación utilizaremos la técnica de _lazy loading_.
+
+.Lazy loading
+****
+De forma predeterminada, al iniciar la aplicación se cargan todos los módulos presentes en `app.module.ts`. Si colocamos ahí todos los módulos de la aplicación, en aplicaciones grandes con gran cantidad de módulos se ralentizará su carga y funcionamiento inicial. Esta situación se puede prevenir con lo que se conoce como _lazy loading_, que consiste en separar los distintos módulos de la aplicación y cargarlos conforme vayan siendo necesarios. El concepto _necesario_ básicamente hace referencia a que el usuario acceda a las rutas de la aplicación que utilizan los componentes de un módulo. Esto tiene un resultado inmediato y es la reducción de los tiempos de carga.
+
+Implementaremos _lazy loading_ definiendo un módulo exclusivo de routing `app-routing.module.ts` que será importado en `app.module.ts`. Sin embargo, `app-routing.module.ts` pospone la carga de cada módulo concreto a la activación de la ruta asociada a la funcionalidad que proporciona cada módulo.
+
+Archivo `app.module.ts`:
+
+[source, ts]
+----
+...
+import { AppRoutingModule } from './app-routing.module';
+...
+@NgModule({
+  ...
+  imports: [
+    ...
+    AppRoutingModule, <1>
+    ...
+  ],
+  ...
+})
+export class AppModule {}
+----
+<1> Importación del módulo global de routing
+
+Archivo `app-routing.module.ts`:
+
+[source, ts]
+----
+const routes: Routes = [
+  {
+    path: 'items',
+    loadChildren: () => import('./items/items.module').then(m => m.ItemsModule) <1>
+  }
+];
+----
+<1> El módulo `ItemsModule` no es cargado hasta que no se acceda a la ruta `items` en la URL.
+****
+
+Crearemos los módulos con estas instrucciones. Incluiremos el parámetro `--routing` para que genere un archivo de rutas a nivel de módulo. 
+
+[source, bash]
+----
+$ ng g module main/home --routing
+$ ng g module main/solicitudes --routing
+$ ng g module main/espacios --routing
+----
+
+[NOTE]
+====
+Los archivos de rutas a nivel de módulo permiten organizar mejor las rutas de una aplicación. A un nivel general, `app-routing.module.ts` cargará las rutas de cada módulo, y cada módulo incluirá sus propias rutas locales relativas. 
+====
+
+### Creación de los componentes de la aplicación
+
+Un módulo organiza un bloque funcional del dominio de la aplicación (p.e. solicitudes, espacios, ...). Los componentes Angular permitirán llevar a cabo la funcionalidad del módulo. 
+
+La organización que seguiremos para los componentes de la aplicación podría resumirse de esta forma. 
+
+Dentro de la carpeta de cada módulo encontraremos:
+
+* Un archivo de módulo
+* El archivo de routing del módulo para implementar _lazy loading_
+* Un directorio `pages` que contendrá a su vez un directorio para las funcionalidades
+** `consultar`
+** `crear`
+* Un directorio `components` que contendrá a su vez un directorio `dialogo-eliminar` que incluirá un componente de cuadro de diálogo para la funcionalidad de eliminar.
+
+.`pages` vs `components`
+****
+En la carpeta `pages` de la aplicación Angular incluiremos componentes Angular que van a ser directamente alcanzables por una ruta. Por ejemplo: `<url-base>/solicitudes/crear`
+
+En la carpeta `components` se incluirán componentes que no estarán directamen asociados a una ruta de la aplicación, pero que serán usados por otros componentes (que pondran estar en `components` o en `pages`).
+****
+
+La figura siguiente ilustra cómo quedaría la carpeta de un módulo:
+
+image::OrganizacionModulo.png[]
+
+.Organización básica de los archivos de la aplicación
+****
+A grandes rasgos la aplicación quedará organizada de esta forma:
+
+* `app.module.ts`
+* `app-routing.ts`
+* `app-component.ts`
+* `material`
+** `material.module.ts`
+* `shared`
+** `shared.module.ts`
+** `sidebar`
+*** `sidebar.component.html`
+*** `sidebar.component.ts`
+** `footbar`
+*** `footbar.component.html`
+*** `footbar.component.ts`
+* `main`
+** `home`
+*** `home-routing.module.ts`
+*** `home.module.ts`
+*** `pages`
+**** `home.component.html`
+**** `home.component.ts`
+** `espacios`
+*** `espacios-routing.module.ts`
+*** `espacios.module.ts`
+*** `pages`
+**** `espacios.component.html`
+**** `espacios.component.ts`
+****
+
+Crearemos los componentes con estas instrucciones
+
+[source, bash]
+----
+$ ng g c main/home/pages/home
+$ ng g c main/espacios/pages/consultar
+$ ng g c main/solicitudes/pages/consultar
+$ ng g c main/solicitudes/pages/crear
+----
+
+### Creación de las rutas
+
+Aquí configuraremos:
+
+* el archivo `app-routing.module.ts` para hacer _lazy loading_ indicando la ruta raíz del módulo y la ubicación de la clase del módulo.
+* cada uno de los archivos de rutas parciales de cada módulo.
+
+Archivo de rutas desde `app-routing.module.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [
+  {
+    path: 'solicitudes', <1>
+    loadChildren: () => <2>
+      import('./main/solicitudes/solicitudes.module').then(
+        (m) => m.SolicitudesModule
+      ),
+  },
+  {
+    path: 'espacios',
+    loadChildren: () =>
+      import('./main/espacios/espacios.module').then((m) => m.EspaciosModule),
+  },
+  {
+    path: '', <3>
+    loadChildren: () => <4>
+      import('./main/home/home.module').then((m) => m.HomeModule),
+  },
+  {
+    path: '**', <5>
+    redirectTo: '',
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
+----
+<1> Configuración de la URL de la ruta de un módulo
+<2> _Lazy loading_ del módulo indicando el archivo y la clase del módulo
+<3> Configuración de la ruta vacía
+<4> Módulo asociado a la ruta vacía
+<5> Expresión regular para indicar que redirija cualquier otro `path` no indicado al `path` vacío configurado anteriormente
+
+[NOTE]
+====
+Los `path` son evaluados de arriba abajo. Hay que tener cuidado de no poner un `path` demasiado genérico arriba porque impediría la evaluación de otros `path` que estén configurados después.
+====
+
+A continuación, creremos los archivos de rutas de cada módulo de la aplicación.
+
+Archivo `main/home/home.routing.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './pages/home/home.component';
+
+const routes: Routes = [
+  {
+    path: '',
+    children: [{ path: '', component: HomeComponent }],
+  },
+  {
+    path: '**',
+    redirectTo: '',
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class HomeRoutingModule {}
+----
+
+
+Archivo `main/espacios/espacios.routing.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ConsultarComponent } from './pages/consultar/consultar.component';
+
+const routes: Routes = [
+  {
+    path: '',
+    children: [
+      { path: 'consultar', component: ConsultarComponent },
+      { path: '', redirectTo: 'consultar' },
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: 'consultar',
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class EspaciosRoutingModule {}
+----
+
+Archivo `main/solicitudes/solicitudes.routing.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { CrearComponent } from './pages/crear/crear.component';
+import { ConsultarComponent } from './pages/consultar/consultar.component';
+
+const routes: Routes = [
+  {
+    path: '',
+    children: [
+      { path: 'crear', component: CrearComponent },
+      { path: 'consultar', component: ConsultarComponent },
+      { path: '', redirectTo: 'consultar' },
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: 'crear',
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class SolicitudesRoutingModule {}
+----
+
+A continuación, comprobaremos que las rutas funcionan correctamente. Escribiremos las siguientes URL en el navegador y deben ser respetardas y no redirigirnos a la ruta predeterminada.
+
+* http://localhost:4200/
+* http://localhost:4200/espacios/consultar
+* http://localhost:4200/solicitudes/crear
+* http://localhost:4200/solicitudes/consultar
+
+Las siguientes rutas no serán reconocidas y seremos redirigidos a las rutas predetermninadas de cada módulo:
+
+* http://localhost:4200/novale
+* http://localhost:4200/espacios
+* http://localhost:4200/espacios/novale
+* http://localhost:4200/espacios/crear
+* http://localhost:4200/solicitudes
+* http://localhost:4200/solicitudes/novale
+
+## Primeros componentes de la aplicación
+
+### Barra lateral y la barra de pie
+
+Comenzaremos con la configuración del módulo `shared`. Como tanto la barra lateral como la de pie usarán componentes de Angular Material, habrá que importar el módulo `Material` creado anteriormente.
+
+Además, como la barra lateral hará uso de los `routerLink` para cargar en la zona de páginas de la aplicación los componentes seleccionados, también tendrá que importarse `RouterModule`. 
+
+Así queda `shared/shared.module.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { FootbarComponent } from './footbar/footbar.component';
+import { MaterialModule } from '../material/material.module';
+import { RouterModule } from '@angular/router';
+
+@NgModule({
+  declarations: [SidebarComponent, FootbarComponent],
+  imports: [CommonModule, MaterialModule, RouterModule], <1>
+  exports: [SidebarComponent, FootbarComponent],
+})
+export class SharedModule {}
+----
+<1> Importación de los módulos de Material y de routing
+
+[NOTE]
+====
+No olvidar añadir `RouterModule` a los `imports` del módulo de la barra de navegación.
+====
+
+A continuación se muestra el código de la barra lateral con el menú de operaciones de la aplicación.
+
+Archivo `shared/sidebar/sidebar.component.html`:
+
+[source, html]
+----
+<div fxLayout="column">
+  <button mat-button routerLink="/">Home</button>
+  <hr />
+
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Solicitudes </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div fxLayout="column">
+        <div>
+          <button mat-button routerLink="./solicitudes/crear">Crear</button>
+        </div>
+        <div>
+          <button mat-button routerLink="./solicitudes/consultar">
+            Consultar
+          </button>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Espacios </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div fxLayout="column">
+        <a mat-button routerLink="./espacios/consultar">Consultar</a>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+----
+
+La barra del pie estará formada por tres botones con los enlaces a aviso legal y las políticas de privacidad y accesibilidad.
+
+Archivo `shared/footbar/footbar.component.html`
+
+[source, html]
+----
+<div fxLayout="row">
+  <a mat-button href="https://www.ual.es/avisolegal" target="_blank"
+    >Aviso legal</a
+  >
+
+  <a mat-button href="https://www.ual.es/politicaprivacidad" target="_blank"
+    >Política de Privacidad</a
+  >
+
+  <a mat-button href="https://www.ual.es/accesibilidad" target="_blank"
+    >Política de Accesibilidad</a
+  >
+</div>
+----
+
+### Página de inicio
+
+La página de inicio dará la bienvenida usando componentes Material y permitirá acceder a la consulta de espacios. 
+
+Comenzaremos añadiendo el módulo de componentes Material de nuestra aplicación al módulo `Home`.
+
+Archivo `main/home/home.module.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { HomeRoutingModule } from './home-routing.module';
+import { HomeComponent } from './pages/home/home.component';
+import { MaterialModule } from '../../material/material.module';
+
+@NgModule({
+  declarations: [HomeComponent],
+  imports: [CommonModule, HomeRoutingModule, MaterialModule], <1>
+})
+export class HomeModule {}
+----
+<1> Inclusión de nuestro módulo de Material
+
+Para la página de inicio busca tu propia imagen, colócala en `assets/images/` y añade un código como este.
+
+Archivo `main/home/pages/home.component.html`:
+
+[source, html]
+----
+<div fxLayout="row" fxLayoutAlign="center center">
+  <mat-card class="text-center" fxLayout="column" fxLayoutAlign="center center">
+    <img src="assets/images/empty.png" />
+    <h1>¡Hola! ¿Aún no has reservado ningún espacio?</h1>
+    <p>
+      Si deseas reservar un espacio, consulta la disponibilidad a través del
+      siguiente enlace.
+    </p>
+    <button
+      [routerLink]="['/espacios/consultar']"
+      mat-stroked-button
+      ngClass.xs="mat-fab"
+      color="primary"
+    >
+      <span fxHide fxShow.gt-xs>Ver disponibilidad de espacios</span>
+    </button>
+  </mat-card>
+</div>
+----
+
+Quedará algo así:
+
+image::Home.png[]
+
+### Formulario de creación de solicitudes
+
+Trabajaremos con formularios reactivos. Esto nos permitirá desviar la lógica a la parte TypeScript del componente y dejar más limpia la parte HTML del componente. Cada objeto de la pantalla HTML tendrá su homólogo en la parte TypeScript lo que permitirá acceder y modificar sus datos, quedando el HTML y el TS totalmente conectado. Esto supone:
+
+* Importar `ReactiveFormsModule` en el módulo de solicitudes 
+* Crear un objeto formulario en la parte TyepScript del componente 
+
+Comenzamos con las importaciones al módulo que contiene el componente en el que está nuestro componente de formulario. Hay que importar el módulo `ReactiveFormsModule` y nuestro módulo Material 
+
+Archivo `main/solicitudes/solicitudes.module.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { SolicitudesRoutingModule } from './solicitudes-routing.module';
+import { ConsultarComponent } from './pages/consultar/consultar.component';
+import { CrearComponent } from './pages/crear/crear.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from '../../material/material.module';
+
+@NgModule({
+  declarations: [ConsultarComponent, CrearComponent],
+  imports: [
+    CommonModule,
+    SolicitudesRoutingModule,
+    ReactiveFormsModule, <1>
+    MaterialModule, <2>
+  ],
+})
+export class SolicitudesModule {}
+----
+<1> Módulo de formularios reactivos
+<2> Módulo de los componentes Material de nuestra aplicación
+
+[WARNING]
+====
+Si no se importa `ReactiveFormsModule` tendremos un error del tipo 
+
+[source, code]
+----
+Uncaught (in promise): NullInjectorError: R3InjectorError(SolicitudesModule)[FormBuilder -> FormBuilder -> FormBuilder -> FormBuilder]: 
+  NullInjectorError: No provider for FormBuilder!
+---
+====
+
+A continuación crearemos la parte TypeScript del componente de creación de solicitudes. Se trata de:
+
+* Definir el objeto formulario con los campos que habrá en la pantalla
+* Para cada campo se define si tiene valores predeterminados, si está desactivado y sus validadores.
+
+En un formulario reactivo los campos se definen como pares JSON con el nombre del campo y un array en el que se puede indicar valores predeterminados, validadores, si está desactivado, y demás.
+
+Este componente tendrá que implementar un método `save` que sea llamado por la parte HTML del componente cuando se quiera crear la solicitud. Será un método que por ahora simplemente imprimirá por consola los valores introducidos a modo de comprobación. Posteriormente, se llamará a un servicio que crearemos más adelante y que se dedicará a almacenar la solicitud.
+
+Archivo `main/solicitudes/pages/solicitudes.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-crear',
+  templateUrl: './crear.component.html',
+  styleUrls: ['./crear.component.css'],
+})
+export class CrearComponent implements OnInit {
+  formHorario: FormGroup = this.fb.group({ <1>
+    nombre: [{ value: '', disabled: true }], <2>
+    cargo: [, [Validators.required]], <3>
+    unidad: [{ value: '', disabled: true }],
+    telefono: [{ value: '', disabled: true }],
+    email: [, [Validators.required, Validators.email]], <4>
+    tipo: [,],
+    nombreActividad: [, [Validators.required, Validators.minLength(5)]], <5>
+    start: [,],
+    end: [,],
+    dia: [,],
+    horaInicio: [,],
+    horaFin: [,],
+  });
+  
+  cargos: string[] = [ <6>
+    'Profesor Titular de Universidad',
+    'Director de Secretariado de Innovación Tecnológica',
+  ];
+  
+
+  diasSemana: string[] = [ <7>
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado',
+    'domingo',
+  ];
+
+  horas = Array.from(Array(24).keys()); <8>
+
+  constructor(private fb: FormBuilder)  {} <9>
+
+  ngOnInit(): void { <10>
+    this.formHorario.controls['nombre'].setValue('Manuel Torres Gil');
+    this.formHorario.controls['unidad'].setValue('Informática');
+    this.formHorario.controls['telefono'].setValue('84030');
+  }
+
+  save() { <11>
+    console.log('this.formHorario :>> ', this.formHorario);
+  }
+
+----
+<1> Los campos son creados en JSON como valores del método `group` del objeto `FormBuilder` que representa al formulario.
+<2> Definición del nombre del campo y su configuración (valores predeterminados, validadores, si está desactivado, ...)
+<3> Uso del validador `Required`. Va después del valor inicial
+<4> Se puede usar una lista de validadores
+<5> Validador de longitud mínima
+<6> Array para inicializar la lista de cargos
+<7> Array para inicializar la lista de día de la semana en un listbox
+<8> Array para inicializar las horas en un listbox
+<9> Inyección de `FormBuilder` 
+<10> Inicialización de valores
+<11> Método `save` inicializado con código de prueba
+
+.Validadores
+****
+Angular proporciona una serie de validadores útiles para la validación de campos. Destacan `required, email, min(<valor>), max(<valor>), minLength(<valor>), maxLength(<valor>)` y `pattern(<expresión-regular>)`. `email` permite validar si el valor introducido se ajusta a un email. Con `pattern` se pueden definir expresiones regulares para la validación de datos de los controles del formulario.
+
+El uso de validadores deja un código muy limpio comparado con hacerlo mediante métodos propios que además de ser implementados en la parte TypeScript deberían ser llamados en la parte HTML. Además, la posibilidad de usar varios incluyéndolos en un array facilita mucho las validaciones compuestas.
+
+Por último, el formulario (sus datos) no será considerado como válido mientras todos sus campos no hayan cumplido con sus validadores.
+
+Más información en la https://angular.io/api/forms/Validators[documentación oficial].
+****
+
+A continuación crearemos la parte visual del compomente. Se trata de un formulario reactivo ligado al objeto `formHorario` creado en la parte TS. Organizaremos sus elementos en tres tarjetas (datos personales, datos de la actividad, horario de la reserva). Usaremos un compomente `Datepicker` de Material para la selección de fechas. Las horas las seleccionaremos mediante listas desplegables. Se trata de la primera aproximación al formulario. Por ahora:
+
+* No usamos servicios de recuperación de los datos del usuario
+* Las horas las gestionaremos por ahora con listas desplegables con valores sólo para las horas, sin minutos.
+
+Archivo `main/solicitudes/pages/solicitudes.component.html`:
+
+[source, html]
+----
+<div fxFlexAlign="center" fxLayoutAlign="center center">
+  <form [formGroup]="formHorario"> <1>
+    <h1>Crear reserva</h1>
+    <hr />
+    <div fxLayout="column wrap" fxLayoutGap="20px">
+      <mat-card> <2>
+        <mat-card-subtitle>Datos personales</mat-card-subtitle> 
+        <div fxLayout="row" fxLayoutGap="20px">
+          <div fxFlex>
+            <mat-form-field appearance="outline" fxFill> <3>
+              <mat-label>Email</mat-label> <4>
+              <input
+                matInput <5>
+                formControlName="email" <6>
+              />
+            </mat-form-field>
+          </div>
+          <div fxFlex>
+            <mat-form-field appearance="outline" fxFill>
+              <mat-label>Nombre</mat-label>
+              <input matInput formControlName="nombre" />
+            </mat-form-field>
+          </div>
+
+          <div fxFlex>
+            <mat-form-field appearance="outline" fxFill>
+              <mat-label>Unidad/Departamento/Centro</mat-label>
+              <input matInput formControlName="unidad" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayoutGap="20px">
+          <div fxFlex>
+            <mat-form-field appearance="outline" fxFill>
+              <mat-label>Teléfono</mat-label>
+              <input matInput formControlName="telefono" />
+            </mat-form-field>
+          </div>
+          <div fxFlex>
+            <mat-form-field appearance="outline" fxFill>
+              <mat-label>Cargo</mat-label>
+              <div>
+                <mat-select formControlName="cargo"> <7>
+                  <mat-option
+                    *ngFor="let cargo of cargos"
+                    value="{{ cargo }}"
+                    >{{ cargo }}</mat-option
+                  >
+                </mat-select>
+              </div>
+            </mat-form-field>
+          </div>
+          <div fxFlex></div>
+        </div>
+      </mat-card>
+
+      <mat-card> <8>
+        <mat-card-subtitle>Datos de la actividad</mat-card-subtitle>
+        <div fxLayout="row" fxLayoutGap="20px">
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo</mat-label>
+              <mat-select formControlName="tipo">
+                <mat-option value="docente">Docente</mat-option>
+                <mat-option value="noDocente">No docente</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div fxFlex>
+            <mat-form-field appearance="outline" fxFill>
+              <mat-label>Actividad</mat-label>
+              <input matInput formControlName="nombreActividad" />
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-subtitle>Horario de la reserva</mat-card-subtitle>
+        <div fxLayout="row" fxLayoutGap="20px">
+          <div fxFlex>
+            <mat-form-field appearance="fill">
+              <mat-label>Rango de fechas</mat-label>
+              <mat-date-range-input [rangePicker]="picker"> <9>
+                <input
+                  matStartDate
+                  formControlName="start"
+                  placeholder="Start date"
+                />
+                <input
+                  matEndDate
+                  formControlName="end"
+                  placeholder="End date"
+                />
+              </mat-date-range-input>
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="picker"
+              ></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker> <10>
+            </mat-form-field>
+          </div>
+          <div fxFlex>
+            <mat-form-field appearance="outline">
+              <mat-label>Día</mat-label>
+              <mat-select formControlName="dia"> <11>
+                <mat-option *ngFor="let day of daysOfWeek" value="{{ day }}">{{
+                  day | titlecase
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div fxFlex>
+            <mat-form-field appearance="outline">
+              <mat-label>Hora de inicio</mat-label>
+              <mat-select formControlName="horaInicio"> <12>
+                <mat-option *ngFor="let hour of hours" value="{{ hour }}">{{
+                  hour
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div fxFlex>
+            <mat-form-field appearance="outline">
+              <mat-label>Hora de fin</mat-label>
+              <mat-select formControlName="horaFin"> <13>
+                <mat-option *ngFor="let hour of hours" value="{{ hour }}">{{
+                  hour
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="end">
+          <button mat-stroked-button color="primary" (click)="save()"> <14>
+            Guardar
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </form>
+</div>
+----
+<1> Objeto formulario ligado al formulario reactivo `formHorario` definido en el TS
+<2> Tarjeta para elementos de datos personales
+<3> Creación de campo de formulario Material
+<4> Etiqueta
+<5> Input de tipo Material
+<6> Vinculación del campo al elemento `email` al elemento del formulario de la parte TS
+<7> Listbox inicializado con los valores de la parte TS
+<8> Tarjeta para los datos de la actividad
+<9> Elemento para los datos del rango de fechas
+<10> Elemento para la selección del rango de fechas
+<11> Desplegable para la selección de días
+<12> Desplegable para la selección de la hora de inicio
+<13> Desplegable para la selección de la hora de fin
+<14> Llamada al método que gestionará el formulario
+
+Si pulsamos el botón `Crear` y no se cumple alguno de los validadores, los campos no válidos aparecerán marcados en rojo. Y si activamos en el navegador las Herramientas para desarrolladores, como el método `save` hace un `console.log` del objeto `formHorario`, vemos que su estado es `INVALID`. Esto se debe a que no se está cumpliendo alguno de sus validadores.
+
+A continuación veremos cómo mostrar mensajes de error en las validaciones y cómo desactivar el botón del formulario hasta que éste sea válido.
+
+image::CrearReservaInvalid.png[]
+
+#### Añadiendo mensajes de error en las validaciones
+
+Necesitamos un método genérico que nos indique si un campo tiene errores o no. En nuestro caso, los campos tendrán errores si no se cumplen algunos de los validadores. Introduciremos además la condición de que hayan sido tocados para que no se inicialmente no se consideren erróneos los campos que aún no han sido tocados.
+
+Archivo `main/solicitudes/pages/solicitudes.component.ts`:
+
+[source, ts]
+----
+  ...
+  isNotValidField(field: string) {
+    return (
+      this.formHorario.controls[field].errors &&
+      this.formHorario.controls[field].touched
+    );
+  }
+  ...
+----
+
+Definimos una clase `invalid-mat-form-field` en `styles.css` para personalizar los mensajes de error en los campos no válidos
+
+[source, css]
+----
+.invalid-mat-form-field {
+  font-size: small;
+  color: red;
+}
+----
+
+Por último, añadimos la presentación condicional del error en un elemento `<span>` si `isNotValidField` devuelve que el campo no es válido.
+
+Archivo `main/solicitudes/pages/solicitudes.component.html`:
+
+[source, html]
+----
+...
+            <mat-form-field appearance="outline" fxFill>
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                formControlName="email"
+              />
+              <span class="invalid-mat-form-field" *ngIf="isNotValidField('email')"
+                >* Formato de email incorrecto</span
+              > <1>
+            </mat-form-field>
+...            
+            <mat-form-field appearance="outline" fxFill>
+              <mat-label>Actividad</mat-label>
+              <input matInput formControlName="nombreActividad" />
+              <span
+                class="invalid-mat-form-field"
+                *ngIf="isNotValidField('nombreActividad')"
+                >Al menos 5 caracteres</span
+              > <2>
+            </mat-form-field>
+...
+----
+<1> Presentación de mensaje de error si el email no es válido
+<2> Presentación de mensaje de error si la actividad no es válida
+
+A continuación se muestra el efecto de la presentación del mensaje de error cuando los campos no son válidos.
+
+image::IsNotValidField.png[]
+
+#### Desactivación condicional del botón Crear
+
+Queremos que el botón Crear no esté disponible si el formulario no es válido. Para ello, comenzaremos añadiendo un método al TS del componente que indique si el formulario es válido o no basándonse en la propiedad `valid` de los formularios.
+
+Archivo `main/solicitudes/pages/crear/crear.component.ts`:
+
+[source, ts]
+----
+...
+  isValidForm() {
+    return this.formHorario.valid;
+  }
+...
+----
+
+Ahora sólo falta configurar la propiedad `disabled` del formulario en función de lo que devuelva el método `isValidForm`.
+
+Archivo `main/solicitudes/pages/crear/crear.component.html`:
+
+[source, html]
+----
+...
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="save()"
+            [disabled]="!isValidForm()" <1>
+          >
+            Crear
+          </button>
+...
+----
+<1> Desactivación del botón Crear si el formulario no es válido
+
+Si ahora alguno de los campos no cumple sus validaciones el formulario no será válido y el botón Crear estará desactivado.
+
+image::BotonCrearDisabled.png[]
+
+## Creación de un servidor JSON para datos de prueba
+
+Con el fin de poder simular el funcionamiento de servicios de backend sin necesidad de montar un backend y su complejidad asociada, para desarrollar la aplicación en Angular podemos usar algo con menor funcionalidad pero que nos permita realizar nuestras operaciones CRUD básicas. 
+
+https://github.com/typicode/json-server[JSON-server] nos ofrece la posibilidad de tener de forma muy sencilla un prototipo de API REST totalmente funcional sin necesidad de programar nada.
+
+Se instala de forma sencilla con
+
+[source, bash]
+----
+$ npm install -g json-server
+----
+
+A continuación, hay que crear un archivo JSON con los datos que va a manejar inicialmente la API.
+
+Incluiremos un archivo `db.json` en nuestro proyecto para que contemos con un conjunto inicial de datos.
+
+[source, json]
+----
+{
+  "personas": [
+    {
+      "email": "mtorres@ual.es",
+      "nombre": "Manuel Torres Gil",
+      "telefono": "84030",
+      "unidad": "Departamento de Informática",
+      "cargo": [
+        "Profesor Titular de Universidad",
+        "Director de Secretariado de Innovación Tecnológica"
+      ],
+      "docente": true
+    },
+    {
+      "email": "ggf906@ual.es",
+      "nombre": "Francisco José García García",
+      "telefono": "N/D",
+      "unidad": "STIC",
+      "cargo": ["Gestor Informática"],
+      "docente": false
+    }
+  ]
+}
+----
+
+Iniciamos JSON Server con
+
+[source, bash]
+----
+$ json-server --watch db.json
+----
+
+El puerto predeterminado en que se ofrece la API REST es el 3000. Así, tendríamos una API REST funcional en http://localhost:3000/personas
+
+Para iniciar JSON Server en otro puerto, pasamos al final el parámetro `--port` seguido de un número de puerto.
+
+[source, bash]
+----
+$ json-server --watch db.json --port 3002
+----
+
+En este caso tendríamos la API REST funcional en http://localhost:3002/personas.
+
+
+## Creación de un servicio de datos de persona
+
+En esta sección crearemos un servicio que recupere datos de persona. Comenzaremos creando un servicio.
+
+[source, bash]
+----
+$ ng g service services/persona
+----
+
+[NOTE]
+====
+Los servicios los organizaremos en una carpeta `services`
+
+====
+.Inclusión de los servicios en la organización básica de los archivos de la aplicación
+****
+A grandes rasgos la aplicación quedará organizada de esta forma:
+
+* `app.module.ts`
+* `app-routing.ts`
+* `app-component.ts`
++
+---
+* `services` // Carpeta para la organización de servicios
+** `persona.service.ts` // Servicio para personas
++
+---
+
+* `material`
+** `material.module.ts`
+* `shared`
+** `shared.module.ts`
+** `sidebar`
+*** `sidebar.component.html`
+*** `sidebar.component.ts`
+** `footbar`
+*** `footbar.component.html`
+*** `footbar.component.ts`
+* `main`
+** `home`
+*** `home-routing.module.ts`
+*** `home.module.ts`
+*** `pages`
+**** `home.component.html`
+**** `home.component.ts`
+** `espacios`
+*** `espacios-routing.module.ts`
+*** `espacios.module.ts`
+*** `pages`
+**** `espacios.component.html`
+**** `espacios.component.ts`
+****
+
+.Importación de HttpClientModule
+****
+El servicio usará la clase HttpClient. Para usar esta clase es necesario que previamente se haya importado HttpClientModule. La mayoría de las aplicaciones realizan esta importación en app.module.ts.
+
+Archivo `app.module.ts`
+
+[source, ts]
+----
+...
+  imports: [
+    BrowserModule,
+    HttpClientModule, <1>
+    ...
+  ],
+----
+<1> Incorporación a la lista de `imports` de la aplicación
+
+No importar este módulo provocaría este error al usar el servicio indicando que no existe provider para HttpClient:
+
+image::errorHttpClientModule.png[]
+****
+
+HttpClientModule en `app.module.ts`
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http'; <1>
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { SharedModule } from './shared/shared.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    HttpClientModule, <2>
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    FlexLayoutModule,
+    SharedModule,
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+----
+<1> Importación del módulo de `HttpClientModule`
+<2> Incorporación a la lista de `imports`
+
+Para implementar el servicio:
+
+* Inyectaremos `HttpClient` en el constructor para poder realizar peticiones HTTP
+* Inicializaremos la URL de acceso a la API
+* Implementaremos un método que permita la recuperación de una persona por su email.
+    
+Servicio en `services/people.ts`:
+
+[source, ts]
+----
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PeopleService {
+  url = 'http://localhost:3000/personas';
+  constructor(private http: HttpClient) {}
+
+  findOne(email: any): Observable<any> {
+    return this.http.get(`${this.url}?email=${email}`);
+  }
+}
+----
+
+#### Uso de variables de entorno
+
+En el ejemplo anterior, teníamos la URL en el propio código de la aplicación. Esto presenta problemas de mantenimiento porque si cambia la URL tendremos que hacer cambios en todos los archivos en los que aparezca. Además, tendremos que ir cambiando el valor en función de si estamos en un entorno de desarrollo o en el entorno de producción.
+
+Angular permite la definición de archivos de variables de entorno y permite tener archivos separados para los entornos de desarrollo y producción. Los procesos de despligue tomarán los valores del archivo del entorno de producción, mientras que cuando estemos desarrollando `ng serve` toma los valores del entorno de desarrollo.
+
+Estos son los archivos de variables de entorno que manejaremos en nuestra aplicación Angular:
+
+* `environments/environments.ts`: Variables de entorno para desarrollo
+* `environments/environments.prod.ts`: Variables de entorno para producción
+
+A continuación se muestra el archivo de variables de entorno para desarrollo.
+
+Archivo `environments/environments.ts`:
+
+[source, ts]
+----
+export const environment = {
+  production: false,
+  urlPersonas: 'http://localhost:3000/personas', <1>
+};
+----
+
+Una vez definido, podremos usar sus variables en el resto de la aplicación. Veamos cómo quedaría el servicio usando variables de entorno.
+
+Servicio en `services/people.ts`:
+
+[source, ts]
+----
+import { environment } from './../../environments/environment'; <1>
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PeopleService {
+  constructor(private http: HttpClient) {}
+
+  findOne(email: any): Observable<any> {
+    return this.http.get(`${environment.urlPersonas}?email=${email}`); <2>
+  }
+}
+----
+<1> Importación de variables de entorno de desarrollo
+<2> Uso de las variables de entorno
+
+[IMPORTANT]
+====
+Hay que tener cuidado a la hora de importar las variables de entorno y no importar el de producción.
+====
+
+También habría que configurar las variables de entorno de producción. A continuación se muestra un ejemplo para producción.
+
+Archivo `environments/environments.prod.ts`:
+
+[source, ts]
+----
+export const environment = {
+  production: true,
+  urlPersonas: 'http://<your-production-people-api-server>/personas', <1>
+};
+----
+<1> Configuración para producción
+
+## Mejora de la carga de datos en el formulario de creación de solicitudes
+
+Hasta ahora, al inicializar el formulario de creación de solicitudes, los datos de la persona eran incluidos sin capacidad de ser cambiados mediante una inicialización de valores en el método `ngOnInit`.
+
+[source, ts]
+----
+  ngOnInit(): void { 
+    this.formHorario.controls['nombre'].setValue('Manuel Torres Gil');
+    this.formHorario.controls['unidad'].setValue('Informática');
+    this.formHorario.controls['telefono'].setValue('84030');
+  }
+----
+
+Sin embargo, el funcionamiento esperado es que estos datos sean inicializados a partir del email introducido en el formulario. Actualmente contamos con el método `findOne()` en el servicio `PersonaService` que permite recuperar los datos de una persona a partir de su email. Sin embargo, esto aún no está siendo explotado por la aplicación. Veamos cómo hacerlo.
+
+En primer lugar, dejaremos el método `ngOnInit()` vacío. Ahora la inicialización se delegará en un método dedicado a ello. Dicho método será llamado cada vez que se introduzca un email en el formulario.
+
+Necesitaremos dos métodos:
+
+* Un método `buscarPersona()` que llamará al servicio de búsqueda de personas por email.
+* Un método `actualizarCamposPersona()` que será el que actualice el formulario con los datos recuperados por el método anterior. El método `actualizarCamposPersona()` será llamado cuando se introduzca un email en el formulario.
+
+[NOTE]
+====
+Hacemos una prueba llamando directamente a la API REST con Postman o con un navegador recuperando la persona a partir de su email para ver la estructura de datos de la respuesta. Al hacer la petición siguiente:
+
+[source, code]
+----
+http://localhost:3000/personas?email=mtorres@ual.es
+----
+
+obtenemos la respuesta siguiente:
+
+[source, json]
+----
+[
+  {
+    "email": "mtorres@ual.es",
+    "nombre": "Manuel Torres Gil",
+    "telefono": "84030",
+    "unidad": "Departamento de Informática",
+    "cargo": [
+      "Profesor Titular de Universidad",
+      "Director de Secretariado de Innovación Tecnológica"
+    ],
+    "docente": true
+  }
+]
+----
+
+*Vemos que la persona es un objeto que pertenece a un array.*
+====
+
+Archivo `main/solicitudes/pages/crear/crear.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { lastValueFrom, Observable, of, shareReplay } from 'rxjs';
+import { PersonaService } from '../../../../services/persona.service';
+
+@Component({
+  selector: 'app-crear',
+  templateUrl: './crear.component.html',
+  styleUrls: ['./crear.component.css'],
+})
+export class CrearComponent implements OnInit {
+  cargos: string[] = []; <1>
+  persona: any; <2>
+
+  formHorario: FormGroup = this.fb.group({
+    nombre: [{ value: '', disabled: true }],
+    cargo: [, [Validators.required]],
+    unidad: [{ value: '', disabled: true }],
+    telefono: [{ value: '', disabled: true }],
+    email: [, [Validators.required, Validators.email]],
+    tipo: [,],
+    nombreActividad: [, [Validators.required, Validators.minLength(5)]],
+    start: [,],
+    end: [,],
+    dia: [,],
+    horaInicio: [,],
+    horaFin: [,],
+  });
+
+  diasSemana: string[] = [
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado',
+    'domingo',
+  ];
+
+  horas = Array.from(Array(24).keys());
+
+  constructor(
+    private fb: FormBuilder,
+    private personaService: PersonaService <3>
+  ) {}
+
+  ngOnInit(): void {} <4>
+
+  isNotValidField(field: string) {
+    return (
+      this.formHorario.controls[field].errors &&
+      this.formHorario.controls[field].touched
+    );
+  }
+
+  isValidForm() {
+    return this.formHorario.valid;
+  }
+
+  buscarPersona(email: any) { <5>
+    this.personaService.findOne(email).subscribe((res) => { <6>
+      this.persona = res[0]; <7>
+    });
+  }
+
+  actualizarCamposPersona() { <8>
+    const email = this.formHorario.controls['email'].value; <9>
+
+    this.buscarPersona(email); <10>
+
+    if (this.persona) { <11>
+      this.cargos = [...this.persona.cargo];
+
+      this.formHorario.controls['nombre'].setValue(this.persona.nombre);
+      this.formHorario.controls['unidad'].setValue(this.persona.unidad);
+      this.formHorario.controls['telefono'].setValue(this.persona.telefono);
+
+      this.persona.cargo = this.formHorario.controls['cargo'].value;
+
+      return;
+    }
+  }
+
+  save() {
+    console.log('this.formHorario :>> ', this.formHorario);
+  }
+}
+----
+<1> Variable para almacenar los cargos recuperados de una persona. Se usa para poblar el desplegable en el formulario
+<2> Variable para almacenar la persona recuperada del servicio
+<3> Inyección del servicio en el constructor
+<4> Ahora ya no se inicializan los datos de la persona desde `ngOnInit`
+<5> Método para la búsqueda de una persona mediante su email
+<6> Llamada al servicio que recupera los datos de una persona
+<7> Almacenamiento de los datos recuperados en la variable de instancia `persona`. *Vimos que la persona está en la primera posición del array*
+<8> Método de actualización de datos en el formulario
+<9> Acceso al valor del `email` introducido en el formulario
+<10> Llamada al método de búsqueda de personas por email
+<11> Actualización de datos en el formulario si se recupera una persona
+
+Ahora ya sólo falta llamar al método `actulizarCamposPersona()` desde el cuadro de texto del email.
+
+Archivo `main/solicitudes/pages/crear/crear.component.html`:
+
+[source, html]
+----
+<div fxFlexAlign="center" fxLayoutAlign="center center">
+  <form [formGroup]="formHorario" autocomplete="off">
+    <h1>Crear reserva</h1>
+    <hr />
+    <div fxLayout="column wrap" fxLayoutGap="20px">
+      <mat-card>
+        <mat-card-subtitle>Datos personales</mat-card-subtitle>
+        <div fxLayout="row" fxLayoutGap="20px">
+          <div fxFlex>
+            <mat-form-field appearance="outline" fxFill>
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                formControlName="email"
+                (blur)="actualizarCamposPersona()" <1>
+              />
+              <span
+                class="invalid-mat-form-field"
+                *ngIf="isNotValidField('email')"
+                >* Formato de email incorrecto</span
+              >
+            </mat-form-field>
+          </div>
+          
+...
+----
+<1> Llamada al método `actualizarCamposPersona()` tras perder el foco (evento  `blur`)
+
+image::DatosPersonaDesdeServicio.png[]
+
+Tras introducir un email registrado en el backend, se cargarán los datos de la persona. No obstante, vemos un comportamiento anómalo. Los datos no aparecen actualizados al retirar el foco de email por primera vez. Parece que hubiera que cambiar dos veces el foco, entrando y saliendo dos veces del email. Este comportamient anómalo se debe a que los datos de la persona están llegando tarde y no están al perder el foco la primera vez, pero sí parece que ya están disponibles si se vuelve a cambiar el foco.
+
+A continuación veremos cómo solucionar este problema.
+
+#### Actualizaciones con datos asíncronos.
+
+Para evitar el problema de que los datos que devuelve el servicio llegan con retraso y no están a tiempo para presentarlos en la pantalla esperaremos a que lleguen los datos antes de proceder a su presentación en pantalla.
+
+El problema radica en que el método `buscarPersona()` actualizaba tarde los datos de la persona. El código siguiente ilustra los cambios que hacemos en el código
+
+[source, ts]
+----
+  buscarPersona(email: any) {
+    /*
+    this.personaService.findOne(email).subscribe((res) => { <1>
+      this.persona = res[0];
+    });
+    */
+    
+    return lastValueFrom(this.personaService.findOne(email));<2>
+  }
+----
+<1> Antigua llamada al servicio de búsqueda de persona por email
+<2> Ahora `buscarPersona` devuelve una promesa de un observable, que se consumirá con `async/await`.
+
+.La función `lastValueFrom`
+****
+`lastValueFrom` es una función de https://rxjs.dev/[RxJS], la librería que nos permite tratar las llamadas asíncronas mediante observables.
+
+`lastValueFrom` convierte un observable en una promesa mediante una suscripción al observable, esperando a que se complete y devolviendo el último valor del servicio llamado.
+
+Posteriormente consumiremos el valor devuelto por `lastValueFrom` con `async/await`.
+****
+
+También habrá que cambiar la llamada a `buscarPersona()` desde `actualizarDatosPersona()`. Quderá así:
+
+[source, ts]
+----
+  async actualizarCamposPersona() { <1>
+    const email = this.formHorario.controls['email'].value;
+
+    // this.buscarPersona(email); <2>
+
+    this.persona = (await this.buscarPersona(email))[0]; <3>
+
+    if (this.persona) {
+      this.cargos = [...this.persona.cargo];
+
+      this.formHorario.controls['nombre'].setValue(this.persona.nombre);
+      this.formHorario.controls['unidad'].setValue(this.persona.unidad);
+      this.formHorario.controls['telefono'].setValue(this.persona.telefono);
+
+      this.persona.cargo = this.formHorario.controls['cargo'].value;
+
+      return;
+    }
+  }
+----
+<1> Ahora el método es async porque dentro contiene un `await`
+<2> Antigua forma de llamada a `buscarPersona()`
+<3> Carga de datos en persona
+
+Ahora, la carga de datos en persona no se realiza hasta que no se hayan recuperado sus datos del servicio.
+
+#### Mejora del código de actualización del formulario con `patchValue`
+
+En el código anterior teníamos un código engorroso que puede ser mejorado. Se trata de:
+
+[source, ts]
+----
+      this.formHorario.controls['nombre'].setValue(this.persona.nombre);
+      this.formHorario.controls['unidad'].setValue(this.persona.unidad);
+      this.formHorario.controls['telefono'].setValue(this.persona.telefono);
+----
+
+Esto podría ser aún peor si en lugar de tener que actualizar 3 campos tuviésemos que actuliazar 10. 
+
+Para ello, cuando los nombres de los controles del formulario coincidan con los nombres usados en los objetos que contienen los datos (`nombre - nombre`, `unidad - unidad`, `telefono - telefono`) podemos usar `patchValue` que actualizará todos los valores que tengan el mismo nombre.
+
+Así, el código anterior quedaría de la siguiente forma, mucho más limpio.
+
+[source, ts]
+----
+  async actualizarCamposPersona() {
+    const email = this.formHorario.controls['email'].value;
+
+    this.buscarPersona(email);
+
+    //this.persona = (await this.buscarPersona(email))[0];
+
+    if (this.persona) {
+      this.cargos = [...this.persona.cargo];
+
+      this.formHorario.patchValue(this.persona); <1>
+
+      this.persona.cargo = this.formHorario.controls['cargo'].value;
+
+      return;
+    }
+
+    this.clearPersonalData();
+  }
+----
+<1> `patchValue` hace la actualización de todos los datos en una sola línea
+
+#### Limpieza de datos cuando la persona no existe
+
+Si probamos a introducir una persona que no existe, comprobaremos que no se actalizan los datos, lo que podría inducir a error. Si el formulario estaba vacío y se introduce un email inexistente, no se mostrarán datos. Pero, si ya había datos y se introduce un nuevo email, se mantendrán los datos de la persona anterior, lo que no es correcto.
+
+La solución planteada consiste en crear un método que limpie el formulario si no se recuperan datos (`persona` no contiene datos). Para mejorar la experiencia de usuario usaremos el compoente Material Snackbar que muestra una barra al pie útil para mensajes.
+
+[NOTE]
+====
+El módulo `SnackbarModule` que contiene al componente `MatSnackbar` es uno de los módulos que tenemos incluidos en nuestro módulo `Material`, lo que como está importado en el módulo del componente de solicitudes, permite usar todos los compomentes de nuetro módulo Material.
+====
+
+A continuación se muestra el código completo de cómo quedaría el componente con el nuevo método de limpieza de datos con emails no existentes.
+
+Archivo `main/solicitudes/pages/crear/crear.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { lastValueFrom } from 'rxjs';
+import { PersonaService } from '../../../../services/persona.service';
+import { MatSnackBar } from '@angular/material/snack-bar'; <1>
+
+@Component({
+  selector: 'app-crear',
+  templateUrl: './crear.component.html',
+  styleUrls: ['./crear.component.css'],
+})
+export class CrearComponent implements OnInit {
+  cargos: string[] = [];
+
+  persona: any;
+
+  formHorario: FormGroup = this.fb.group({
+    nombre: [{ value: '', disabled: true }],
+    cargo: [, [Validators.required]],
+    unidad: [{ value: '', disabled: true }],
+    telefono: [{ value: '', disabled: true }],
+    email: [, [Validators.required, Validators.email]],
+    tipo: [,],
+    nombreActividad: [, [Validators.required, Validators.minLength(5)]],
+    start: [,],
+    end: [,],
+    dia: [,],
+    horaInicio: [,],
+    horaFin: [,],
+  });
+
+  diasSemana: string[] = [
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado',
+    'domingo',
+  ];
+
+  horas = Array.from(Array(24).keys());
+
+  constructor(
+    private fb: FormBuilder,
+    private personaService: PersonaService,
+    private snackBar: MatSnackBar <2>
+  ) {}
+
+  ngOnInit(): void {}
+
+  isNotValidField(field: string) {
+    return (
+      this.formHorario.controls[field].errors &&
+      this.formHorario.controls[field].touched
+    );
+  }
+
+  isValidForm() {
+    return this.formHorario.valid;
+  }
+
+  buscarPersona(email: any) {
+    return lastValueFrom(this.personaService.findOne(email));
+  }
+
+  async actualizarCamposPersona() {
+    const email = this.formHorario.controls['email'].value;
+
+    this.persona = (await this.buscarPersona(email))[0];
+
+    if (this.persona) {
+      this.cargos = [...this.persona.cargo];
+
+      this.formHorario.patchValue(this.persona);
+
+      this.persona.cargo = this.formHorario.controls['cargo'].value;
+
+      return;
+    }
+
+    this.clearPersonalData(); <3>
+  }
+
+  clearPersonalData() { <4>
+    this.formHorario.reset(); <5>
+
+    this.snackBar.open('Persona no disponible', '', { <6>
+      duration: 1500,
+    });
+  }
+
+  save() {
+    console.log('this.formHorario :>> ', this.formHorario);
+  }
+}
+
+----
+<1> Importación del componente `MatSnackBar`
+<2> Inyección del componente `MatSnakcBar` para poder usarlo más adelante.
+<3> Llamada al método de limpieza si `persona` no tiene datos
+<4> Método de limpieza del formulario
+<5> Limpieza de los datos del formulario
+<6> Presentación del mensaje de error durante 1500 ms (1.5 segudos)
+
+A continuación se muestra el mensaje el borrado de los datos del fomrulario y la presentación del mensaje de error en la barra tras introducir un email que no existe.
+
+image::PersonaNoDisponible.png[]
+
+## Guardado de datos en backend
+
+En esta sección veremos cómo guardar los datos en el backend. Básicamente tendremos que
+
+* Crear el servicio que se encargará del almacenamiento en el backend.
+* Actualizar el método `save()` para que llame al servicio de almacenamiento anterior.
+
+### Actualización de los datos de JSON Server
+
+Vamos a contar con un nuevo elemento en nuestro backend de pruebas para las solicitudes. Para ello, basta con añadir el elemento siguiente a `db.json`.
+
+[source, json]
+----
+{
+  "personas": [
+    {
+      "email": "mtorres@ual.es",
+      "nombre": "Manuel Torres Gil",
+      "telefono": "84030",
+      "unidad": "Departamento de Informática",
+      "cargo": [
+        "Profesor Titular de Universidad",
+        "Director de Secretariado de Innovación Tecnológica"
+      ],
+      "docente": true
+    },
+    {
+      "email": "ggf906@ual.es",
+      "nombre": "Francisco José García García",
+      "telefono": "N/D",
+      "unidad": "STIC",
+      "cargo": ["Gestor Informática"],
+      "docente": false
+    }
+  ],
+  "solicitudes": [] <1>
+}
+----
+<1> Nueva colección añadida
+
+Como tenemos iniciado JSON Server en modo `watch`, los cambios introducidos generan nuevos endpoints de forma inmediata en 
+
+[source, code]
+----
+http://localhost:3000/solicitudes
+----
+
+### Creación del servicio de almacenamiento
+
+Comenzamos creando un nuevo servicio para las reservas
+
+[source, bash]
+----
+$ ng g service services/solicitudes
+----
+
+### Modificación de las variables de entorno
+
+Hasta ahora tenemos una URL desde donde recuperamos los datos de las personas. Este servicio realmente es ajeno al de la aplicación de espacios de este tutorial. Nuestra aplicación contará con servicios para gestión de solicitudes y consulta de espacios. Todos ellos los vamos a incluir en la misma URL y será diferentes de la URL de la API de personas que, como hemos comentado, es algo externo a esta aplicación de espacios. Por tanto, tendremos variables de entorno diferentes.
+
+Archivo `environments/environments.ts`:
+
+[source, ts]
+----
+export const environment = {
+  production: false,
+  urlPersonas: 'http://localhost:3000/personas',
+  urlEspacios: 'http://localhost:3000',
+};
+----
+
+La API de espacios tendrá endpoints como los siguientes. Todos ellos, tienen como elemento común `urlEspacios`.
+
+* `GET http://localhost:3000/espacios/`
+* `GET http://localhost:3000/solicitudes/`
+* `GET http://localhost:3000/solicitudes/1`
+* `DELETE http://localhost:3000/espacios/1`
+
+Archivo `environments/environments.prod.ts`:
+
+[source, ts]
+----
+export const environment = {
+  production: true,
+  urlPersonas: 'http://<your-production-people-api-server>/personas',
+  urlEspacios: 'http://<your-production-espacios-api-server>',
+};
+----
+
+Creación del método de almacenamiento en el servicio.
+
+Archivo `services/reservations.service.ts`:
+
+[source, ts]
+----
+import { environment } from './../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ReservationsService {
+  constructor(private http: HttpClient) {}
+
+  save(data: any): Observable<any> { <1>
+    return this.http.post(`${environment.urlEspacios}/reservations`, data);
+  }
+}
+----
+<1> Método que almacena los datos y devuelve un observable
+
+A continuación modificaremos el método `save()` del componente de crear solicitudes para que llame al servicio anterior. Además, para ofrecer una mejor experiencia de usuario, mostraremos un mensaje en la _snackbar_ indicando que se ha creado la solicitud y redirigiremos al usuario a la pantalla del listado de solicitudes. Allí podrá ver su solicitud, aunque aún no podrá ver nada ya que no está implementada. En la sección siguiente implementaremos la funcionalidad de mostrar el listado de solicitudes.
+
+Archivo `main/solicitudes/pages/crear/crear.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { lastValueFrom } from 'rxjs';
+import { PersonaService } from '../../../../services/persona.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-crear',
+  templateUrl: './crear.component.html',
+  styleUrls: ['./crear.component.css'],
+})
+export class CrearComponent implements OnInit {
+  cargos: string[] = [];
+
+  persona: any;
+
+  formHorario: FormGroup = this.fb.group({
+    nombre: [{ value: '', disabled: true }],
+    cargo: [, [Validators.required]],
+    unidad: [{ value: '', disabled: true }],
+    telefono: [{ value: '', disabled: true }],
+    email: [, [Validators.required, Validators.email]],
+    tipo: [,],
+    nombreActividad: [, [Validators.required, Validators.minLength(5)]],
+    start: [,],
+    end: [,],
+    dia: [,],
+    horaInicio: [,],
+    horaFin: [,],
+  });
+
+  diasSemana: string[] = [
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado',
+    'domingo',
+  ];
+
+  horas = Array.from(Array(24).keys());
+
+  constructor(
+    private fb: FormBuilder,
+    private personaService: PersonaService,
+    private solicitudesService: SolicitudesService, <1>
+    private snackBar: MatSnackBar,
+    private router: Router <2>
+  ) {}
+
+  ngOnInit(): void {}
+
+  isNotValidField(field: string) {
+    return (
+      this.formHorario.controls[field].errors &&
+      this.formHorario.controls[field].touched
+    );
+  }
+
+  isValidForm() {
+    return this.formHorario.valid;
+  }
+
+  buscarPersona(email: any) {
+    return lastValueFrom(this.personaService.findOne(email));
+  }
+
+  async actualizarCamposPersona() {
+    const email = this.formHorario.controls['email'].value;
+
+    this.persona = (await this.buscarPersona(email))[0];
+
+    if (this.persona) {
+      this.cargos = [...this.persona.cargo];
+
+      this.formHorario.patchValue(this.persona);
+
+      this.persona.cargo = this.formHorario.controls['cargo'].value;
+
+      return;
+    }
+
+    this.clearPersonalData();
+  }
+
+  clearPersonalData() {
+    this.formHorario.reset();
+
+    this.snackBar.open('Persona no disponible', '', {
+      duration: 1500,
+    });
+  }
+
+  save() {
+    let solicitud = this.formHorario.getRawValue(); <3>
+
+    this.solicitudesService.save(solicitud).subscribe((res) => { <4>
+      if (res) { <5>
+        this.snackBar.open('Solicitud creada', '', {  <6>
+          duration: 1500,
+        });
+
+        this.router.navigate(['/solicitudes/consultar']); <7>
+      } 
+    });
+  }
+}
+----
+<1> Inyección del servicio de gestión de solicitudes
+<2> Inyección de `Router` para poder ir a la página del listado de solicitudes tras la creación de una solicitud
+<3> Inicializar un objeto `solicitud` con todos los valores introducidos en el formulario
+<4> Llamada al método `save` del servicio pasándole los datos de la solicitud a crear
+<5> Comprobación de almacenamiento correcto
+<6> Presentación de la _snackbar_ con el mensaje de solicitud creada
+<7> Redirigir a la página de listado de solicitudes
+
+## Lista de reservas
+
+En esta sección crearemos la página que muestra las solicitudes creadas. Inicialmente las mostrará todas y después incorporaremos las posibilidad de filtrado para la consulta de solicitudes.
+
+### Servicio de lista de reservas
+
+Comenzaremos añadiendo al servicio `Solicitudes` un método que recupere todas las solicitudes.
+
+[source, ts]
+----
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SolicitudesService {
+  constructor(private http: HttpClient) {}
+
+  findAll(): Observable<any> { <1>
+    return this.http.get(`${environment.urlEspacios}/solicitudes`); <2>
+  }
+
+  save(data: any): Observable<any> {
+    return this.http.post(`${environment.urlEspacios}/solicitudes`, data);
+  }
+}
+----
+<1> Método para recuperar las solicitudes. Devuelve un observable
+<2> Llamada al método del servicio que recupera las solicitudes
+
+### Carga de datos en el componente de listado de solicitudes
+
+Para la presentación de datos usaremos el componente `Table` de Angular Material, que ya tenemos incluido en nuestro módulo `Material`. Este componente tiene una parte TypeScript y una parte HTML. En la parte TypeScript básicamente debemos inicializar el conjunto de datos a mostrar y una lista de columnas a mostrar. Como peculiaridad, indicar que hay que cargar de forma independiente cada columna de datos. Veamos cómo hacerlo:
+
+Archivo `main/solicitudes/pages/consultar/consultar.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
+
+@Component({
+  selector: 'app-consultar',
+  templateUrl: './consultar.component.html',
+  styleUrls: ['./consultar.component.css'],
+})
+export class ConsultarComponent implements OnInit {
+  dataSource: any = [] <1>
+  displayedColumns= ['nombre', 'cargo', 'unidad', 'telefono']; <2>
+
+  constructor(
+    private solicitudesService: SolicitudesService, <3>
+    private snackBar: MatSnackBar <4>
+  ) {}
+  ngOnInit(): void { <5>
+    this.solicitudesService.findAll().subscribe((res) => { <6>
+      this.dataSource = res; <7>
+      if (this.dataSource.length == 0) { <8>
+        this.snackBar.open('No hay solicitudes', '', {
+          duration: 1500,
+        });
+      }
+    });
+  }
+}
+----
+<1> Variable para almacenar los datos recuperados por el servicio
+<2> Variable para indicar las columnas a mostrar
+<3> Inyección del servicio de solicitudes
+<4> Inyección de la snackbar para presentar mensajes al pie
+<5> Inicializar la tabla al iniciar el componente
+<6> Suscripción al método que recupera las solicitudes
+<7> Almacenar los datos recuperados del servicio
+<8> Mostrar mensaje de error si no hay datos
+
+A continuación vamos con la parte de la presentación de los datos (el código está copiado tal cual de la documentación)
+
+[source, html]
+----
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h1>Listado de solicitudes</h1>
+  <div *ngIf="dataSource.length > 0"> <1>
+    <hr />
+    <mat-card> 
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8"> <2>
+        <ng-container matColumnDef="nombre"> <3> 
+          <th mat-header-cell *matHeaderCellDef>Nombre</th> <4>
+          <td mat-cell *matCellDef="let element">{{ element.nombre }}</td> <5>
+        </ng-container>
+
+        <ng-container matColumnDef="cargo">
+          <th mat-header-cell *matHeaderCellDef>Cargo</th>
+          <td mat-cell *matCellDef="let element">{{ element.cargo }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="unidad">
+          <th mat-header-cell *matHeaderCellDef>Unidad</th>
+          <td mat-cell *matCellDef="let element">{{ element.unidad }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="telefono">
+          <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+          <td mat-cell *matCellDef="let element">{{ element.telefono }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr> <6>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr> <7>
+      </table>
+    </mat-card>
+  </div>
+</div>
+----
+<1> Presentación de la tabla si contiene datos
+<2> Inicialización de la tabla con su fuente de datos definida en la parte TS
+<3> Definición de la columna del nombre
+<4> Etiqueta que se quiere presentar en esta columna
+<5> Indicar el campo del que se recuperarán los datos 
+<6> Crear la fila de cabecera
+<7> Creación del cuerpo de la tabla
+
+A continuación se muestra el listado de resultados.
+
+image::ListarSolicitudes.png[]
+
+## Lista de espacios
+
+De forma análoga a como acabamos de hacer con el listado de solicitudes vamos a implementar la parte del listado de solicitudes, que guarda bastante parecido con el anterior. Comenzaremos creando un listado completo y posteriormente le añadiremos capacidades de filtrado.
+
+### Generación del servicio
+
+En esta sección crearemos un servicio que recupere datos de persona. Comenzaremos creando un servicio.
+
+[source, bash]
+----
+$ ng g service services/espacios
+----
+
+A continuación añadiremos un método que recupere todos los espacios.
+
+Método de recuperación de espacios en el servicio `services/espacios.ts`:
+
+[source, ts]
+----
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EspaciosService {
+  constructor(private http: HttpClient) {} <1>
+
+  findAll(): Observable<any> { <2>
+    return this.http.get(`${environment.urlEspacios}/espacios`); <3>
+  }
+}
+----
+<1> Inyección del cliente HTTP
+<2> Método que devuelve los espacios como un observable
+<3> Llamada al endpoint usando la variable de entorno
+
+[NOTE]
+====
+La variable de entorno se reutiliza. Sólo necesitamos la URL del servidor. El resto se añade en cada módulo funcional de la API.
+====
+
+Para que haya datos de prueba, añadiremos este nuevo elemento al archivo `db.json` de JSON Server para tener el endpoint de acceso a los espacios (`http://localhost:3000/espacios`)
+
+[source, json]
+----
+{
+...
+  "espacios": [
+    {
+      "edificio": "Aulario I",
+      "aula": "Aula 2",
+      "fecha": "07/02/2022",
+      "reservas": [
+        {
+          "hora": "09:00 - 12:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 12103230 ) - Lengua Clásica: Latín",
+          "profesor": ""
+        }
+      ]
+    },
+    {
+      "edificio": "Aulario I",
+      "aula": "Aula 1",
+      "fecha": "07/02/2022",
+      "reservas": [
+        {
+          "hora": "09:00 - 12:00",
+          "descripcion": "GRUPO UNICO",
+          "asignatura": "( 67104216 ) - Gestión Integral de la Imagen",
+          "profesor": ""
+        }
+      ]
+    },
+    {
+      "edificio": "Aulario II",
+      "aula": "Aula 1",
+      "fecha": "07/02/2022",
+      "reservas": [
+        {
+          "hora": "09:00 - 12:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 31103209 ) - Lexicología y Semántica Inglesas",
+          "profesor": ""
+        },
+        {
+          "hora": "12:00 - 15:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 12104226 ) - Historia de la Lengua Española II",
+          "profesor": ""
+        },
+        {
+          "hora": "16:00 - 19:00",
+          "descripcion": "GRUPO UNICO",
+          "asignatura": "( 40153329 ) - Teoría de Códigos y Criptografía",
+          "profesor": ""
+        }
+      ]
+    }
+  ],
+...
+}
+----
+
+### Programación del componente
+
+A continuación ya podemos programar el componente TypeScript de espacios `main/espacios/pages/consultar/consultar.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { EspaciosService } from '../../../../services/espacios.service';
+
+@Component({
+  selector: 'app-consultar',
+  templateUrl: './consultar.component.html',
+  styleUrls: ['./consultar.component.css'],
+})
+export class ConsultarComponent implements OnInit {
+  espacios: any = []; <1>
+
+  constructor(private espaciosService: EspaciosService) {} <2>
+
+  ngOnInit(): void { <3>
+    this.espaciosService.findAll().subscribe((res) => { <4>
+      this.espacios = res; <5>
+    });
+  }
+}
+
+----
+<1> Variable donde volcaremos los datos de los espacios
+<2> Inyección del servivio de espacios
+<3> Método para recuperar los espacios. Devuelve un observable
+<4> Llamada al método del servicio que recupera los espacios
+<5> Carga de los datos leídos en la variable de espacios
+
+### Configuración de las importaciones del módulo
+
+A continuación se configurar las importaciones de `main/espacios/espacios.module.ts` para incluir nuestro módulo de `Material`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { EspaciosRoutingModule } from './espacios-routing.module';
+import { ConsultarComponent } from './pages/consultar/consultar.component';
+import { MaterialModule } from '../../material/material.module';
+
+@NgModule({
+  declarations: [ConsultarComponent],
+  imports: [CommonModule, EspaciosRoutingModule, MaterialModule], <1>
+})
+export class EspaciosModule {}
+----
+<1> Módulo de `Material`
+
+### Programación de la presentación de datos
+
+A continuación se muestra cómo presentamos los datos en el componente de espacios. Básicamente se trata de explotar la variable `espacios` que es la que contiene los datos. Para ello, se iterará sobre ella y se mostrarán los datos en tarjetas Material. Dentro de cada espacio, puede haber una lista de reservas. Por tanto, habrá que crear un bucle anidado que itere sobre las reservas de un espacio.
+
+Archivo `main/espacios/pages/consultar/consultar.component.html`:
+
+[source, html]
+----
+<div
+  *ngIf="espacios.length " <1>
+  fxLayout="column"
+  fxLayoutAlign="center "
+  fxLayoutGap="10px"
+>
+  <mat-card *ngFor="let espacio of espacios" class="mt-3" fxFill> <2>
+    <mat-card-subtitle>
+      <mat-label class="mat-body-strong">Edificio: </mat-label
+      >{{ espacio.edificio }} <3>
+      <mat-label class="mat-body-strong">Aula: </mat-label> {{ espacio.aula }}
+      <mat-label class="mat-body-strong">Fecha: </mat-label>{{ espacio.fecha }}
+    </mat-card-subtitle>
+    <mat-list>
+      <mat-list-item *ngFor="let reserva of espacio.reservas"> <4> 
+        <mat-card-content>
+          <mat-label class="mat-body-strong">Hora: </mat-label
+          >{{ reserva.hora }} <5>
+          <mat-label class="mat-body-strong">Descripción: </mat-label
+          >{{ reserva.descripcion }}
+          <mat-label class="mat-body-strong">Asignatura: </mat-label
+          >{{ reserva.asignatura }}
+          <mat-label class="mat-body-strong">Profesor: </mat-label
+          >{{ reserva.profesor }}
+        </mat-card-content>
+      </mat-list-item>
+    </mat-list>
+  </mat-card>
+</div>
+----
+<1> Impide que haya errores en el `*ngFor` siguiente cuando no hay datos
+<2> Bucle para recorrer los espacios
+<3> Presentación de datos de espacios
+<4> Bucle anidado para recorrer las reservas de un espacio
+<5> Presentación de los datos de una reserva
+
+### Incorporación de funcionalidad de filtrado
+
+En esta sección vamos a ver cómo llevar el código anterior del listado de solicitudes a un componente específico. Haremos esto porque vamos a estructurar la página de espacios en dos componentes. Uno para un componente de filtrado con cuadros de lista y de entrada de datos para especificar condiciones de filtrado. Otro para el componente de presentación de la tabla de datos.
+
+Comencemos generando el componente de tabla de espacios para resultados de búsqueda y del formulario de búsqueda
+
+[source, bash]
+----
+$ ng g component main/espacios/components/tabla-espacios
+$ ng g component main/espacios/components/form-buscar
+----
+
+[NOTE]
+====
+Es habitual colocar los componentes de un módulo funcional en una carpeta `components`, que está al mismo nivel que la carpeta `pages`.
+====
+
+#### Flujo de datos entre los componentes
+
+La organización y el flujo de datos entre componentes es el siguiente:
+
+* La página de espacios incluye los selectores de sus componentes: en este caso el de filtrado y el de tabla de datos.
+* El objeto que contiene los datos de los espacios está en el componente de espacios, digamos el componente padre.
+* El componente padre pasa al componente hijo de tabla de datos los datos de los espacios. Lo hace como parámetro en el selector
+* El componente hijo de tabla de datos recibe en el TypeScript los datos de los espacios mediante un decorador `@Input()`
+* El componente hijo de filtrado de datos pasa los datos al padre emitiendo eventos y adjuntando datos
+* El componente padre recibe los datos del componente hijo de filtrado escuchando el evento.
+
+La figura siguiente ilustra los componentes, el flujo y la parte relevante del código para conseguirlo.
+
+image::$$$$$$$$.png[]
+
+#### Programación de la parte TypeScript del componente de tabla de datos
+
+En esta parte sólo tendremos que añadir el decorador `@Input` y asociarle una variable, que será la que usen otros componentes para inyectarle datos.
+
+Archivo `main/espacios/component/tabla-espacios/tabla-espacios.component.ts`:
+
+[source, ts]
+----
+import { Component, Input, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-tabla-espacios', <1>
+  templateUrl: './tabla-espacios.component.html',
+  styleUrls: ['./tabla-espacios.component.css'],
+})
+export class TablaEspaciosComponent implements OnInit {
+  @Input() espacios: any; <2>
+
+  constructor() {}
+
+  ngOnInit(): void {}
+}
+----
+<1> Selector para usar este componente
+<2> Decorador `Input()` que define una variable `espacios` en la que se recibirán los espacios
+
+.El decorador `@Input`
+****
+El decorador `@Input` ofrece un medio para inyectar datos a un componente desde otro componente externo. El componente de destino asociará a este decorador una variable en la que se recibirán los datos enviados desde otros componentes. El componente que envía los datos envía los datos mediante un atributo HTML. El atributo de envío coincide con la variable usada en el `@Input`.
+****
+
+#### Refactorización en un componente dedicado a la tabla de datos
+
+Ahora llevaremos el código que creamos para el HTML del listado de espacios hasta el HTML de la tabla de datos, tal cual, respetando el uso de `espacios`.
+
+Archivo `main/espacios/component/tabla-espacios/tabla-espacios.component.html`:
+
+[source, html]
+----
+<div *ngIf="espacios.length">
+  <div fxLayout="column" fxLayoutAlign="center " fxLayoutGap="10px">
+    <mat-card *ngFor="let espacio of espacios" class="mt-3" fxFill>
+      <mat-card-subtitle>
+        <mat-label class="mat-body-strong">Edificio: </mat-label
+        >{{ espacio.edificio }}
+        <mat-label class="mat-body-strong">Aula: </mat-label>
+        {{ espacio.aula }} <mat-label class="mat-body-strong">Fecha: </mat-label
+        >{{ espacio.fecha }}
+      </mat-card-subtitle>
+      <mat-list>
+        <mat-list-item *ngFor="let reserva of espacio.reservas">
+          <mat-card-content>
+            <mat-label class="mat-body-strong">Hora: </mat-label
+            >{{ reserva.hora }}
+            <mat-label class="mat-body-strong">Descripción: </mat-label
+            >{{ reserva.descripcion }}
+            <mat-label class="mat-body-strong">Asignatura: </mat-label
+            >{{ reserva.asignatura }}
+            <mat-label class="mat-body-strong">Profesor: </mat-label
+            >{{ reserva.profesor }}
+          </mat-card-content>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+  </div>
+</div>
+----
+
+#### Configuración de la página de listado de espacios
+
+Ahora la página de listado de espacios, que antes mostraba directamente el listado de espacios, se convertirá en una página que incluye al componente de formulario de búsqueda y al de filtrado de datos, tal y como se muestra a continuación.
+
+[source, html]
+----
+<div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
+  <div fxFlex>
+    <h1>Lista de espacios</h1>
+    <app-form-buscar ></app-form-buscar> <1>
+  </div>
+  <div fxLayoutAlign="center stretch">
+    <app-tabla-espacios [espacios]="espacios"></app-tabla-espacios> <2>
+  </div>
+</div>
+----
+<1> Selector para incluir el componente del formulario de búsqueda
+<2> Selector para incluir el componente de tabla de datos y pasándole al decorador `@Input` definido como `espacios` el valor que tenemos almacenado en `espacios` de este componente, el componente padre. 
+
+Al pasar datos a un componente a través de `@Input`, la sintaxis 
+
+[source, html]
+----
+<app-tabla-espacios [espacios]="espacios"></app-tabla-espacios>
+----
+
+se interpreta así: la primera parte es el nombre del `Input` en el componente de destino; la segunda parte es el valor que le pasamos.
+
+La página se verá así.
+
+image::ListaDeEspaciosSinFormularioDeBusqueda.png[]
+
+Vemos que aún no aparece el formulario para el filtrado. Lo crearemos en breve. Antes, hay que adaptar el módulo de estos componentes de espacios para incluir formularios reactivos
+
+#### Modificación del módulo de espacios
+
+Hay que hace una modificación ligera al módulo de espacios para importar el módulo de formularios reactivos. Lo va a necesitar el componente del formulario de filtrado de espacios.
+
+[source, ts]
+----
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { EspaciosRoutingModule } from './espacios-routing.module';
+import { ConsultarComponent } from './pages/consultar/consultar.component';
+import { MaterialModule } from '../../material/material.module';
+import { TablaEspaciosComponent } from './components/tabla-espacios/tabla-espacios.component';
+import { FormBuscarComponent } from './components/form-buscar/form-buscar.component';
+
+@NgModule({
+  declarations: [
+    ConsultarComponent,
+    TablaEspaciosComponent,
+    FormBuscarComponent,
+  ],
+  imports: [
+    CommonModule,
+    EspaciosRoutingModule,
+    MaterialModule,
+    ReactiveFormsModule, <1>
+  ],
+})
+export class EspaciosModule {}
+----
+<1> Incorporación del módulo de formularios reactivos
+
+#### Adaptación del servicio de búsqueda para que acepte parámetros de filtrado
+
+En el servicio de espacios, el método `findAll()` devolvía todos los espacios y no ofrecía posibilidad de filtrado. A continuación se muestra una modificación para que permita como parámetros de filtrado los que le pueda pasar el formulario de filtrado. 
+
+El filtro de búsqueda llega como un objeto JSON clave-valor, donde la clave es el nombre del campo a filtrar y el valor, el valor de filtrado. La idea es ir concatenando uno detrás de otro los parámetros de filtrado como se muestra a continuación. Nótese que también se ordena para que aparezcan primero los espacios con las solicitudes ordenadas en el tiempo.
+
+[source, code]
+----
+http://localhost:3002/espacios?_sort=fecha&fecha=07/02/2022&aula=Aula%201
+----
+
+[NOTE]
+====
+En la URL anterior `%20` representa un espacio en blanco para consultar las solcitudes en `Aula 1`.
+====
+
+[source, ts]
+----
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EspaciosService {
+  constructor(private http: HttpClient) {}
+
+  findAll(filtroBusqueda: any): Observable<any> {
+    let filtroRequest = ''; <1>
+
+    if (filtroBusqueda.start) { <2>
+      filtroRequest = filtroRequest.concat(`&start=${filtroBusqueda.start}`);
+    }
+
+    if (filtroBusqueda.end) {
+      filtroRequest = filtroRequest.concat(`&end=${filtroBusqueda.end}`);
+    }
+
+    if (filtroBusqueda.horaInicio) {
+      filtroRequest = filtroRequest.concat(
+        `&horaInicio=${filtroBusqueda.horaInicio}`
+      );
+    }
+    if (filtroBusqueda.horaFin) {
+      filtroRequest = filtroRequest.concat(
+        `&horaFin=${filtroBusqueda.horaFin}`
+      );
+    }
+    if (filtroBusqueda.edificio) {
+      filtroRequest = filtroRequest.concat(
+        `&edificio=${filtroBusqueda.edificio}`
+      );
+    }
+    if (filtroBusqueda.aula) {
+      filtroRequest = filtroRequest.concat(`&aula=${filtroBusqueda.aula}`);
+    }
+
+    return this.http.get(
+      `${environment.urlEspacios}/espacios?_sort=fecha${filtroRequest}`
+    );
+  }
+}
+----
+
+#### Creación de un formulario inicial de búsqueda
+
+Se trata de programar el formulario reactivo del componente de búsqueda, tanto en su parte TypeScript como en su parte HTML.
+
+Comenzaremos con un formulario básico que aún no implementará la funcionalidad de búsqueda. Sí tendrá ya un método `buscar()`, pero su cuerpo aún estará vacío. Iremos construyendo el formulario de búsqueda de forma incremental.
+
+Archivo `main/espacios/componentes/form-buscar/form-buscar.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+@Component({
+  selector: 'app-form-buscar',
+  templateUrl: './form-buscar.component.html',
+  styleUrls: ['./form-buscar.component.css'],
+})
+export class FormBuscarComponent implements OnInit {
+
+  formBuscarEspacio: FormGroup = this.fb.group({ <1>
+    start: [,],
+    end: [,],
+    horaInicio: [,],
+    horaFin: [,],
+    edificio: [,],
+    aula: [,],
+    busqueda: [,],
+  });
+
+  hours = Array.from(Array(24).keys()); <2>
+
+  constructor(private fb: FormBuilder) {} <3>
+
+  ngOnInit(): void {}
+  
+  buscar() {} <4>
+}
+----
+<1> Componentes del formulario reactivo
+<2> Variable para almacenar las horas con las que poblar el desplegable de horas
+<3> Inyección de `FormBuilder`
+<4> Declaración del método `buscar()` que implementaremos más adelante
+
+A continuación crearemos la parte de presentación del formulario de búsqueda:
+
+Archivo `main/espacios/componentes/form-buscar/form-buscar.html`:
+
+[source, html]
+----
+<form [formGroup]="formBuscarEspacio"> <1>
+  <mat-card>
+    <mat-card-subtitle>Datos para la consulta</mat-card-subtitle>
+    <div fxLayout="row" fxLayoutGap="20px">
+      <div fxFlex>
+        <mat-form-field appearance="fill" fxFill>
+          <mat-label>Rango de fechas</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+            <input
+              matStartDate
+              formControlName="start" <2>
+              placeholder="Start date"
+            />
+            <input matEndDate formControlName="end" placeholder="End date" />
+          </mat-date-range-input>
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field appearance="outline" fxFill>
+          <mat-label>Hora de inicio</mat-label>
+          <mat-select formControlName="horaInicio"> <3>
+            <mat-option *ngFor="let hour of hours" value="{{ hour }}">{{
+              hour
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex>
+        <mat-form-field appearance="outline" fxFill>
+          <mat-label>Hora de fin</mat-label>
+          <mat-select formControlName="horaFin"> <4>
+            <mat-option *ngFor="let hour of hours" value="{{ hour }}">{{
+              hour
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayoutGap="20px">
+      <div fxFlex>
+        <mat-form-field appearance="outline" fxFill>
+          <mat-label>Edificio</mat-label>
+          <mat-select formControlName="edificio"> <5>
+            <mat-option value="Aulario I">Aulario I</mat-option>
+            <mat-option value="Aulario II">Aulario II</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field appearance="outline" fxFill>
+          <mat-label>Aula</mat-label>
+          <mat-select formControlName="aula"> <6>
+            <mat-option value="Aula 1">Aula 1</mat-option>
+            <mat-option value="Aula 2">Aula 2</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field appearance="outline" fxFill>
+          <mat-label>Texto de búsqueda</mat-label>
+          <input matInput formControlName="busqueda" /> <7>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <button
+        mat-button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        (click)="buscar()" <8>
+      >
+        Buscar
+      </button>
+    </div>
+  </mat-card>
+</form>
+----
+<1> Ligado del formulario al objeto formulario en la parte TypeScript
+<2> Ligado del input en modo de formulario reactivo
+<3> Ligado del select en modo de formulario reactivo
+<4> Ligado del select en modo de formulario reactivo
+<5> Ligado del select en modo de formulario reactivo
+<6> Ligado del select en modo de formulario reactivo
+<7> Ligado del input en modo de formulario reactivo
+<8> Ligado del input en modo de formulario reactivo
+
+Una vez creadas las partes TS y HTML del componente de formulario, sólo falta añadirlo como componente hijo al componente de consulta de espacios.
+
+Archivo `main/espacios/pages/consultar/consultar.component.html`:
+
+[source, html]
+----
+<div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
+  <div fxFlex>
+    <h1>Lista de espacios</h1>
+    <app-form-buscar></app-form-buscar>
+  </div>
+  <div fxLayoutAlign="center stretch">
+    <app-tabla-espacios [espacios]="espacios"></app-tabla-espacios>
+  </div>
+</div>
+----
+
+Si ahora seleccionamos la página de consulta de espacios veremos que ya sí aparece el formulario. Nuestra página de consulta de espacios está formada por el componente de formulario y el de tabla de resultados. Sin embargo, si seleccionamos `Aulario II` y `Aula 1` como criterios de búsqueda y pulsamos `Buscar` vemos que no se filtran los resultados.
+
+image::FormularioDeBusquedaQueNoBusca.png[]
+
+Esto se debe a que aún no se están recuperando los parámetros de filtrado del formulario ni se están pasando al servicio de búsqueda para que devuelva un resultado filtrado. Lo veremos a continuación.
+
+#### Incorporación de capacidades de búsqueda/filtrado
+
+Para finalizar con el formulario de búsqueda tenemos varias tareas pendientes:
+
+. Modificar el TS del componente hijo (el formulario de búsqueda) para implementar la función de configuración del filtro de búsqueda y para enviar los datos al componente padre (la página de consulta de espacios).
+. Implementar la función de búsqueda con parámetros en el componente padre (la página de espacios).
+. Recoger en la página de espacios los datos enviados desde el componente formulario.
+
+##### Configuración del filtro de búsqueda en el componente hijo 
+
+Los componentes Angular envían sus datos a otros componentes (en este caso el formulario de búsqueda envía a la página de espacios) generando un evento personalizado a través del cual publica sus datos. Los datos que publicaremos serán los valores del filtro de búsqueda recogidos mediante el formulario. Veamos cómo hacerlo.
+
+Archivo `main/espacios/components/form-buscar/form-buscar.component.ts`:
+
+[source, ts]
+----
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+@Component({
+  selector: 'app-form-buscar',
+  templateUrl: './form-buscar.component.html',
+  styleUrls: ['./form-buscar.component.css'],
+})
+export class FormBuscarComponent implements OnInit {
+  @Output() onSearchEspacio = new EventEmitter(); <1>
+
+  filtroBusqueda: any; <2>
+
+  formBuscarEspacio: FormGroup = this.fb.group({
+    start: [,],
+    end: [,],
+    horaInicio: [,],
+    horaFin: [,],
+    edificio: [,],
+    aula: [,],
+    busqueda: [,],
+  });
+
+  hours = Array.from(Array(24).keys());
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {}
+
+  buscar() { 
+    this.filtroBusqueda = { <3>
+      start: this.formBuscarEspacio.controls['start'].value,
+      end: this.formBuscarEspacio.controls['end'].value,
+      horaInicio: this.formBuscarEspacio.controls['horaInicio'].value,
+      horaFin: this.formBuscarEspacio.controls['horaFin'].value,
+      edificio: this.formBuscarEspacio.controls['edificio'].value,
+      aula: this.formBuscarEspacio.controls['aula'].value,
+    };
+    this.onSearchEspacio.emit(this.filtroBusqueda); <4>
+  }
+}
+----
+<1> Creación de un evento personalizado para publicar los datos del filtro de búsqueda
+<2> Objeto JSON donde almacenaremos las condiciones del filtro de búsqueda
+<3> Inicialización del filtro de búsqueda con los valores recogidos en el formulario.
+<4> Disparo del evento personalizado añadiéndole (publicando) los datos del filtro de búsqueda
+
+##### Implementacion de la función de búsqueda con parámetros en el componente padre
+
+Se trata de incorporar al método `buscar()` los parámetros de búsqueda que serán utilizados en el método `findAll()` del servicio de espacios. También se usará una snackbar para mostrar posibles mensajes de error.
+
+Archivo `main/espacios/pages/consultar/consultar.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { EspaciosService } from '../../../../services/espacios.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+@Component({
+  selector: 'app-consultar',
+  templateUrl: './consultar.component.html',
+  styleUrls: ['./consultar.component.css'],
+})
+export class ConsultarComponent implements OnInit {
+  espacios: any = [];
+
+  constructor(
+    private espaciosService: EspaciosService,
+    private snackBar: MatSnackBar <1>
+  ) {}
+
+  ngOnInit(): void {} <2>
+
+  buscar(filtroBusqueda: any) {
+    this.espacios = this.espaciosService
+      .findAll(filtroBusqueda) <3>
+      .subscribe((res) => {
+        this.espacios = res;
+
+        if (this.espacios.length == 0) { <4>
+          this.snackBar.open('No hay datos', '', {
+            duration: 1500,
+          });
+        }
+      });
+  }
+}
+----
+<1> Inyección de la snackbar
+<2> El método de inicialización ya no muestra todas los datos de espacios ocupados
+<3> Llamada al método `findAll()` del servicio pasándole el filtro de búsqueda
+<4> Presentación de mensaje de error si no hay datos
+
+
+##### Recogida de datos en el componente padre
+
+Aquí se trata de escuchar al evento que va a publicar el componente del formulario de búsqueda y disparar una acción, que consisitirá en la llamada al método de búsqueda.
+
+Archivo `main/espacios/pages/consultar/consultar.component.html`:
+
+[source, html]
+----
+<div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
+  <div fxFlex>
+    <h1>Lista de reservas</h1>
+    <app-form-buscar (onSearchEspacio)="buscar($event)"></app-form-buscar> <1>
+  </div>
+  <div fxLayoutAlign="center stretch">
+    <app-tabla-espacios [espacios]="espacios"></app-tabla-espacios>
+  </div>
+</div>
+----
+<1> Llamar al método `buscar()` tras la publicación del evento `onSearchEspacio` pasándole los datos recibidos en el evento `$event`.
+
+[NOTE]
+====
+La utilización de un evento publicado por parte de otro componente se hace siguiendo este patrón:
+
+Llamar a un método como respuesta al evento publicado y pasándole al método como parámetro los datos recibidos a través de un objeto `$event`).
+
+[source, html]
+----
+<app-form-buscar (onSearchEspacio)="buscar($event)"></app-form-buscar>
+----
+
+El código anterior escucha a un evento `onSearchEspacio` publicado por el componente `app-form-buscar`. En respuesta, llama a un método `buscar()` pasándole a través de `$event` los datos publicados/enviados por el evento.
+====
+
+Si ahora volvemos a seleccionar `Aulario II` y `Aula 1` como criterios de búsqueda y pulsamos Buscar vemos que ya sí se filtran los resultados.
+
+image::EspaciosFiltrados.png[]
+
+.Flujo datos entre componentes
+****
+Envío del evento, recepción del evento, acción y envío de datos...
+****
+
+
+### Cuadros de diálogo
+
+#### Cuadro de diálogo informativo
+
+Crearemos un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón `Créditos` añadido a la barra lateral.
+
+[NOTE]
+====
+Añadimos el módulo Material `MatDialogModule` al módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.
+==== 
+
+Archivo `shared/shared.module.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { FootbarComponent } from './footbar/footbar.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatListModule } from '@angular/material/list';
+
+import { MatDialogModule } from '@angular/material/dialog';
+import { DialogoCreditosComponent } from './sidebar/components/dialogo-creditos/dialogo-creditos.component';
+@NgModule({
+  declarations: [SidebarComponent, FootbarComponent, DialogoCreditosComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FlexLayoutModule,
+    MatButtonModule,
+    MatExpansionModule,
+    MatListModule,
+    MatDialogModule,
+  ],
+  exports: [SidebarComponent, FootbarComponent],
+})
+export class SharedModule {}
+----
+
+Crear el componente para el cuadro de diálogo.
+
+[source, bash]
+----
+$ ng g component shared/sidebar/components/dialogoCreditos
+----
+
+Implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar)
+
+Archivo `shared/sidebar/components/dialogo-creditos/dialogo-creditos.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+
+@Component({
+  selector: 'app-dialogo-creditos',
+  templateUrl: './dialogo-creditos.component.html',
+  styleUrls: ['./dialogo-creditos.component.css'],
+})
+export class DialogoCreditosComponent implements OnInit {
+  constructor(public dialogRef: MatDialogRef<DialogoCreditosComponent>) {} <1>
+
+  ngOnInit(): void {}
+
+  aceptar() { <2>
+    console.log('Pulsaste Aceptar'); <3>
+    this.dialogRef.close(); <4>
+  }
+}
+----
+<1>
+<2>
+<3>
+<4>
+
+Crear el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. `mat-dialog-title, mat-dialog-content, mat-dialog-actions` y el estilo `mat-typography`.
+
+Archivo `shared/sidebar/components/dialogo-creditos/dialogo-creditos.html`:
+
+[source, html]
+----
+<h1 mat-dialog-title>Créditos</h1>
+<div mat-dialog-content class="mat-typography">
+  <h3>Dirección del proyecto</h3>
+  <p>
+    Culpa incididunt ut occaecat amet dolore eiusmod ex ut sit laborum in
+    nostrud.
+  </p>
+
+  <h3>Equipo de desarrollo</h3>
+  <p>
+    Laboris excepteur voluptate deserunt labore ex consequat nisi fugiat non
+    incididunt adipisicing nisi ipsum labore.
+  </p>
+
+  <h3>Información del proyecto</h3>
+  <p>
+    <a href="https://www.ual.es" target="_blank">Web del proyecto</a>
+  </p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close] cdkFocusInitial>Cancelar</button> <1>
+  <button mat-button mat-flat-button color="primary" (click)="aceptar()"> <2>
+    Aceptar
+  </button>
+</div>
+----
+
+Implementar la lógica en la barra literal que abrirá el cuadro de diálogo
+
+Archivo `shared/sidebar/sidebar.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogoCreditosComponent } from './components/dialogo-creditos/dialogo-creditos.component';
+
+@Component({
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.css'],
+})
+export class SidebarComponent implements OnInit {
+  constructor(public dialog: MatDialog) {} <1>
+
+  ngOnInit(): void {}
+
+  creditos() { <2> 
+    const dialogRef = this.dialog.open(DialogoCreditosComponent, { <3>
+      width: '50%',
+    });
+  }
+}
+----
+<1>
+<2>
+<3>
+
+Creación del botón que abre el cuadro de diálogo desde la barra lateral.
+
+Archivo 
+
+[source, html]
+----
+<div fxLayout="column" fxLayoutAlign="start " fxFlex="1 1 auto">
+  <a mat-button routerLink="/">Home</a>
+  <hr />
+
+  <div>
+   ...
+  </div>
+  
+  <button mat-button (click)="creditos()">Créditos</button> <1>
+</div>
+----
+<1>
+
+### Eliminación de solicitudes
+
+Eliminaremos a partir del listado de solicitudes. En cada registro de la tabla de solicitudes añadiremos un botón de eliminar que llamará a un método de eliminación al que pasaremos todos los datos de la solicitud que se vaya a eliminar. Con esos datos se podrá completar un cuadro de diálogo que permitirá la confirmación o la cancelación de la eliminación.
+
+Creación del cuadro de diálogo de confirmación de eliminación.
+
+[source, bash]
+----
+$ ng g component main/solicitudes/components/dialogoEliminar
+----
+
+Incluir los componentes `MatIconModule, MatDialogModule` de Material en el módulo en el que está el listado de solicitudes.
+
+Archivo `main/solicitudes/solicitudes.module.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { SolicitudesRoutingModule } from './solicitudes-routing.module';
+import { ConsultarComponent } from './pages/consultar/consultar.component';
+import { CrearComponent } from './pages/crear/crear.component';
+import { DialogoEliminarComponent } from './components/dialogo-eliminar/dialogo-eliminar.component';
+
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+
+import { MatIconModule } from '@angular/material/icon'; <1>
+import { MatDialogModule } from '@angular/material/dialog'; <2>
+
+import { FlexLayoutModule } from '@angular/flex-layout';
+
+@NgModule({
+  declarations: [ConsultarComponent, CrearComponent, DialogoEliminarComponent],
+  imports: [
+    CommonModule,
+    SolicitudesRoutingModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatCardModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatTableModule,
+    MatIconModule, <3>
+    MatDialogModule, <4>
+  ],
+})
+export class SolicitudesModule {}
+----
+
+Incorporación del método de eliminación de solicitude al servicio `services/reservations.service.ts`:
+
+[source, ts]
+----
+import { environment } from './../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ReservationsService {
+  constructor(private http: HttpClient) {}
+
+  findAll(): Observable<any> {
+    return this.http.get(`${environment.urlEspacios}/reservations`);
+  }
+
+  save(data: any): Observable<any> {
+    return this.http.post(`${environment.urlEspacios}/reservations`, data);
+  }
+
+  delete(id: any): Observable<any> { <1>
+    return this.http.delete(`${environment.urlEspacios}/reservations/${id}`); <2>
+  }
+}
+----
+<1>
+<2>
+
+Programación del cuadro de diálogo de eliminación.
+
+Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.ts`:
+
+[source, ts]
+----
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { ReservationsService } from '../../../../services/reservations.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+@Component({
+  selector: 'app-dialogo-eliminar',
+  templateUrl: './dialogo-eliminar.component.html',
+  styleUrls: ['./dialogo-eliminar.component.css'],
+})
+export class DialogoEliminarComponent implements OnInit {
+  constructor(
+    public dialogRef: MatDialogRef<DialogoEliminarComponent>, <1>
+    @Inject(MAT_DIALOG_DATA) public data: any, <2>
+    private reservationsService: ReservationsService, <3>
+    private router: Router, <4> 
+    private snackBar: MatSnackBar <5>
+  ) {} 
+
+  ngOnInit(): void {}
+
+  eliminar() { <6>
+    this.reservationsService.delete(this.data.id).subscribe(() => { <7>
+      this.snackBar.open('Solicitud eliminada', '', { <8>
+        duration: 1500,
+      });
+
+      this.dialogRef.close(); <9>
+      this.router.navigate([this.router.url]).then(() => { <10>
+        window.location.reload();
+      });
+    });
+  }
+}
+----
+<1>
+<2>
+<3>
+<4>
+<5>
+<6>
+<7>
+<8>
+<9>
+<10>
+
+Presentación de los datos en el cuadro de diálogo de eliminación.
+
+Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.html`:
+
+[source, html]
+----
+<h1 mat-dialog-title>Confirmación de eliminación</h1>
+<div mat-dialog-content class="mat-typography">
+  <h3>Desea eliminar esto?</h3>
+  <p>Reserva para : {{ data.nombre }} - {{ data.cargo }}</p> <1>
+  <p>Actividad: {{ data.nombreActividad }}</p>
+  <p>
+    Desde {{ data.start | date: "dd/MM/yyyy" }} hasta
+    {{ data.end | date: "dd/MM/yyyy" }}. Día: {{ data.dia }}. Hora:
+    {{ data.horaInicio }} - {{ data.horaFin }}
+  </p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close] cdkFocusInitial>Cancelar</button> <2>
+  <button mat-button mat-flat-button color="warn" (click)="eliminar()"> <3>
+    Eliminar
+  </button>
+</div>
+----
+<1>
+<2>
+<3>
+
+Programación de la llamada a la eliminación desde el listado de solicitudes.
+
+Archivo `main/solicitudes/pages/consultar/consultar.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ReservationsService } from '../../../../services/reservations.service';
+import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dialogo-eliminar.component';
+
+@Component({
+  selector: 'app-consultar',
+  templateUrl: './consultar.component.html',
+  styleUrls: ['./consultar.component.css'],
+})
+export class ConsultarComponent implements OnInit {
+  reservations: any = [];
+  columns: any;
+  dataSource: any;
+  displayedColumns: any;
+
+  constructor(
+    private reservationsService: ReservationsService,
+    public dialog: MatDialog
+  ) {}
+
+  ngOnInit(): void {
+    this.reservationsService.findAll().subscribe((res) => {
+      this.reservations = res;
+      this.displayData();
+    });
+  }
+
+  displayData() {
+    this.dataSource = this.reservations;
+    this.displayedColumns = [
+      'nombre',
+      'cargo',
+      'unidad',
+      'telefono',
+      'acciones', <1>
+    ];
+  }
+
+  eliminar(element: any) { <2>
+    const dialogRef = this.dialog.open(DialogoEliminarComponent, { <3>
+      data: element, <4>
+    });
+  }
+}
+----
+<1>
+<2>
+<3>
+<4>
+
+Presentación del botón de eliminación en el listado de solicitudes.
+
+Archivo `main/solicitudes/pages/consultar/consultar.component.html`:
+
+[source, html]
+----
+<div fxLayout="column" fxFlexAlign="center" fxLayoutAlign="center center">
+  <h1>Listado de solicitudes</h1>
+  <div>
+    <hr />
+    <mat-card *ngIf="reservations.length > 0"> <1>
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cargo">
+          <th mat-header-cell *matHeaderCellDef>Cargo</th>
+          <td mat-cell *matCellDef="let element">{{ element.cargo }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="unidad">
+          <th mat-header-cell *matHeaderCellDef>Unidad</th>
+          <td mat-cell *matCellDef="let element">{{ element.unidad }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="telefono">
+          <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+          <td mat-cell *matCellDef="let element">{{ element.telefono }}</td>
+        </ng-container>
+
+        <!-- Get Details -->
+        <ng-container matColumnDef="acciones"> <2>
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let element">
+            <button <3>
+              mat-stroked-button
+              color="primary"
+              (click)="eliminar(element)" <4>
+            >
+              <mat-icon>delete</mat-icon> <5>
+              Eliminar
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-card>
+  </div>
+</div>
+----
+<1>
+<2>
+<3>
+<4>
+<5>
+
+### Actualización de solicitudes
+
+Implementación de los métodos `findOne` para búsqueda de la solicitud a modificar y `update` para actualización con los nuevos datos.
+
+Archivo `services/reservations.service.ts`:
+
+[source, ts]
+----
+import { environment } from './../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ReservationsService {
+  constructor(private http: HttpClient) {}
+
+  findOne(id: any): Observable<any> { <1>
+    return this.http.get(`${environment.urlEspacios}/reservations/${id}`); <2>
+  }
+
+  findAll(): Observable<any> {
+    return this.http.get(`${environment.urlEspacios}/reservations`);
+  }
+
+  save(data: any): Observable<any> {
+    return this.http.post(`${environment.urlEspacios}/reservations`, data);
+  }
+
+  delete(id: any): Observable<any> {
+    return this.http.delete(`${environment.urlEspacios}/reservations/${id}`);
+  }
+
+  update(data: any): Observable<any> { <3>
+    return this.http.put( <4>
+      `${environment.urlEspacios}/reservations/${data.id}`,
+      data
+    );
+  }
+}
+----
+
+La ruta de editar será nueva, pero la gestionará el mismo componente de Crear solicitud. Habrá que adaptarlo, pero básicamente es lo mismo pero con `id`  y tendrá que llamar a un método `PATCH` en lugar de uno `POST`. Lo veremos más adelante.
+
+Archivo `main/solicitudes/solictudes.routing.ts`:
+
+[source, ts]
+----
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { CrearComponent } from './pages/crear/crear.component';
+import { ConsultarComponent } from './pages/consultar/consultar.component';
+
+const routes: Routes = [
+  {
+    path: '',
+    children: [
+      { path: 'crear', component: CrearComponent },
+      { path: 'editar/:id', component: CrearComponent }, <1>
+      { path: 'consultar', component: ConsultarComponent },
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: 'crear',
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class SolicitudesRoutingModule {}
+----
+
+Adaptación del componente de Crear solicitud para que también valga para editar.
+
+Archivo `main/solicitudes/pages/crear/crear.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PeopleService } from '../../../../services/people.service';
+import { ReservationsService } from '../../../../services/reservations.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
+
+@Component({
+  selector: 'app-crear',
+  templateUrl: './crear.component.html',
+  styleUrls: ['./crear.component.css'],
+})
+export class CrearComponent implements OnInit {
+  editMode: boolean = false;
+  id: any;
+
+  formHorario: FormGroup = this.fb.group({
+    nombre: [{ value: '', disabled: true }],
+    cargo: [, [Validators.required]],
+    unidad: [{ value: '', disabled: true }],
+    telefono: [{ value: '', disabled: true }],
+    email: [, [Validators.required, Validators.email]],
+    tipo: [,],
+    nombreActividad: [, [Validators.required, Validators.minLength(5)]],
+    start: [,],
+    end: [,],
+    dia: [,],
+    horaInicio: [,],
+    horaFin: [,],
+  });
+
+  daysOfWeek: string[] = [
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado',
+    'domingo',
+  ];
+
+  hours = Array.from(Array(24).keys());
+  people: any = [];
+  cargos: any = [];
+
+  constructor(
+    private fb: FormBuilder,
+    private peopleService: PeopleService,
+    private reservationsService: ReservationsService,
+    private snackBar: MatSnackBar,
+    private router: Router,
+    private route: ActivatedRoute <1>
+  ) {}
+
+  ngOnInit(): void {
+    this.editMode = false; <2>
+    this.id = this.route.snapshot.params['id']; <3>
+    if (this.id) { <4>
+      this.reservationsService.findOne(this.id).subscribe((res) => { <5>
+        this.editMode = true; <6>
+        this.formHorario.patchValue({ ...res }); <7>
+      });
+    }
+  }
+
+  isValidField(field: string) {
+    return (
+      this.formHorario.controls[field].errors &&
+      this.formHorario.controls[field].touched
+    );
+  }
+
+  isValidForm() {
+    return this.formHorario.valid;
+  }
+
+  findPeople(email: any) {
+    this.peopleService.findOne(email).subscribe((res) => {
+      this.people = res;
+    });
+  }
+
+  updatePeopleFields() {
+    const email = this.formHorario.controls['email'].value;
+    this.findPeople(email);
+
+    if (this.people.length > 0) {
+      this.cargos = [...this.people[0].cargo];
+
+      this.formHorario.controls['nombre'].setValue(this.people[0].nombre);
+      this.formHorario.controls['unidad'].setValue(this.people[0].unidad);
+      this.formHorario.controls['telefono'].setValue(this.people[0].telefono);
+
+      this.people.cargo = this.formHorario.controls['cargo'].value;
+
+      return;
+    }
+    this.clearPersonalData();
+  }
+
+  clearPersonalData() {
+    this.formHorario.controls['nombre'].setValue('');
+    this.formHorario.controls['unidad'].setValue('');
+    this.formHorario.controls['telefono'].setValue('');
+    this.formHorario.controls['cargo'].setValue('');
+  }
+
+  save() {
+    let {
+      nombre,
+      cargo,
+      unidad,
+      telefono,
+      email,
+      tipo,
+      nombreActividad,
+      start,
+      end,
+      dia,
+      horaInicio,
+      horaFin,
+    } = this.formHorario.controls;
+
+    let reservation: any = {
+      nombre: nombre.value,
+      cargo: cargo.value,
+      unidad: unidad.value,
+      telefono: telefono.value,
+      email: email.value,
+      tipo: tipo.value,
+      nombreActividad: nombreActividad.value,
+      start: start.value,
+      end: end.value,
+      dia: dia.value,
+      horaInicio: horaInicio.value,
+      horaFin: horaFin.value,
+    };
+
+    if (this.editMode) { <8>
+      (reservation.id = this.id), <9>
+        this.reservationsService.update(reservation).subscribe(() => { <10>
+          this.snackBar.open('Solicitud actualizada', '', {
+            duration: 1500,
+          });
+
+          this.router.navigate(['/solicitudes/consultar']);
+          
+        });
+    } else {
+      this.reservationsService.save(reservation).subscribe((res) => { <11>
+        this.snackBar.open('Solicitud guardada', '', {
+          duration: 1500,
+        });
+
+        this.router.navigate(['/solicitudes/consultar']);
+      });
+    }
+  }
+}
+----
+<1>
+<2>
+<3>
+<4>
+<5>
+<6>
+<7>
+<8>
+<9>
+<10>
+<11>
+
+Modificación de la presentación del formulario de Crear solicitud para que sirva también para actualizar. Básicamente se trata de cambiar el título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo y será el que se encargue de saber si tiene que actualizar o insertar en función del valor de `editMode`, que básicamente se terminaba a partir de lo que indicase la ruta.
+
+Archivo `main/solicitudes/pages/crear/crear.component.html`:
+
+[source, html]
+----
+<div fxFlexAlign="center" fxLayoutAlign="center center">
+  <form [formGroup]="formHorario" autocomplete="off">
+    <h1>{{ editMode ? "Editar" : "Crear" }} reserva</h1> <1>
+    <hr />
+
+....
+
+        <div fxLayout="row" fxLayoutAlign="end">
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="save()"
+            [disabled]="!isValidForm()"
+          >
+            {{ editMode ? "Actualizar" : "Crear" }} <2>
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </form>
+</div>
+----
+<1>
+<2>
+
+.La seguridad ha de estar en el backend
+****
+Para que filtre si alguien está intentando modificar una reserva que no le corresponda ....
+****
+
+Programación de la llamada a la actualización en el listado solicitudes
+
+Archivo `main/pages/solicitudes/consultar/consultar.component.ts`:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router'; <1>
+import { ReservationsService } from '../../../../services/reservations.service';
+import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dialogo-eliminar.component';
+
+@Component({
+  selector: 'app-consultar',
+  templateUrl: './consultar.component.html',
+  styleUrls: ['./consultar.component.css'],
+})
+export class ConsultarComponent implements OnInit {
+  reservations: any = [];
+  columns: any;
+  dataSource: any;
+  displayedColumns: any;
+
+  constructor(
+    private reservationsService: ReservationsService,
+    public dialog: MatDialog,
+    private router: Router <2>
+  ) {}
+
+  ngOnInit(): void {
+    this.reservationsService.findAll().subscribe((res) => {
+      this.reservations = res;
+      this.displayData();
+    });
+  }
+
+  displayData() {
+    this.dataSource = this.reservations;
+    this.displayedColumns = [
+      'nombre',
+      'cargo',
+      'unidad',
+      'telefono',
+      'acciones',
+    ];
+  }
+
+  editar(element: any) { <3>
+    this.router.navigate([`/solicitudes/editar/${element.id}`]); <4>
+  }
+
+  eliminar(element: any) {
+    const dialogRef = this.dialog.open(DialogoEliminarComponent, {
+      data: element,
+    });
+  }
+}
+----
+<1>
+<2>
+<3>
+<4>
+
+Creación del botón de Actualización de solicitudes en la pantalla de Consultar solicitudes para iniciar el proceso de actualización.
+
+Archivo `main
+
+[source, html]
+----
+<div fxLayout="column" fxFlexAlign="center" fxLayoutAlign="center center">
+  <h1>Listado de solicitudes</h1>
+  <div>
+    <hr />
+    <mat-card *ngIf="reservations.length > 0">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cargo">
+          <th mat-header-cell *matHeaderCellDef>Cargo</th>
+          <td mat-cell *matCellDef="let element">{{ element.cargo }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="unidad">
+          <th mat-header-cell *matHeaderCellDef>Unidad</th>
+          <td mat-cell *matCellDef="let element">{{ element.unidad }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="telefono">
+          <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+          <td mat-cell *matCellDef="let element">{{ element.telefono }}</td>
+        </ng-container>
+
+        <!-- Botones de acción -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let element">
+            <button <1>
+              mat-stroked-button
+              color="primary"
+              (click)="editar(element)" <2>
+            >
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+            <button 
+              mat-stroked-button
+              color="primary"
+              (click)="eliminar(element)"
+            >
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-card>
+  </div>
+</div>
+----
+<1>
+<2>
