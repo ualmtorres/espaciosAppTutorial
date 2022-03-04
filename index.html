@@ -528,13 +528,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
-<li><a href="#truecuadros-de-diálogo">10.6. Cuadros de diálogo</a>
-<ul class="sectlevel3">
-<li><a href="#truecuadro-de-diálogo-informativo">10.6.1. Cuadro de diálogo informativo</a></li>
 </ul>
 </li>
-<li><a href="#trueeliminación-de-solicitudes">10.7. Eliminación de solicitudes</a></li>
-<li><a href="#trueactualización-de-solicitudes">10.8. Actualización de solicitudes</a></li>
+<li><a href="#truecuadros-de-diálogo">11. Cuadros de diálogo</a>
+<ul class="sectlevel2">
+<li><a href="#truecuadro-de-diálogo-informativo">11.1. Cuadro de diálogo informativo</a></li>
+</ul>
+</li>
+<li><a href="#trueeliminación-de-solicitudes">12. Eliminación de solicitudes</a>
+<ul class="sectlevel2">
+<li><a href="#truecreación-del-cuadro-de-diálogo-de-confirmación-de-eliminación">12.1. Creación del cuadro de diálogo de confirmación de eliminación.</a></li>
+<li><a href="#truecreación-del-método-de-eliminación-de-solicitudes">12.2. Creación del método de eliminación de solicitudes</a></li>
+<li><a href="#trueprogramación-de-la-lógica-del-cuadro-de-diálogo-de-eliminación">12.3. Programación de la lógica del cuadro de diálogo de eliminación</a></li>
+<li><a href="#truepresentación-de-los-datos-en-el-cuadro-de-diálogo-de-eliminación">12.4. Presentación de los datos en el cuadro de diálogo de eliminación</a></li>
+<li><a href="#truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes">12.5. Presentación del botón de eliminación en el listado de solicitudes</a></li>
+<li><a href="#trueactualización-de-solicitudes">12.6. Actualización de solicitudes</a></li>
 </ul>
 </li>
 </ul>
@@ -5040,12 +5048,18 @@ export class ConsultarComponent implements OnInit {
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="truecuadros-de-diálogo"><a class="anchor" href="#truecuadros-de-diálogo"></a>10.6. Cuadros de diálogo</h3>
-<div class="sect3">
-<h4 id="truecuadro-de-diálogo-informativo"><a class="anchor" href="#truecuadro-de-diálogo-informativo"></a>10.6.1. Cuadro de diálogo informativo</h4>
+</div>
+</div>
+<div class="sect1">
+<h2 id="truecuadros-de-diálogo"><a class="anchor" href="#truecuadros-de-diálogo"></a>11. Cuadros de diálogo</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Crearemos un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón <code>Créditos</code> añadido a la barra lateral.</p>
+<p>Un aspecto útil que debemos controlar es la presentación de información en cuadros de diálogo. Veamos en esta sección cómo tratar con ellos.</p>
+</div>
+<div class="sect2">
+<h3 id="truecuadro-de-diálogo-informativo"><a class="anchor" href="#truecuadro-de-diálogo-informativo"></a>11.1. Cuadro de diálogo informativo</h3>
+<div class="paragraph">
+<p>Comenzaremos creando un cuadro de diálogo informativo, que son los más sencillos. Se trata de un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón <code>Créditos</code> que vamos a añadir a la barra lateral.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -5055,47 +5069,14 @@ export class ConsultarComponent implements OnInit {
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Añadimos el módulo Material <code>MatDialogModule</code> al módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.</p>
+<p>Para usar cuadros de diálogo es necesario el módulo Material <code>MatDialogModule</code>. Nuestro módulo <code>Material</code> ya lo tenía incorporado. Si no disponemos de un modo tan genérico como nuestro <code>Material</code> que puede ser demasiado en algunos casos, <code>MatDialogModule</code> tiene que estar en el módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Archivo <code>shared/shared.module.ts</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code data-lang="ts" class="language-ts hljs">import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { FootbarComponent } from './footbar/footbar.component';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatButtonModule } from '@angular/material/button';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatListModule } from '@angular/material/list';
-
-import { MatDialogModule } from '@angular/material/dialog';
-import { DialogoCreditosComponent } from './sidebar/components/dialogo-creditos/dialogo-creditos.component';
-@NgModule({
-  declarations: [SidebarComponent, FootbarComponent, DialogoCreditosComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FlexLayoutModule,
-    MatButtonModule,
-    MatExpansionModule,
-    MatListModule,
-    MatDialogModule,
-  ],
-  exports: [SidebarComponent, FootbarComponent],
-})
-export class SharedModule {}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Crear el componente para el cuadro de diálogo.</p>
+<p>Comenzaremos creando el componente para el cuadro de diálogo. Como es algo informativo y común a toda la aplicación no lo incluiremos en la carpeta <code>main</code>. Lo colocaremos en <code>shared/sidebar/components</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5103,7 +5084,22 @@ export class SharedModule {}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar)</p>
+<p>A continuación vamos a implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar). Para ello, implementaremos un método que denominaremos <code>aceptar()</code> a modo de prueba. Necesitaremos trabajar un objetp <code>MatDialogRef</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>De acuerdo con la documentación de Angular Material, al abrir un cuadro de diálogo, éste devolverá una instancia de <code>MatDialogRef. Este `MatDialogRef</code> proporciona un `
+<em>handle</em> sobre el cuadro de diálogo abierto. Aquí lo usaremos para cerrar el cuadro de diálogo.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Archivo <code>shared/sidebar/components/dialogo-creditos/dialogo-creditos.ts</code>:</p>
@@ -5130,14 +5126,28 @@ export class DialogoCreditosComponent implements OnInit {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;
-&lt;3&gt;
-&lt;4&gt;</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Inyección del <em>handle</em> para manejar el cuadro de diálogo</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Método al que llamar cuando se pulse el botón <code>Aceptar</code> del cuadro de diálogo</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Mostrar un eco en la consola para saber que el método se ejecutó.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Cerrar el cuadro de diálogo.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Crear el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. <code>mat-dialog-title, mat-dialog-content, mat-dialog-actions</code> y el estilo <code>mat-typography</code>.</p>
+<p>A continuación crearemos el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. <code>mat-dialog-title, mat-dialog-content, mat-dialog-actions</code> y el estilo <code>mat-typography</code>.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>shared/sidebar/components/dialogo-creditos/dialogo-creditos.html</code>:</p>
@@ -5171,8 +5181,20 @@ export class DialogoCreditosComponent implements OnInit {
 &lt;/div&gt;</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Botón <code>Cerrar</code> al que asociaremos directamente la directiva de cierre del formulario</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Botón <code>Aceptar</code> que llamará al método que hemos creado un poco más arriba.</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Implementar la lógica en la barra literal que abrirá el cuadro de diálogo</p>
+<p>A continuación, añadiremos a la barra lateral la lógica que abrirá el cuadro de diálogo</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>shared/sidebar/sidebar.component.ts</code>:</p>
@@ -5201,140 +5223,143 @@ export class SidebarComponent implements OnInit {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;
-&lt;3&gt;</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Inyección del objeto <code>MatDialog</code> para poder abrirlo</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Método que será llamado para abrir el cuadro de diálogo</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Abrir el cuadro de diálogo y que ocupe el 50% del ancho de la pantalla</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Creación del botón que abre el cuadro de diálogo desde la barra lateral.</p>
+<p>Por último, ya sólo falta añadir a la barra lateral el botón que abre el cuadro de diálogo y asociarle el método <code>creditos()</code> que acabamos de crear.</p>
 </div>
 <div class="paragraph">
-<p>Archivo</p>
+<p>Archivo <code>shared/sidebar/sidebar.component.html</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column" fxLayoutAlign="start " fxFlex="1 1 auto"&gt;
-  &lt;a mat-button routerLink="/"&gt;Home&lt;/a&gt;
+<pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column"&gt;
+  &lt;button mat-button routerLink="/"&gt;Home&lt;/button&gt;
   &lt;hr /&gt;
 
-  &lt;div&gt;
-   ...
-  &lt;/div&gt;
-
+  &lt;mat-accordion&gt;
+    ...
+  &lt;/mat-accordion&gt;
   &lt;button mat-button (click)="creditos()"&gt;Créditos&lt;/button&gt; <i class="conum" data-value="1"></i><b>(1)</b>
 &lt;/div&gt;</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Botón que abre el cuadro de diálogo</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/DialogoInformativo.png" alt="DialogoInformativo">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="trueeliminación-de-solicitudes"><a class="anchor" href="#trueeliminación-de-solicitudes"></a>12. Eliminación de solicitudes</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>&lt;1&gt;</p>
+<p>En esta sección vamoa ver cómo podemos realizar eliminaciones en nuestra aplicación. Para ello, dado que en la sección anterior hemos visto cómo presentar un cuadro de diálogo, nos apoyaremos en esa técnica para mostrar en un cuadro de diálogo informativo los datos que se van a eliminar antes de proceder a su eliminación.</p>
 </div>
-</div>
+<div class="paragraph">
+<p>La forma de proceder para la eliminación de solicitudes es incluir en el listado de solicitudes un botón de eliminar al lado de cada solicitud. El botón llamará a un método de eliminación al que pasaremos todos los datos de la solicitud que se vaya a eliminar. Con esos datos se podrá completar un cuadro de diálogo que permitirá la confirmación o la cancelación de la eliminación.</p>
 </div>
 <div class="sect2">
-<h3 id="trueeliminación-de-solicitudes"><a class="anchor" href="#trueeliminación-de-solicitudes"></a>10.7. Eliminación de solicitudes</h3>
+<h3 id="truecreación-del-cuadro-de-diálogo-de-confirmación-de-eliminación"><a class="anchor" href="#truecreación-del-cuadro-de-diálogo-de-confirmación-de-eliminación"></a>12.1. Creación del cuadro de diálogo de confirmación de eliminación.</h3>
 <div class="paragraph">
-<p>Eliminaremos a partir del listado de solicitudes. En cada registro de la tabla de solicitudes añadiremos un botón de eliminar que llamará a un método de eliminación al que pasaremos todos los datos de la solicitud que se vaya a eliminar. Con esos datos se podrá completar un cuadro de diálogo que permitirá la confirmación o la cancelación de la eliminación.</p>
-</div>
-<div class="paragraph">
-<p>Creación del cuadro de diálogo de confirmación de eliminación.</p>
+<p>Comencemos creando el componente del cuadro de diálogo de eliminación. Se trata de un componente que estará dentro de la carpeta de solicitudes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ ng g component main/solicitudes/components/dialogoEliminar</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Incluir los componentes <code>MatIconModule, MatDialogModule</code> de Material en el módulo en el que está el listado de solicitudes.</p>
+<p>Usaremos los módulos <code>MatIconModule, MatDialogModule</code>, que ya están incorporados en nuestro módulo <code>Material</code></p>
 </div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="truecreación-del-método-de-eliminación-de-solicitudes"><a class="anchor" href="#truecreación-del-método-de-eliminación-de-solicitudes"></a>12.2. Creación del método de eliminación de solicitudes</h3>
 <div class="paragraph">
-<p>Archivo <code>main/solicitudes/solicitudes.module.ts</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code data-lang="ts" class="language-ts hljs">import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { SolicitudesRoutingModule } from './solicitudes-routing.module';
-import { ConsultarComponent } from './pages/consultar/consultar.component';
-import { CrearComponent } from './pages/crear/crear.component';
-import { DialogoEliminarComponent } from './components/dialogo-eliminar/dialogo-eliminar.component';
-
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-
-import { MatIconModule } from '@angular/material/icon'; <i class="conum" data-value="1"></i><b>(1)</b>
-import { MatDialogModule } from '@angular/material/dialog'; <i class="conum" data-value="2"></i><b>(2)</b>
-
-import { FlexLayoutModule } from '@angular/flex-layout';
-
-@NgModule({
-  declarations: [ConsultarComponent, CrearComponent, DialogoEliminarComponent],
-  imports: [
-    CommonModule,
-    SolicitudesRoutingModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatCardModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatTableModule,
-    MatIconModule, <i class="conum" data-value="3"></i><b>(3)</b>
-    MatDialogModule, <i class="conum" data-value="4"></i><b>(4)</b>
-  ],
-})
-export class SolicitudesModule {}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Incorporación del método de eliminación de solicitude al servicio <code>services/reservations.service.ts</code>:</p>
+<p>A continuación debemos implementar en el servicio <code>Solicitudes</code> el método de eliminación de solicitudes añadiéndolo a <code>services/reservations.service.ts</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="ts" class="language-ts hljs">import { environment } from './../../environments/environment';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ReservationsService {
+export class SolicitudesService {
   constructor(private http: HttpClient) {}
 
   findAll(): Observable&lt;any&gt; {
-    return this.http.get(`${environment.urlEspacios}/reservations`);
+    return this.http.get(`${environment.urlEspacios}/solicitudes`);
   }
 
   save(data: any): Observable&lt;any&gt; {
-    return this.http.post(`${environment.urlEspacios}/reservations`, data);
+    return this.http.post(`${environment.urlEspacios}/solicitudes`, data);
   }
 
   delete(id: any): Observable&lt;any&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
-    return this.http.delete(`${environment.urlEspacios}/reservations/${id}`); <i class="conum" data-value="2"></i><b>(2)</b>
+    return this.http.delete(`${environment.urlEspacios}/solicitudes/${id}`); <i class="conum" data-value="2"></i><b>(2)</b>
   }
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Método de eliminación de solicitudes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Llamada al método HTTP de eliminación componiendo la URL</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="trueprogramación-de-la-lógica-del-cuadro-de-diálogo-de-eliminación"><a class="anchor" href="#trueprogramación-de-la-lógica-del-cuadro-de-diálogo-de-eliminación"></a>12.3. Programación de la lógica del cuadro de diálogo de eliminación</h3>
 <div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;</p>
+<p>EL cuadro de diálogo de eliminación usará un <em>handle</em> para manejar (en nuestro caso cerrar) el cuadro de diálogo y se le inyectarán los datos que queremos mostrar (en nuestro caso los datos de la solicitud a eliminar).</p>
 </div>
 <div class="paragraph">
-<p>Programación del cuadro de diálogo de eliminación.</p>
+<p>También usará el servicio de reservas para proceder a la eliminación, una snackbar para la presentación de mensajes y un router para redirigir la aplicación a otra pantalla tras la eliminación.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.ts</code>:</p>
@@ -5378,20 +5403,55 @@ export class DialogoEliminarComponent implements OnInit {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;
-&lt;3&gt;
-&lt;4&gt;
-&lt;5&gt;
-&lt;6&gt;
-&lt;7&gt;
-&lt;8&gt;
-&lt;9&gt;
-&lt;10&gt;</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Inyección del <em>handle</em> para manejar el cuadro de diálogo</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inyección de datos para el cuadro de diálogo</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Servicio de operaciones solicitudes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Router para desviar la aplicación a otra página tras la eliminación</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Snackbar para la presentación de mensajes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Método para eliminación de solicitudes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Llamada al método eliminación del servicio</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Presentación de la snackbar</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Cierre del cuadro de diálogo</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Recargar la ruta de la página</td>
+</tr>
+</table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="truepresentación-de-los-datos-en-el-cuadro-de-diálogo-de-eliminación"><a class="anchor" href="#truepresentación-de-los-datos-en-el-cuadro-de-diálogo-de-eliminación"></a>12.4. Presentación de los datos en el cuadro de diálogo de eliminación</h3>
 <div class="paragraph">
-<p>Presentación de los datos en el cuadro de diálogo de eliminación.</p>
+<p>La parte TypeScript del cuadro de diálogo tiene en una variable <code>data</code> los datos que se van a eliminar. Los mostraremos en el cuadro de diálogo para que los usuarios pueden comprobar lo que van a eliminar antes de proceder.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.html</code>:</p>
@@ -5417,10 +5477,21 @@ export class DialogoEliminarComponent implements OnInit {
 &lt;/div&gt;</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;
-&lt;3&gt;</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Presentación de elementos <code>nombre</code> y <code>cargo</code> del objeto <code>data</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Acción de cierre del cuadro proporionada por <code>[mat-dialog-close]</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Llamada al método <code>eliminar()</code> implmementado en la parte TypeScript del cuadro de diálogo</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Programación de la llamada a la eliminación desde el listado de solicitudes.</p>
@@ -5431,8 +5502,9 @@ export class DialogoEliminarComponent implements OnInit {
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="ts" class="language-ts hljs">import { Component, OnInit } from '@angular/core';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { ReservationsService } from '../../../../services/reservations.service';
 import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dialogo-eliminar.component';
 
 @Component({
@@ -5441,61 +5513,87 @@ import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dial
   styleUrls: ['./consultar.component.css'],
 })
 export class ConsultarComponent implements OnInit {
-  reservations: any = [];
-  columns: any;
-  dataSource: any;
-  displayedColumns: any;
+  solicitudes: any = [];
+
+  dataSource: any = [];
+  displayedColumns = ['nombre', 'cargo', 'unidad', 'telefono', 'acciones'];
 
   constructor(
-    private reservationsService: ReservationsService,
-    public dialog: MatDialog
+    private solicitudesService: SolicitudesService, <i class="conum" data-value="1"></i><b>(1)</b>
+    private snackBar: MatSnackBar, <i class="conum" data-value="2"></i><b>(2)</b>
+    public dialog: MatDialog <i class="conum" data-value="3"></i><b>(3)</b>
   ) {}
-
   ngOnInit(): void {
-    this.reservationsService.findAll().subscribe((res) =&gt; {
-      this.reservations = res;
-      this.displayData();
+    this.solicitudesService.findAll().subscribe((res) =&gt; { <i class="conum" data-value="4"></i><b>(4)</b>
+      this.dataSource = res;
+      if (this.dataSource.length == 0) { <i class="conum" data-value="5"></i><b>(5)</b>
+        this.snackBar.open('No hay solicitudes', '', {
+          duration: 1500,
+        });
+      }
     });
   }
 
-  displayData() {
-    this.dataSource = this.reservations;
-    this.displayedColumns = [
-      'nombre',
-      'cargo',
-      'unidad',
-      'telefono',
-      'acciones', <i class="conum" data-value="1"></i><b>(1)</b>
-    ];
-  }
-
-  eliminar(element: any) { <i class="conum" data-value="2"></i><b>(2)</b>
-    const dialogRef = this.dialog.open(DialogoEliminarComponent, { <i class="conum" data-value="3"></i><b>(3)</b>
-      data: element, <i class="conum" data-value="4"></i><b>(4)</b>
+  eliminar(element: any) { <i class="conum" data-value="6"></i><b>(6)</b>
+    this.dialog.open(DialogoEliminarComponent, { <i class="conum" data-value="7"></i><b>(7)</b>
+      data: element, <i class="conum" data-value="8"></i><b>(8)</b>
     });
   }
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;
-&lt;3&gt;
-&lt;4&gt;</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Servicio en el que está el método de eliminación de solicitudes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Snackbar para la presentación de mensajes de error</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inyección del cuadro de diálogo para poder abrirlo</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Recuperación de la lista de solicitudes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Presentación de mensaje de error en la snakbar si no hay solicitudes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Método <code>eliminar()</code> llamado desde la página del listado de solicitudes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Abrir el cuadro de diálogo pasándole datos en <code>data</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Configurar <code>data</code> con los datos que reciba el método</td>
+</tr>
+</table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes"><a class="anchor" href="#truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes"></a>12.5. Presentación del botón de eliminación en el listado de solicitudes</h3>
 <div class="paragraph">
-<p>Presentación del botón de eliminación en el listado de solicitudes.</p>
+<p>Por último, ya sólo nos falta incluir un botón de eliminar en el componente  del listado de solicitudes y que llame al método que presenta el cuadro de diálogo de eliminación pasándole los datos de la solicitud a eliminar.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/pages/consultar/consultar.component.html</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column" fxFlexAlign="center" fxLayoutAlign="center center"&gt;
+<pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column" fxLayoutAlign="center center"&gt;
   &lt;h1&gt;Listado de solicitudes&lt;/h1&gt;
-  &lt;div&gt;
+  &lt;div *ngIf="dataSource.length &gt; 0"&gt; <i class="conum" data-value="1"></i><b>(1)</b>
     &lt;hr /&gt;
-    &lt;mat-card *ngIf="reservations.length &gt; 0"&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;mat-card&gt;
       &lt;table mat-table [dataSource]="dataSource" class="mat-elevation-z8"&gt;
         &lt;ng-container matColumnDef="nombre"&gt;
           &lt;th mat-header-cell *matHeaderCellDef&gt;Nombre&lt;/th&gt;
@@ -5518,10 +5616,10 @@ export class ConsultarComponent implements OnInit {
         &lt;/ng-container&gt;
 
         &lt;!-- Get Details --&gt;
-        &lt;ng-container matColumnDef="acciones"&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+        &lt;ng-container matColumnDef="acciones"&gt;  <i class="conum" data-value="2"></i><b>(2)</b>
           &lt;th mat-header-cell *matHeaderCellDef&gt;Acciones&lt;/th&gt;
-          &lt;td mat-cell *matCellDef="let element"&gt;
-            &lt;button <i class="conum" data-value="3"></i><b>(3)</b>
+          &lt;td mat-cell *matCellDef="let element"&gt; <i class="conum" data-value="3"></i><b>(3)</b>
+            &lt;button
               mat-stroked-button
               color="primary"
               (click)="eliminar(element)" <i class="conum" data-value="4"></i><b>(4)</b>
@@ -5531,6 +5629,7 @@ export class ConsultarComponent implements OnInit {
             &lt;/button&gt;
           &lt;/td&gt;
         &lt;/ng-container&gt;
+
         &lt;tr mat-header-row *matHeaderRowDef="displayedColumns"&gt;&lt;/tr&gt;
         &lt;tr mat-row *matRowDef="let row; columns: displayedColumns"&gt;&lt;/tr&gt;
       &lt;/table&gt;
@@ -5539,16 +5638,57 @@ export class ConsultarComponent implements OnInit {
 &lt;/div&gt;</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Mostrar la tabla si hay datos</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Bloque para la columna de acciones</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Configuración del valor de la celda a todo el registro mostrado (<code>element</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Llamada al método <code>eliminar()</code> de la parte TypeScript pasándole todo el registro</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Incorporación del icono de la papelera al botón</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;
-&lt;3&gt;
-&lt;4&gt;
-&lt;5&gt;</p>
+<p>Veamos el resultado en funcionamiento. Partimos de una pantalla con un conjunto de solicitudes. Al lado de cada solicitud aparecerá un botón para poder eliminarla.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/PantallaParaEliminarSolicitudes.png" alt="PantallaParaEliminarSolicitudes">
+</div>
+</div>
+<div class="paragraph">
+<p>Si pulsamos <code>Eliminar</code> sobre una de ellas aparecerá el cuadro de diálogo de confirmación mostrando los datos para comprobar que es la solicitud a eliminar.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/ConfirmarEliminarSolicitud.png" alt="ConfirmarEliminarSolicitud">
+</div>
+</div>
+<div class="paragraph">
+<p>Si confirmamos la eliminación, se eliminará la solicitud, se informará en una snackbar y se devolverá la aplicación para que vuelva a mostrar la lista de solicitudes. La solicitud eliminada ya no aparecerá.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/SolicitudesTrasEliminar.png" alt="SolicitudesTrasEliminar">
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueactualización-de-solicitudes"><a class="anchor" href="#trueactualización-de-solicitudes"></a>10.8. Actualización de solicitudes</h3>
+<h3 id="trueactualización-de-solicitudes"><a class="anchor" href="#trueactualización-de-solicitudes"></a>12.6. Actualización de solicitudes</h3>
 <div class="paragraph">
 <p>Implementación de los métodos <code>findOne</code> para búsqueda de la solicitud a modificar y <code>update</code> para actualización con los nuevos datos.</p>
 </div>
@@ -5994,7 +6134,7 @@ export class ConsultarComponent implements OnInit {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-03-03 21:35:13 +0100
+Last updated 2022-03-04 21:16:44 +0100
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

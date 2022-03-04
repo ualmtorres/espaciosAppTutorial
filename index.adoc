@@ -3019,57 +3019,33 @@ Envío del evento, recepción del evento, acción y envío de datos...
 ****
 
 
-### Cuadros de diálogo
+## Cuadros de diálogo
 
-#### Cuadro de diálogo informativo
+Un aspecto útil que debemos controlar es la presentación de información en cuadros de diálogo. Veamos en esta sección cómo tratar con ellos.
 
-Crearemos un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón `Créditos` añadido a la barra lateral.
+### Cuadro de diálogo informativo
+
+Comenzaremos creando un cuadro de diálogo informativo, que son los más sencillos. Se trata de un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón `Créditos` que vamos a añadir a la barra lateral.
 
 [NOTE]
 ====
-Añadimos el módulo Material `MatDialogModule` al módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.
+Para usar cuadros de diálogo es necesario el módulo Material `MatDialogModule`. Nuestro módulo `Material` ya lo tenía incorporado. Si no disponemos de un modo tan genérico como nuestro `Material` que puede ser demasiado en algunos casos, `MatDialogModule` tiene que estar en el módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.
 ==== 
 
-Archivo `shared/shared.module.ts`:
-
-[source, ts]
-----
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { FootbarComponent } from './footbar/footbar.component';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatButtonModule } from '@angular/material/button';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatListModule } from '@angular/material/list';
-
-import { MatDialogModule } from '@angular/material/dialog';
-import { DialogoCreditosComponent } from './sidebar/components/dialogo-creditos/dialogo-creditos.component';
-@NgModule({
-  declarations: [SidebarComponent, FootbarComponent, DialogoCreditosComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FlexLayoutModule,
-    MatButtonModule,
-    MatExpansionModule,
-    MatListModule,
-    MatDialogModule,
-  ],
-  exports: [SidebarComponent, FootbarComponent],
-})
-export class SharedModule {}
-----
-
-Crear el componente para el cuadro de diálogo.
+Comenzaremos creando el componente para el cuadro de diálogo. Como es algo informativo y común a toda la aplicación no lo incluiremos en la carpeta `main`. Lo colocaremos en `shared/sidebar/components`.
 
 [source, bash]
 ----
 $ ng g component shared/sidebar/components/dialogoCreditos
 ----
 
-Implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar)
+A continuación vamos a implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar). Para ello, implementaremos un método que denominaremos `aceptar()` a modo de prueba. Necesitaremos trabajar un objetp `MatDialogRef`.
+
+[NOTE]
+====
+De acuerdo con la documentación de Angular Material, al abrir un cuadro de diálogo, éste devolverá una instancia de `MatDialogRef. Este `MatDialogRef` proporciona un `
+_handle_ sobre el cuadro de diálogo abierto. Aquí lo usaremos para cerrar el cuadro de diálogo.
+====
 
 Archivo `shared/sidebar/components/dialogo-creditos/dialogo-creditos.ts`:
 
@@ -3094,12 +3070,12 @@ export class DialogoCreditosComponent implements OnInit {
   }
 }
 ----
-<1>
-<2>
-<3>
-<4>
+<1> Inyección del _handle_ para manejar el cuadro de diálogo
+<2> Método al que llamar cuando se pulse el botón `Aceptar` del cuadro de diálogo
+<3> Mostrar un eco en la consola para saber que el método se ejecutó.
+<4> Cerrar el cuadro de diálogo.
 
-Crear el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. `mat-dialog-title, mat-dialog-content, mat-dialog-actions` y el estilo `mat-typography`.
+A continuación crearemos el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. `mat-dialog-title, mat-dialog-content, mat-dialog-actions` y el estilo `mat-typography`.
 
 Archivo `shared/sidebar/components/dialogo-creditos/dialogo-creditos.html`:
 
@@ -3131,8 +3107,10 @@ Archivo `shared/sidebar/components/dialogo-creditos/dialogo-creditos.html`:
   </button>
 </div>
 ----
+<1> Botón `Cerrar` al que asociaremos directamente la directiva de cierre del formulario
+<2> Botón `Aceptar` que llamará al método que hemos creado un poco más arriba.
 
-Implementar la lógica en la barra literal que abrirá el cuadro de diálogo
+A continuación, añadiremos a la barra lateral la lógica que abrirá el cuadro de diálogo
 
 Archivo `shared/sidebar/sidebar.component.ts`:
 
@@ -3159,125 +3137,89 @@ export class SidebarComponent implements OnInit {
   }
 }
 ----
-<1>
-<2>
-<3>
+<1> Inyección del objeto `MatDialog` para poder abrirlo
+<2> Método que será llamado para abrir el cuadro de diálogo
+<3> Abrir el cuadro de diálogo y que ocupe el 50% del ancho de la pantalla
 
-Creación del botón que abre el cuadro de diálogo desde la barra lateral.
+Por último, ya sólo falta añadir a la barra lateral el botón que abre el cuadro de diálogo y asociarle el método `creditos()` que acabamos de crear.
 
-Archivo 
+Archivo `shared/sidebar/sidebar.component.html`:
 
 [source, html]
 ----
-<div fxLayout="column" fxLayoutAlign="start " fxFlex="1 1 auto">
-  <a mat-button routerLink="/">Home</a>
+<div fxLayout="column">
+  <button mat-button routerLink="/">Home</button>
   <hr />
 
-  <div>
-   ...
-  </div>
-  
+  <mat-accordion>
+    ...
+  </mat-accordion>
   <button mat-button (click)="creditos()">Créditos</button> <1>
 </div>
+
 ----
-<1>
+<1> Botón que abre el cuadro de diálogo
 
-### Eliminación de solicitudes
+image::DialogoInformativo.png[]
 
-Eliminaremos a partir del listado de solicitudes. En cada registro de la tabla de solicitudes añadiremos un botón de eliminar que llamará a un método de eliminación al que pasaremos todos los datos de la solicitud que se vaya a eliminar. Con esos datos se podrá completar un cuadro de diálogo que permitirá la confirmación o la cancelación de la eliminación.
+## Eliminación de solicitudes
 
-Creación del cuadro de diálogo de confirmación de eliminación.
+En esta sección vamoa ver cómo podemos realizar eliminaciones en nuestra aplicación. Para ello, dado que en la sección anterior hemos visto cómo presentar un cuadro de diálogo, nos apoyaremos en esa técnica para mostrar en un cuadro de diálogo informativo los datos que se van a eliminar antes de proceder a su eliminación.
+
+La forma de proceder para la eliminación de solicitudes es incluir en el listado de solicitudes un botón de eliminar al lado de cada solicitud. El botón llamará a un método de eliminación al que pasaremos todos los datos de la solicitud que se vaya a eliminar. Con esos datos se podrá completar un cuadro de diálogo que permitirá la confirmación o la cancelación de la eliminación.
+
+### Creación del cuadro de diálogo de confirmación de eliminación.
+
+Comencemos creando el componente del cuadro de diálogo de eliminación. Se trata de un componente que estará dentro de la carpeta de solicitudes.
 
 [source, bash]
 ----
 $ ng g component main/solicitudes/components/dialogoEliminar
 ----
 
-Incluir los componentes `MatIconModule, MatDialogModule` de Material en el módulo en el que está el listado de solicitudes.
+[NOTE]
+====
+Usaremos los módulos `MatIconModule, MatDialogModule`, que ya están incorporados en nuestro módulo `Material`
+====
 
-Archivo `main/solicitudes/solicitudes.module.ts`:
+### Creación del método de eliminación de solicitudes
 
-[source, ts]
-----
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { SolicitudesRoutingModule } from './solicitudes-routing.module';
-import { ConsultarComponent } from './pages/consultar/consultar.component';
-import { CrearComponent } from './pages/crear/crear.component';
-import { DialogoEliminarComponent } from './components/dialogo-eliminar/dialogo-eliminar.component';
-
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-
-import { MatIconModule } from '@angular/material/icon'; <1>
-import { MatDialogModule } from '@angular/material/dialog'; <2>
-
-import { FlexLayoutModule } from '@angular/flex-layout';
-
-@NgModule({
-  declarations: [ConsultarComponent, CrearComponent, DialogoEliminarComponent],
-  imports: [
-    CommonModule,
-    SolicitudesRoutingModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatCardModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatTableModule,
-    MatIconModule, <3>
-    MatDialogModule, <4>
-  ],
-})
-export class SolicitudesModule {}
-----
-
-Incorporación del método de eliminación de solicitude al servicio `services/reservations.service.ts`:
+A continuación debemos implementar en el servicio `Solicitudes` el método de eliminación de solicitudes añadiéndolo a `services/reservations.service.ts`:
 
 [source, ts]
 ----
 import { environment } from './../../environments/environment';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ReservationsService {
+export class SolicitudesService {
   constructor(private http: HttpClient) {}
 
   findAll(): Observable<any> {
-    return this.http.get(`${environment.urlEspacios}/reservations`);
+    return this.http.get(`${environment.urlEspacios}/solicitudes`);
   }
 
   save(data: any): Observable<any> {
-    return this.http.post(`${environment.urlEspacios}/reservations`, data);
+    return this.http.post(`${environment.urlEspacios}/solicitudes`, data);
   }
 
   delete(id: any): Observable<any> { <1>
-    return this.http.delete(`${environment.urlEspacios}/reservations/${id}`); <2>
+    return this.http.delete(`${environment.urlEspacios}/solicitudes/${id}`); <2>
   }
 }
 ----
-<1>
-<2>
+<1> Método de eliminación de solicitudes
+<2> Llamada al método HTTP de eliminación componiendo la URL
 
-Programación del cuadro de diálogo de eliminación.
+### Programación de la lógica del cuadro de diálogo de eliminación
+
+EL cuadro de diálogo de eliminación usará un _handle_ para manejar (en nuestro caso cerrar) el cuadro de diálogo y se le inyectarán los datos que queremos mostrar (en nuestro caso los datos de la solicitud a eliminar).
+
+También usará el servicio de reservas para proceder a la eliminación, una snackbar para la presentación de mensajes y un router para redirigir la aplicación a otra pantalla tras la eliminación.
 
 Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.ts`:
 
@@ -3319,18 +3261,20 @@ export class DialogoEliminarComponent implements OnInit {
   }
 }
 ----
-<1>
-<2>
-<3>
-<4>
-<5>
-<6>
-<7>
-<8>
-<9>
-<10>
+<1> Inyección del _handle_ para manejar el cuadro de diálogo
+<2> Inyección de datos para el cuadro de diálogo
+<3> Servicio de operaciones solicitudes
+<4> Router para desviar la aplicación a otra página tras la eliminación
+<5> Snackbar para la presentación de mensajes
+<6> Método para eliminación de solicitudes
+<7> Llamada al método eliminación del servicio
+<8> Presentación de la snackbar
+<9> Cierre del cuadro de diálogo
+<10> Recargar la ruta de la página
 
-Presentación de los datos en el cuadro de diálogo de eliminación.
+### Presentación de los datos en el cuadro de diálogo de eliminación
+
+La parte TypeScript del cuadro de diálogo tiene en una variable `data` los datos que se van a eliminar. Los mostraremos en el cuadro de diálogo para que los usuarios pueden comprobar lo que van a eliminar antes de proceder.
 
 Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.html`:
 
@@ -3354,9 +3298,9 @@ Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component
   </button>
 </div>
 ----
-<1>
-<2>
-<3>
+<1> Presentación de elementos `nombre` y `cargo` del objeto `data`
+<2> Acción de cierre del cuadro proporionada por `[mat-dialog-close]`
+<3> Llamada al método `eliminar()` implmementado en la parte TypeScript del cuadro de diálogo
 
 Programación de la llamada a la eliminación desde el listado de solicitudes.
 
@@ -3365,8 +3309,9 @@ Archivo `main/solicitudes/pages/consultar/consultar.component.ts`:
 [source, ts]
 ----
 import { Component, OnInit } from '@angular/core';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { ReservationsService } from '../../../../services/reservations.service';
 import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dialogo-eliminar.component';
 
 @Component({
@@ -3375,57 +3320,56 @@ import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dial
   styleUrls: ['./consultar.component.css'],
 })
 export class ConsultarComponent implements OnInit {
-  reservations: any = [];
-  columns: any;
-  dataSource: any;
-  displayedColumns: any;
+  solicitudes: any = [];
+
+  dataSource: any = [];
+  displayedColumns = ['nombre', 'cargo', 'unidad', 'telefono', 'acciones'];
 
   constructor(
-    private reservationsService: ReservationsService,
-    public dialog: MatDialog
+    private solicitudesService: SolicitudesService, <1>
+    private snackBar: MatSnackBar, <2>
+    public dialog: MatDialog <3>
   ) {}
-
   ngOnInit(): void {
-    this.reservationsService.findAll().subscribe((res) => {
-      this.reservations = res;
-      this.displayData();
+    this.solicitudesService.findAll().subscribe((res) => { <4>
+      this.dataSource = res;
+      if (this.dataSource.length == 0) { <5>
+        this.snackBar.open('No hay solicitudes', '', {
+          duration: 1500,
+        });
+      }
     });
   }
 
-  displayData() {
-    this.dataSource = this.reservations;
-    this.displayedColumns = [
-      'nombre',
-      'cargo',
-      'unidad',
-      'telefono',
-      'acciones', <1>
-    ];
-  }
-
-  eliminar(element: any) { <2>
-    const dialogRef = this.dialog.open(DialogoEliminarComponent, { <3>
-      data: element, <4>
+  eliminar(element: any) { <6>
+    this.dialog.open(DialogoEliminarComponent, { <7>
+      data: element, <8>
     });
   }
 }
 ----
-<1>
-<2>
-<3>
-<4>
+<1> Servicio en el que está el método de eliminación de solicitudes
+<2> Snackbar para la presentación de mensajes de error
+<3> Inyección del cuadro de diálogo para poder abrirlo
+<4> Recuperación de la lista de solicitudes
+<5> Presentación de mensaje de error en la snakbar si no hay solicitudes
+<6> Método `eliminar()` llamado desde la página del listado de solicitudes
+<7> Abrir el cuadro de diálogo pasándole datos en `data`
+<8> Configurar `data` con los datos que reciba el método
 
-Presentación del botón de eliminación en el listado de solicitudes.
+### Presentación del botón de eliminación en el listado de solicitudes
+
+Por último, ya sólo nos falta incluir un botón de eliminar en el componente  del listado de solicitudes y que llame al método que presenta el cuadro de diálogo de eliminación pasándole los datos de la solicitud a eliminar.
 
 Archivo `main/solicitudes/pages/consultar/consultar.component.html`:
 
 [source, html]
 ----
-<div fxLayout="column" fxFlexAlign="center" fxLayoutAlign="center center">
+<div fxLayout="column" fxLayoutAlign="center center">
   <h1>Listado de solicitudes</h1>
-  <div>
+  <div *ngIf="dataSource.length > 0"> <1>
     <hr />
-    <mat-card *ngIf="reservations.length > 0"> <1>
+    <mat-card>
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef>Nombre</th>
@@ -3448,10 +3392,10 @@ Archivo `main/solicitudes/pages/consultar/consultar.component.html`:
         </ng-container>
 
         <!-- Get Details -->
-        <ng-container matColumnDef="acciones"> <2>
+        <ng-container matColumnDef="acciones">  <2>
           <th mat-header-cell *matHeaderCellDef>Acciones</th>
-          <td mat-cell *matCellDef="let element">
-            <button <3>
+          <td mat-cell *matCellDef="let element"> <3>
+            <button
               mat-stroked-button
               color="primary"
               (click)="eliminar(element)" <4>
@@ -3461,18 +3405,32 @@ Archivo `main/solicitudes/pages/consultar/consultar.component.html`:
             </button>
           </td>
         </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr> 
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
     </mat-card>
   </div>
 </div>
+
 ----
-<1>
-<2>
-<3>
-<4>
-<5>
+<1> Mostrar la tabla si hay datos
+<2> Bloque para la columna de acciones
+<3> Configuración del valor de la celda a todo el registro mostrado (`element`)
+<4> Llamada al método `eliminar()` de la parte TypeScript pasándole todo el registro
+<5> Incorporación del icono de la papelera al botón
+
+Veamos el resultado en funcionamiento. Partimos de una pantalla con un conjunto de solicitudes. Al lado de cada solicitud aparecerá un botón para poder eliminarla.
+
+image::PantallaParaEliminarSolicitudes.png[]
+
+Si pulsamos `Eliminar` sobre una de ellas aparecerá el cuadro de diálogo de confirmación mostrando los datos para comprobar que es la solicitud a eliminar.
+
+image::ConfirmarEliminarSolicitud.png[]
+
+Si confirmamos la eliminación, se eliminará la solicitud, se informará en una snackbar y se devolverá la aplicación para que vuelva a mostrar la lista de solicitudes. La solicitud eliminada ya no aparecerá.
+
+image::SolicitudesTrasEliminar.png[]
 
 ### Actualización de solicitudes
 
