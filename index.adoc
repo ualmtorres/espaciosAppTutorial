@@ -2985,7 +2985,7 @@ Archivo `main/espacios/pages/consultar/consultar.component.html`:
 ----
 <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
   <div fxFlex>
-    <h1>Lista de reservas</h1>
+    <h1>Lista de espacios</h1>
     <app-form-buscar (onSearchEspacio)="buscar($event)"></app-form-buscar> <1>
   </div>
   <div fxLayoutAlign="center stretch">
@@ -3184,7 +3184,7 @@ Usaremos los módulos `MatIconModule, MatDialogModule`, que ya están incorporad
 
 ### Creación del método de eliminación de solicitudes
 
-A continuación debemos implementar en el servicio `Solicitudes` el método de eliminación de solicitudes añadiéndolo a `services/reservations.service.ts`:
+A continuación debemos implementar en el servicio `Solicitudes` el método de eliminación de solicitudes añadiéndolo a `services/solicitudes.service.ts`:
 
 [source, ts]
 ----
@@ -3228,7 +3228,7 @@ Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { ReservationsService } from '../../../../services/reservations.service';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -3240,7 +3240,7 @@ export class DialogoEliminarComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DialogoEliminarComponent>, <1>
     @Inject(MAT_DIALOG_DATA) public data: any, <2>
-    private reservationsService: ReservationsService, <3>
+    private solicitudesService: SolicitudesService, <3>
     private router: Router, <4> 
     private snackBar: MatSnackBar <5>
   ) {} 
@@ -3248,7 +3248,7 @@ export class DialogoEliminarComponent implements OnInit {
   ngOnInit(): void {}
 
   eliminar() { <6>
-    this.reservationsService.delete(this.data.id).subscribe(() => { <7>
+    this.solicitudesService.delete(this.data.id).subscribe(() => { <7>
       this.snackBar.open('Solicitud eliminada', '', { <8>
         duration: 1500,
       });
@@ -3432,11 +3432,21 @@ Si confirmamos la eliminación, se eliminará la solicitud, se informará en una
 
 image::SolicitudesTrasEliminar.png[]
 
-### Actualización de solicitudes
+## Actualización de solicitudes
 
-Implementación de los métodos `findOne` para búsqueda de la solicitud a modificar y `update` para actualización con los nuevos datos.
+Para finalizar con la parte de operaciones CRUD vamos a añadir a la aplicación la posibilidad de actualizar solicitudes. Tendremos que:
 
-Archivo `services/reservations.service.ts`:
+* Implementar los métodos de localización y modificación de una solicitud.
+* Crear de una nueva ruta en la aplicación para la operación de modificación.
+* Adaptar el componente de crear para que también valga para modificar.
+* Crear el método de editar solcitud en el componente de listado de solicitudes.
+* Añadir el botón de modificar solicitud y conectarlo al método de editar solicitud anterior.
+
+### Creación del método de actualización de una solicitud
+
+La actualización de una solicitud realmente implica dos operaciones diferentes. Una de búsqueda de la solicitud para la recuperación de sus datos y presentarlos en el formulario de modificación, y otra que se encargue de la modificación en sí misma. De esto se van a encargar los métodos `findOne` y `update`, respectivamente, que se muestran acontinuación.
+
+Archivo `services/solicitudes.service.ts`:
 
 [source, ts]
 ----
@@ -3448,35 +3458,41 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class ReservationsService {
+export class SolicitudesService {
   constructor(private http: HttpClient) {}
 
-  findOne(id: any): Observable<any> { <1>
-    return this.http.get(`${environment.urlEspacios}/reservations/${id}`); <2>
+  findAll(): Observable<any> {
+    return this.http.get(`${environment.urlEspacios}/solicitudes`);
   }
 
-  findAll(): Observable<any> {
-    return this.http.get(`${environment.urlEspacios}/reservations`);
+  findOne(id: any): Observable<any> { <1>
+    return this.http.get(`${environment.urlEspacios}/solicitudes/${id}`); <2>
   }
 
   save(data: any): Observable<any> {
-    return this.http.post(`${environment.urlEspacios}/reservations`, data);
+    return this.http.post(`${environment.urlEspacios}/solicitudes`, data);
   }
 
   delete(id: any): Observable<any> {
-    return this.http.delete(`${environment.urlEspacios}/reservations/${id}`);
+    return this.http.delete(`${environment.urlEspacios}/solicitudes/${id}`);
   }
 
   update(data: any): Observable<any> { <3>
-    return this.http.put( <4>
-      `${environment.urlEspacios}/reservations/${data.id}`,
+    return this.http.put(
+      `${environment.urlEspacios}/solicitudes/${data.id}`, <4>
       data
     );
   }
 }
 ----
+<1> Método para la búsqueda y recuperación de los datos de la solicitud a mofificar
+<2> Llamada al endpoint de recuperación de la solicitud a modificar
+<3> Método de actualización
+<4> Llamada al endpoint de actualización de la solicitud pasándole los datos de la solicitud modificada
 
-La ruta de editar será nueva, pero la gestionará el mismo componente de Crear solicitud. Habrá que adaptarlo, pero básicamente es lo mismo pero con `id`  y tendrá que llamar a un método `PATCH` en lugar de uno `POST`. Lo veremos más adelante.
+### Creación de la ruta de modificación de solicitudes
+
+Necesitamos una nueva ruta para editar una solicitud. A esa ruta asociaremos el componente que se mostrará en la aplicación. Realmente no se es necesario un nuevo componente de Modificar solicitud. Se puede encargar el mismo componente de Crear solicitud. Habrá que adaptarlo. Básicamente es lo mismo pero incluyendo el `id` de la solicitud a modificar. Además, tendrá que incorporarse un método `PATCH` para la modificación. Lo veremos más adelante. Ahora vamos a crear la nueva ruta para modificar una solicitud
 
 Archivo `main/solicitudes/solictudes.routing.ts`:
 
@@ -3492,8 +3508,9 @@ const routes: Routes = [
     path: '',
     children: [
       { path: 'crear', component: CrearComponent },
-      { path: 'editar/:id', component: CrearComponent }, <1>
       { path: 'consultar', component: ConsultarComponent },
+      { path: 'editar/:id', component: CrearComponent }, <1>
+      { path: '', redirectTo: 'consultar' },
     ],
   },
   {
@@ -3508,8 +3525,21 @@ const routes: Routes = [
 })
 export class SolicitudesRoutingModule {}
 ----
+<1> Nueva ruta para modificación de solicitudes
 
-Adaptación del componente de Crear solicitud para que también valga para editar.
+Si ahora escribimos la ruta 
+
+comprobamos que la ruta es aceptada. Sin embargo, se muestra el componente de Crear, tal y como hemos indicado en el archivo de rutas. 
+
+image::RutaEditarSolicitud.png[]
+
+Lo esperado en la aplicación es que muestre una pantalla de modificación con los datos de la solicitud a modificar. Obviamente esto aún no se puede mostrar porque aún está por implementar. Veamos cómo hacerlo en los apartados siguientes.
+
+### Un componente para crear y editar
+
+Hasta ahora tenemos un componente para crear solicitudes. Lo inmediato sería crear uno nuevo para editar solicitudes. Sin embargo, si nos paramos a pensar, el componente de editar es prácticamente igual al de crear salvo que al editar se cuenta con el `id` de la solicitud que se está editando y al crear, el `id` es creado a posteriori. Por tanto, podríamos plantear un único componente que usemos para las dos operaciones. Para ello, usaremos una variable que indicará si estamos en modo de edición o en modo de creación. En función de su valor, se mostrará un texto u otro en la cabecera y en los botones, y se llamará al método de creación o de eliminación. Veamos cómo hacerlo.
+
+Comencemos adaptación la parte TypeScript del componente de Crear solicitud para que también valga para editar.
 
 Archivo `main/solicitudes/pages/crear/crear.component.ts`:
 
@@ -3517,9 +3547,11 @@ Archivo `main/solicitudes/pages/crear/crear.component.ts`:
 ----
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { PeopleService } from '../../../../services/people.service';
-import { ReservationsService } from '../../../../services/reservations.service';
+import { lastValueFrom } from 'rxjs';
+import { PersonaService } from '../../../../services/persona.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Solicitud } from '../../../../interfaces/solicitud';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -3528,8 +3560,12 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./crear.component.css'],
 })
 export class CrearComponent implements OnInit {
-  editMode: boolean = false;
-  id: any;
+  modoEditar: boolean = false; <1>
+  id: any; <2>
+
+  cargos: string[] = [];
+
+  persona: any;
 
   formHorario: FormGroup = this.fb.group({
     nombre: [{ value: '', disabled: true }],
@@ -3546,7 +3582,7 @@ export class CrearComponent implements OnInit {
     horaFin: [,],
   });
 
-  daysOfWeek: string[] = [
+  diasSemana: string[] = [
     'lunes',
     'martes',
     'miercoles',
@@ -3556,31 +3592,29 @@ export class CrearComponent implements OnInit {
     'domingo',
   ];
 
-  hours = Array.from(Array(24).keys());
-  people: any = [];
-  cargos: any = [];
+  horas = Array.from(Array(24).keys());
 
   constructor(
     private fb: FormBuilder,
-    private peopleService: PeopleService,
-    private reservationsService: ReservationsService,
+    private personaService: PersonaService,
+    private solicitudesService: SolicitudesService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private route: ActivatedRoute <1>
+    private route: ActivatedRoute <3>
   ) {}
 
   ngOnInit(): void {
-    this.editMode = false; <2>
-    this.id = this.route.snapshot.params['id']; <3>
-    if (this.id) { <4>
-      this.reservationsService.findOne(this.id).subscribe((res) => { <5>
-        this.editMode = true; <6>
-        this.formHorario.patchValue({ ...res }); <7>
+    this.modoEditar = false; <4>
+    this.id = this.route.snapshot.params['id']; <5>
+    if (this.id) { <6>
+      this.solicitudesService.findOne(this.id).subscribe((res) => { <7>
+        this.modoEditar = true; <8>
+        this.formHorario.patchValue({ ...res }); <9>
       });
     }
   }
 
-  isValidField(field: string) {
+  isNotValidField(field: string) {
     return (
       this.formHorario.controls[field].errors &&
       this.formHorario.controls[field].touched
@@ -3591,80 +3625,50 @@ export class CrearComponent implements OnInit {
     return this.formHorario.valid;
   }
 
-  findPeople(email: any) {
-    this.peopleService.findOne(email).subscribe((res) => {
-      this.people = res;
-    });
+  buscarPersona(email: any) {
+    return lastValueFrom(this.personaService.findOne(email));
   }
 
-  updatePeopleFields() {
+  async actualizarCamposPersona() {
     const email = this.formHorario.controls['email'].value;
-    this.findPeople(email);
 
-    if (this.people.length > 0) {
-      this.cargos = [...this.people[0].cargo];
+    this.persona = (await this.buscarPersona(email))[0];
 
-      this.formHorario.controls['nombre'].setValue(this.people[0].nombre);
-      this.formHorario.controls['unidad'].setValue(this.people[0].unidad);
-      this.formHorario.controls['telefono'].setValue(this.people[0].telefono);
+    if (this.persona) {
+      this.cargos = [...this.persona.cargo];
 
-      this.people.cargo = this.formHorario.controls['cargo'].value;
+      this.formHorario.patchValue(this.persona);
+
+      this.persona.cargo = this.formHorario.controls['cargo'].value;
 
       return;
     }
+
     this.clearPersonalData();
   }
 
   clearPersonalData() {
-    this.formHorario.controls['nombre'].setValue('');
-    this.formHorario.controls['unidad'].setValue('');
-    this.formHorario.controls['telefono'].setValue('');
-    this.formHorario.controls['cargo'].setValue('');
+    this.formHorario.reset();
+
+    this.snackBar.open('Persona no disponible', '', {
+      duration: 1500,
+    });
   }
 
   save() {
-    let {
-      nombre,
-      cargo,
-      unidad,
-      telefono,
-      email,
-      tipo,
-      nombreActividad,
-      start,
-      end,
-      dia,
-      horaInicio,
-      horaFin,
-    } = this.formHorario.controls;
+    let solicitud = this.formHorario.getRawValue();
 
-    let reservation: any = {
-      nombre: nombre.value,
-      cargo: cargo.value,
-      unidad: unidad.value,
-      telefono: telefono.value,
-      email: email.value,
-      tipo: tipo.value,
-      nombreActividad: nombreActividad.value,
-      start: start.value,
-      end: end.value,
-      dia: dia.value,
-      horaInicio: horaInicio.value,
-      horaFin: horaFin.value,
-    };
-
-    if (this.editMode) { <8>
-      (reservation.id = this.id), <9>
-        this.reservationsService.update(reservation).subscribe(() => { <10>
+    if (this.modoEditar) { <10>
+      (solicitud.id = this.id), <11>
+        this.solicitudesService.update(solicitud).subscribe(() => { <12>
           this.snackBar.open('Solicitud actualizada', '', {
             duration: 1500,
           });
 
           this.router.navigate(['/solicitudes/consultar']);
-          
         });
-    } else {
-      this.reservationsService.save(reservation).subscribe((res) => { <11>
+    } else { <13>
+      this.solicitudesService.save(solicitud).subscribe((res) => {
         this.snackBar.open('Solicitud guardada', '', {
           duration: 1500,
         });
@@ -3674,20 +3678,28 @@ export class CrearComponent implements OnInit {
     }
   }
 }
-----
-<1>
-<2>
-<3>
-<4>
-<5>
-<6>
-<7>
-<8>
-<9>
-<10>
-<11>
 
-Modificación de la presentación del formulario de Crear solicitud para que sirva también para actualizar. Básicamente se trata de cambiar el título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo y será el que se encargue de saber si tiene que actualizar o insertar en función del valor de `editMode`, que básicamente se terminaba a partir de lo que indicase la ruta.
+----
+<1> Variable para indicar que se está en modo _Editar_
+<2> Variable para almacenar el `id` de la solicitud
+<3> Permite acceder a componentes de la URL
+<4> Configurar el modo Crear como el modo predeterminado (editar es falso)
+<5> Asignar a `id` el componente `id` de la ruta de la URL. Las partes de la ruta están definidas en el módulo de rutas `solicitudes-routing.module.ts`
+<6> Si hay `id` en la URL (es decir, se está en modo _Editar_)
+<7> Buscar la solicitud mediante su `id`
+<8> Activar el modo _Editar_
+<9> Pegarle a cada elemento del formulario los elementos de la solicitud leída 
+<10> Bloque a ejecutar cuando se está en modo _Editar_
+<11> ???
+<12> Llamada al método de actualizar pasándole la solicitud como parámetro
+<13> Bloque a ejecutar cuando se está en modo _Crear_
+
+[NOTE]
+====
+Para asignar cada elemento de una solicitud a su elemento correspondiente del formulario se puede hacer de uno en uno, pero resulta muy pesado y es propenso a errores. En cambio, si los nombres de los elementos del formulario coinciden con los nombre de los elementos de la solicitud leída de la base d datos, se puede hacer con una sola línea mediante `patchValue` (un motivo más para mantener la consistencia en la denominación de variables)
+====
+
+Ahora tocaría modificar la parte de la presentación del formulario de Crear solicitud para que sirva también para actualizar. Básicamente se trata de cambiar el título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo, ya que el propio método actualizará o insertará en función del valor de `modoEditar`, que básicamente se determinaba a partir de lo que indicase la ruta.
 
 Archivo `main/solicitudes/pages/crear/crear.component.html`:
 
@@ -3695,7 +3707,7 @@ Archivo `main/solicitudes/pages/crear/crear.component.html`:
 ----
 <div fxFlexAlign="center" fxLayoutAlign="center center">
   <form [formGroup]="formHorario" autocomplete="off">
-    <h1>{{ editMode ? "Editar" : "Crear" }} reserva</h1> <1>
+    <h1>{{ modoEditar ? "Editar" : "Crear" }} solicitud</h1> <1>
     <hr />
 
 ....
@@ -3707,7 +3719,7 @@ Archivo `main/solicitudes/pages/crear/crear.component.html`:
             (click)="save()"
             [disabled]="!isValidForm()"
           >
-            {{ editMode ? "Actualizar" : "Crear" }} <2>
+            {{ modoEditar ? "Actualizar" : "Crear" }} <2>
           </button>
         </div>
       </mat-card>
@@ -3715,25 +3727,28 @@ Archivo `main/solicitudes/pages/crear/crear.component.html`:
   </form>
 </div>
 ----
-<1>
-<2>
+<1>  Añadir `Editar` o `Crear` a la cabecera en función del valor de `modoEditar`
+<2> Configurar el texto del botón con `Actualizar` o `Crear` en función del valor de `modoEditar`
 
 .La seguridad ha de estar en el backend
 ****
-Para que filtre si alguien está intentando modificar una reserva que no le corresponda ....
+Para que filtre si alguien está intentando modificar una solicitud que no le corresponda ....
 ****
 
-Programación de la llamada a la actualización en el listado solicitudes
+### Actualizar el componente del listado de solicitudes
+
+Para terminar, tendremos que añadir el botón de modificar al listado de solicitudes y programar el método que se ejecutará al pulsar el botón. Comencemos programando la llamada al método de actualización. Básicamente, lo que hará será redirigir a la ruta donde está el componente de editar/crear.
 
 Archivo `main/pages/solicitudes/consultar/consultar.component.ts`:
 
 [source, ts]
 ----
 import { Component, OnInit } from '@angular/core';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router'; <1>
-import { ReservationsService } from '../../../../services/reservations.service';
 import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dialogo-eliminar.component';
+import { Router } from '@angular/router'; <1>
 
 @Component({
   selector: 'app-consultar',
@@ -3741,62 +3756,55 @@ import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dial
   styleUrls: ['./consultar.component.css'],
 })
 export class ConsultarComponent implements OnInit {
-  reservations: any = [];
-  columns: any;
-  dataSource: any;
-  displayedColumns: any;
+  solicitudes: any = [];
+
+  dataSource: any = [];
+  displayedColumns = ['nombre', 'cargo', 'unidad', 'telefono', 'acciones'];
 
   constructor(
-    private reservationsService: ReservationsService,
+    private solicitudesService: SolicitudesService,
+    private snackBar: MatSnackBar,
     public dialog: MatDialog,
     private router: Router <2>
   ) {}
-
   ngOnInit(): void {
-    this.reservationsService.findAll().subscribe((res) => {
-      this.reservations = res;
-      this.displayData();
+    this.solicitudesService.findAll().subscribe((res) => {
+      this.dataSource = res;
+      if (this.dataSource.length == 0) {
+        this.snackBar.open('No hay solicitudes', '', {
+          duration: 1500,
+        });
+      }
     });
   }
-
-  displayData() {
-    this.dataSource = this.reservations;
-    this.displayedColumns = [
-      'nombre',
-      'cargo',
-      'unidad',
-      'telefono',
-      'acciones',
-    ];
-  }
-
+ 
   editar(element: any) { <3>
     this.router.navigate([`/solicitudes/editar/${element.id}`]); <4>
   }
 
   eliminar(element: any) {
-    const dialogRef = this.dialog.open(DialogoEliminarComponent, {
+    this.dialog.open(DialogoEliminarComponent, {
       data: element,
     });
   }
 }
 ----
-<1>
-<2>
-<3>
-<4>
+<1> Importación de `Router
+<2> Inyección del `Router`
+<3> Método al que llamará el botón de `Editar`
+<4> Redirigir a la ruta de editar solicitudes
 
-Creación del botón de Actualización de solicitudes en la pantalla de Consultar solicitudes para iniciar el proceso de actualización.
+Finalzaremos añadiendo un botón de Actualización de solicitudes en la pantalla de Consultar solicitudes que llame al método de actualización.
 
-Archivo `main
+Archivo `main/pages/solicitudes/consultar/consultar.component.html`:
 
 [source, html]
 ----
-<div fxLayout="column" fxFlexAlign="center" fxLayoutAlign="center center">
+<div fxLayout="column" fxLayoutAlign="center center">
   <h1>Listado de solicitudes</h1>
-  <div>
+  <div *ngIf="dataSource.length > 0">
     <hr />
-    <mat-card *ngIf="reservations.length > 0">
+    <mat-card>
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef>Nombre</th>
@@ -3818,7 +3826,7 @@ Archivo `main
           <td mat-cell *matCellDef="let element">{{ element.telefono }}</td>
         </ng-container>
 
-        <!-- Botones de acción -->
+        <!-- Get Details -->
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef>Acciones</th>
           <td mat-cell *matCellDef="let element">
@@ -3830,7 +3838,7 @@ Archivo `main
               <mat-icon>edit</mat-icon>
               Editar
             </button>
-            <button 
+            <button
               mat-stroked-button
               color="primary"
               (click)="eliminar(element)"
@@ -3840,6 +3848,7 @@ Archivo `main
             </button>
           </td>
         </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
@@ -3847,5 +3856,20 @@ Archivo `main
   </div>
 </div>
 ----
-<1>
-<2>
+<1> Botón de modificación
+<2> Llamada al método de modificación pasándole la solicitud a modificar
+
+Veamos el resultado en funcionamiento. Partimos de una pantalla con un conjunto de solicitudes. Al lado de cada solicitud aparecerá un botón para poder modificarla.
+
+image::SolicitudesAntesDeModificar.png[]
+
+Si pulsamos el botón `Editar` de la solicitud a modificar nos redirigirá a la pantalla de edición de solicitudes. En la cabecera aparecerá `Editar solicitud` ya que se ha entrado al componente en modo _Editar_. Recordemos que se trata del componente de Crear solicitud que hemos modificado para que sirva tanto para crear como para modificar solicitudes.
+
+image::EditarSolicitud.png[]
+
+Aprovecharemos y haremos una modificación en el cargo con el realiza la solicitud. Vemos que también aparece modificado el texto del botón, que ahora es `Modificar`. Si pulsamos el botón nos llevará al listado de solicitudes donde aparecerá la solicitud modificada.
+
+image::SolicitudModificada.png[]
+
+Si ahora seleccionáramos la opción de crear solicitud veríamos que se muestra correctamente la pantalla de Crear. Ahora la cabecera y el botón son los correspondientes a la creación de solicitudes.
+

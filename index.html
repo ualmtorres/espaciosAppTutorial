@@ -542,7 +542,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#trueprogramación-de-la-lógica-del-cuadro-de-diálogo-de-eliminación">12.3. Programación de la lógica del cuadro de diálogo de eliminación</a></li>
 <li><a href="#truepresentación-de-los-datos-en-el-cuadro-de-diálogo-de-eliminación">12.4. Presentación de los datos en el cuadro de diálogo de eliminación</a></li>
 <li><a href="#truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes">12.5. Presentación del botón de eliminación en el listado de solicitudes</a></li>
-<li><a href="#trueactualización-de-solicitudes">12.6. Actualización de solicitudes</a></li>
+</ul>
+</li>
+<li><a href="#trueactualización-de-solicitudes">13. Actualización de solicitudes</a>
+<ul class="sectlevel2">
+<li><a href="#truecreación-del-método-de-actualización-de-una-solicitud">13.1. Creación del método de actualización de una solicitud</a></li>
+<li><a href="#truecreación-de-la-ruta-de-modificación-de-solicitudes">13.2. Creación de la ruta de modificación de solicitudes</a></li>
+<li><a href="#trueun-componente-para-crear-y-editar">13.3. Un componente para crear y editar</a></li>
+<li><a href="#trueactualizar-el-componente-del-listado-de-solicitudes">13.4. Actualizar el componente del listado de solicitudes</a></li>
 </ul>
 </li>
 </ul>
@@ -4987,7 +4994,7 @@ export class ConsultarComponent implements OnInit {
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px"&gt;
   &lt;div fxFlex&gt;
-    &lt;h1&gt;Lista de reservas&lt;/h1&gt;
+    &lt;h1&gt;Lista de espacios&lt;/h1&gt;
     &lt;app-form-buscar (onSearchEspacio)="buscar($event)"&gt;&lt;/app-form-buscar&gt; <i class="conum" data-value="1"></i><b>(1)</b>
   &lt;/div&gt;
   &lt;div fxLayoutAlign="center stretch"&gt;
@@ -5311,7 +5318,7 @@ export class SidebarComponent implements OnInit {
 <div class="sect2">
 <h3 id="truecreación-del-método-de-eliminación-de-solicitudes"><a class="anchor" href="#truecreación-del-método-de-eliminación-de-solicitudes"></a>12.2. Creación del método de eliminación de solicitudes</h3>
 <div class="paragraph">
-<p>A continuación debemos implementar en el servicio <code>Solicitudes</code> el método de eliminación de solicitudes añadiéndolo a <code>services/reservations.service.ts</code>:</p>
+<p>A continuación debemos implementar en el servicio <code>Solicitudes</code> el método de eliminación de solicitudes añadiéndolo a <code>services/solicitudes.service.ts</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5369,7 +5376,7 @@ export class SolicitudesService {
 <pre class="highlightjs highlight"><code data-lang="ts" class="language-ts hljs">import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { ReservationsService } from '../../../../services/reservations.service';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -5381,7 +5388,7 @@ export class DialogoEliminarComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef&lt;DialogoEliminarComponent&gt;, <i class="conum" data-value="1"></i><b>(1)</b>
     @Inject(MAT_DIALOG_DATA) public data: any, <i class="conum" data-value="2"></i><b>(2)</b>
-    private reservationsService: ReservationsService, <i class="conum" data-value="3"></i><b>(3)</b>
+    private solicitudesService: SolicitudesService, <i class="conum" data-value="3"></i><b>(3)</b>
     private router: Router, <i class="conum" data-value="4"></i><b>(4)</b>
     private snackBar: MatSnackBar <i class="conum" data-value="5"></i><b>(5)</b>
   ) {}
@@ -5389,7 +5396,7 @@ export class DialogoEliminarComponent implements OnInit {
   ngOnInit(): void {}
 
   eliminar() { <i class="conum" data-value="6"></i><b>(6)</b>
-    this.reservationsService.delete(this.data.id).subscribe(() =&gt; { <i class="conum" data-value="7"></i><b>(7)</b>
+    this.solicitudesService.delete(this.data.id).subscribe(() =&gt; { <i class="conum" data-value="7"></i><b>(7)</b>
       this.snackBar.open('Solicitud eliminada', '', { <i class="conum" data-value="8"></i><b>(8)</b>
         duration: 1500,
       });
@@ -5687,13 +5694,40 @@ export class ConsultarComponent implements OnInit {
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="trueactualización-de-solicitudes"><a class="anchor" href="#trueactualización-de-solicitudes"></a>12.6. Actualización de solicitudes</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="trueactualización-de-solicitudes"><a class="anchor" href="#trueactualización-de-solicitudes"></a>13. Actualización de solicitudes</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Implementación de los métodos <code>findOne</code> para búsqueda de la solicitud a modificar y <code>update</code> para actualización con los nuevos datos.</p>
+<p>Para finalizar con la parte de operaciones CRUD vamos a añadir a la aplicación la posibilidad de actualizar solicitudes. Tendremos que:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Implementar los métodos de localización y modificación de una solicitud.</p>
+</li>
+<li>
+<p>Crear de una nueva ruta en la aplicación para la operación de modificación.</p>
+</li>
+<li>
+<p>Adaptar el componente de crear para que también valga para modificar.</p>
+</li>
+<li>
+<p>Crear el método de editar solcitud en el componente de listado de solicitudes.</p>
+</li>
+<li>
+<p>Añadir el botón de modificar solicitud y conectarlo al método de editar solicitud anterior.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="truecreación-del-método-de-actualización-de-una-solicitud"><a class="anchor" href="#truecreación-del-método-de-actualización-de-una-solicitud"></a>13.1. Creación del método de actualización de una solicitud</h3>
+<div class="paragraph">
+<p>La actualización de una solicitud realmente implica dos operaciones diferentes. Una de búsqueda de la solicitud para la recuperación de sus datos y presentarlos en el formulario de modificación, y otra que se encargue de la modificación en sí misma. De esto se van a encargar los métodos <code>findOne</code> y <code>update</code>, respectivamente, que se muestran acontinuación.</p>
 </div>
 <div class="paragraph">
-<p>Archivo <code>services/reservations.service.ts</code>:</p>
+<p>Archivo <code>services/solicitudes.service.ts</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5705,36 +5739,59 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class ReservationsService {
+export class SolicitudesService {
   constructor(private http: HttpClient) {}
 
-  findOne(id: any): Observable&lt;any&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
-    return this.http.get(`${environment.urlEspacios}/reservations/${id}`); <i class="conum" data-value="2"></i><b>(2)</b>
+  findAll(): Observable&lt;any&gt; {
+    return this.http.get(`${environment.urlEspacios}/solicitudes`);
   }
 
-  findAll(): Observable&lt;any&gt; {
-    return this.http.get(`${environment.urlEspacios}/reservations`);
+  findOne(id: any): Observable&lt;any&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
+    return this.http.get(`${environment.urlEspacios}/solicitudes/${id}`); <i class="conum" data-value="2"></i><b>(2)</b>
   }
 
   save(data: any): Observable&lt;any&gt; {
-    return this.http.post(`${environment.urlEspacios}/reservations`, data);
+    return this.http.post(`${environment.urlEspacios}/solicitudes`, data);
   }
 
   delete(id: any): Observable&lt;any&gt; {
-    return this.http.delete(`${environment.urlEspacios}/reservations/${id}`);
+    return this.http.delete(`${environment.urlEspacios}/solicitudes/${id}`);
   }
 
   update(data: any): Observable&lt;any&gt; { <i class="conum" data-value="3"></i><b>(3)</b>
-    return this.http.put( <i class="conum" data-value="4"></i><b>(4)</b>
-      `${environment.urlEspacios}/reservations/${data.id}`,
+    return this.http.put(
+      `${environment.urlEspacios}/solicitudes/${data.id}`, <i class="conum" data-value="4"></i><b>(4)</b>
       data
     );
   }
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Método para la búsqueda y recuperación de los datos de la solicitud a mofificar</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Llamada al endpoint de recuperación de la solicitud a modificar</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Método de actualización</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Llamada al endpoint de actualización de la solicitud pasándole los datos de la solicitud modificada</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="truecreación-de-la-ruta-de-modificación-de-solicitudes"><a class="anchor" href="#truecreación-de-la-ruta-de-modificación-de-solicitudes"></a>13.2. Creación de la ruta de modificación de solicitudes</h3>
 <div class="paragraph">
-<p>La ruta de editar será nueva, pero la gestionará el mismo componente de Crear solicitud. Habrá que adaptarlo, pero básicamente es lo mismo pero con <code>id</code>  y tendrá que llamar a un método <code>PATCH</code> en lugar de uno <code>POST</code>. Lo veremos más adelante.</p>
+<p>Necesitamos una nueva ruta para editar una solicitud. A esa ruta asociaremos el componente que se mostrará en la aplicación. Realmente no se es necesario un nuevo componente de Modificar solicitud. Se puede encargar el mismo componente de Crear solicitud. Habrá que adaptarlo. Básicamente es lo mismo pero incluyendo el <code>id</code> de la solicitud a modificar. Además, tendrá que incorporarse un método <code>PATCH</code> para la modificación. Lo veremos más adelante. Ahora vamos a crear la nueva ruta para modificar una solicitud</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/solictudes.routing.ts</code>:</p>
@@ -5751,8 +5808,9 @@ const routes: Routes = [
     path: '',
     children: [
       { path: 'crear', component: CrearComponent },
-      { path: 'editar/:id', component: CrearComponent }, <i class="conum" data-value="1"></i><b>(1)</b>
       { path: 'consultar', component: ConsultarComponent },
+      { path: 'editar/:id', component: CrearComponent }, <i class="conum" data-value="1"></i><b>(1)</b>
+      { path: '', redirectTo: 'consultar' },
     ],
   },
   {
@@ -5768,8 +5826,36 @@ const routes: Routes = [
 export class SolicitudesRoutingModule {}</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Nueva ruta para modificación de solicitudes</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Adaptación del componente de Crear solicitud para que también valga para editar.</p>
+<p>Si ahora escribimos la ruta</p>
+</div>
+<div class="paragraph">
+<p>comprobamos que la ruta es aceptada. Sin embargo, se muestra el componente de Crear, tal y como hemos indicado en el archivo de rutas.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/RutaEditarSolicitud.png" alt="RutaEditarSolicitud">
+</div>
+</div>
+<div class="paragraph">
+<p>Lo esperado en la aplicación es que muestre una pantalla de modificación con los datos de la solicitud a modificar. Obviamente esto aún no se puede mostrar porque aún está por implementar. Veamos cómo hacerlo en los apartados siguientes.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="trueun-componente-para-crear-y-editar"><a class="anchor" href="#trueun-componente-para-crear-y-editar"></a>13.3. Un componente para crear y editar</h3>
+<div class="paragraph">
+<p>Hasta ahora tenemos un componente para crear solicitudes. Lo inmediato sería crear uno nuevo para editar solicitudes. Sin embargo, si nos paramos a pensar, el componente de editar es prácticamente igual al de crear salvo que al editar se cuenta con el <code>id</code> de la solicitud que se está editando y al crear, el <code>id</code> es creado a posteriori. Por tanto, podríamos plantear un único componente que usemos para las dos operaciones. Para ello, usaremos una variable que indicará si estamos en modo de edición o en modo de creación. En función de su valor, se mostrará un texto u otro en la cabecera y en los botones, y se llamará al método de creación o de eliminación. Veamos cómo hacerlo.</p>
+</div>
+<div class="paragraph">
+<p>Comencemos adaptación la parte TypeScript del componente de Crear solicitud para que también valga para editar.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/pages/crear/crear.component.ts</code>:</p>
@@ -5778,9 +5864,11 @@ export class SolicitudesRoutingModule {}</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="ts" class="language-ts hljs">import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { PeopleService } from '../../../../services/people.service';
-import { ReservationsService } from '../../../../services/reservations.service';
+import { lastValueFrom } from 'rxjs';
+import { PersonaService } from '../../../../services/persona.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Solicitud } from '../../../../interfaces/solicitud';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -5789,8 +5877,12 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./crear.component.css'],
 })
 export class CrearComponent implements OnInit {
-  editMode: boolean = false;
-  id: any;
+  modoEditar: boolean = false; <i class="conum" data-value="1"></i><b>(1)</b>
+  id: any; <i class="conum" data-value="2"></i><b>(2)</b>
+
+  cargos: string[] = [];
+
+  persona: any;
 
   formHorario: FormGroup = this.fb.group({
     nombre: [{ value: '', disabled: true }],
@@ -5807,7 +5899,7 @@ export class CrearComponent implements OnInit {
     horaFin: [,],
   });
 
-  daysOfWeek: string[] = [
+  diasSemana: string[] = [
     'lunes',
     'martes',
     'miercoles',
@@ -5817,31 +5909,29 @@ export class CrearComponent implements OnInit {
     'domingo',
   ];
 
-  hours = Array.from(Array(24).keys());
-  people: any = [];
-  cargos: any = [];
+  horas = Array.from(Array(24).keys());
 
   constructor(
     private fb: FormBuilder,
-    private peopleService: PeopleService,
-    private reservationsService: ReservationsService,
+    private personaService: PersonaService,
+    private solicitudesService: SolicitudesService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private route: ActivatedRoute <i class="conum" data-value="1"></i><b>(1)</b>
+    private route: ActivatedRoute <i class="conum" data-value="3"></i><b>(3)</b>
   ) {}
 
   ngOnInit(): void {
-    this.editMode = false; <i class="conum" data-value="2"></i><b>(2)</b>
-    this.id = this.route.snapshot.params['id']; <i class="conum" data-value="3"></i><b>(3)</b>
-    if (this.id) { <i class="conum" data-value="4"></i><b>(4)</b>
-      this.reservationsService.findOne(this.id).subscribe((res) =&gt; { <i class="conum" data-value="5"></i><b>(5)</b>
-        this.editMode = true; <i class="conum" data-value="6"></i><b>(6)</b>
-        this.formHorario.patchValue({ ...res }); <i class="conum" data-value="7"></i><b>(7)</b>
+    this.modoEditar = false; <i class="conum" data-value="4"></i><b>(4)</b>
+    this.id = this.route.snapshot.params['id']; <i class="conum" data-value="5"></i><b>(5)</b>
+    if (this.id) { <i class="conum" data-value="6"></i><b>(6)</b>
+      this.solicitudesService.findOne(this.id).subscribe((res) =&gt; { <i class="conum" data-value="7"></i><b>(7)</b>
+        this.modoEditar = true; <i class="conum" data-value="8"></i><b>(8)</b>
+        this.formHorario.patchValue({ ...res }); <i class="conum" data-value="9"></i><b>(9)</b>
       });
     }
   }
 
-  isValidField(field: string) {
+  isNotValidField(field: string) {
     return (
       this.formHorario.controls[field].errors &amp;&amp;
       this.formHorario.controls[field].touched
@@ -5852,80 +5942,50 @@ export class CrearComponent implements OnInit {
     return this.formHorario.valid;
   }
 
-  findPeople(email: any) {
-    this.peopleService.findOne(email).subscribe((res) =&gt; {
-      this.people = res;
-    });
+  buscarPersona(email: any) {
+    return lastValueFrom(this.personaService.findOne(email));
   }
 
-  updatePeopleFields() {
+  async actualizarCamposPersona() {
     const email = this.formHorario.controls['email'].value;
-    this.findPeople(email);
 
-    if (this.people.length &gt; 0) {
-      this.cargos = [...this.people[0].cargo];
+    this.persona = (await this.buscarPersona(email))[0];
 
-      this.formHorario.controls['nombre'].setValue(this.people[0].nombre);
-      this.formHorario.controls['unidad'].setValue(this.people[0].unidad);
-      this.formHorario.controls['telefono'].setValue(this.people[0].telefono);
+    if (this.persona) {
+      this.cargos = [...this.persona.cargo];
 
-      this.people.cargo = this.formHorario.controls['cargo'].value;
+      this.formHorario.patchValue(this.persona);
+
+      this.persona.cargo = this.formHorario.controls['cargo'].value;
 
       return;
     }
+
     this.clearPersonalData();
   }
 
   clearPersonalData() {
-    this.formHorario.controls['nombre'].setValue('');
-    this.formHorario.controls['unidad'].setValue('');
-    this.formHorario.controls['telefono'].setValue('');
-    this.formHorario.controls['cargo'].setValue('');
+    this.formHorario.reset();
+
+    this.snackBar.open('Persona no disponible', '', {
+      duration: 1500,
+    });
   }
 
   save() {
-    let {
-      nombre,
-      cargo,
-      unidad,
-      telefono,
-      email,
-      tipo,
-      nombreActividad,
-      start,
-      end,
-      dia,
-      horaInicio,
-      horaFin,
-    } = this.formHorario.controls;
+    let solicitud = this.formHorario.getRawValue();
 
-    let reservation: any = {
-      nombre: nombre.value,
-      cargo: cargo.value,
-      unidad: unidad.value,
-      telefono: telefono.value,
-      email: email.value,
-      tipo: tipo.value,
-      nombreActividad: nombreActividad.value,
-      start: start.value,
-      end: end.value,
-      dia: dia.value,
-      horaInicio: horaInicio.value,
-      horaFin: horaFin.value,
-    };
-
-    if (this.editMode) { <i class="conum" data-value="8"></i><b>(8)</b>
-      (reservation.id = this.id), <i class="conum" data-value="9"></i><b>(9)</b>
-        this.reservationsService.update(reservation).subscribe(() =&gt; { <i class="conum" data-value="10"></i><b>(10)</b>
+    if (this.modoEditar) { <i class="conum" data-value="10"></i><b>(10)</b>
+      (solicitud.id = this.id), <i class="conum" data-value="11"></i><b>(11)</b>
+        this.solicitudesService.update(solicitud).subscribe(() =&gt; { <i class="conum" data-value="12"></i><b>(12)</b>
           this.snackBar.open('Solicitud actualizada', '', {
             duration: 1500,
           });
 
           this.router.navigate(['/solicitudes/consultar']);
-
         });
-    } else {
-      this.reservationsService.save(reservation).subscribe((res) =&gt; { <i class="conum" data-value="11"></i><b>(11)</b>
+    } else { <i class="conum" data-value="13"></i><b>(13)</b>
+      this.solicitudesService.save(solicitud).subscribe((res) =&gt; {
         this.snackBar.open('Solicitud guardada', '', {
           duration: 1500,
         });
@@ -5937,21 +5997,78 @@ export class CrearComponent implements OnInit {
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Variable para indicar que se está en modo <em>Editar</em></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Variable para almacenar el <code>id</code> de la solicitud</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Permite acceder a componentes de la URL</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Configurar el modo Crear como el modo predeterminado (editar es falso)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Asignar a <code>id</code> el componente <code>id</code> de la ruta de la URL. Las partes de la ruta están definidas en el módulo de rutas <code>solicitudes-routing.module.ts</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Si hay <code>id</code> en la URL (es decir, se está en modo <em>Editar</em>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Buscar la solicitud mediante su <code>id</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Activar el modo <em>Editar</em></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Pegarle a cada elemento del formulario los elementos de la solicitud leída</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Bloque a ejecutar cuando se está en modo <em>Editar</em></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>???</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Llamada al método de actualizar pasándole la solicitud como parámetro</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td>Bloque a ejecutar cuando se está en modo <em>Crear</em></td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;
-&lt;3&gt;
-&lt;4&gt;
-&lt;5&gt;
-&lt;6&gt;
-&lt;7&gt;
-&lt;8&gt;
-&lt;9&gt;
-&lt;10&gt;
-&lt;11&gt;</p>
+<p>Para asignar cada elemento de una solicitud a su elemento correspondiente del formulario se puede hacer de uno en uno, pero resulta muy pesado y es propenso a errores. En cambio, si los nombres de los elementos del formulario coinciden con los nombre de los elementos de la solicitud leída de la base d datos, se puede hacer con una sola línea mediante <code>patchValue</code> (un motivo más para mantener la consistencia en la denominación de variables)</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Modificación de la presentación del formulario de Crear solicitud para que sirva también para actualizar. Básicamente se trata de cambiar el título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo y será el que se encargue de saber si tiene que actualizar o insertar en función del valor de <code>editMode</code>, que básicamente se terminaba a partir de lo que indicase la ruta.</p>
+<p>Ahora tocaría modificar la parte de la presentación del formulario de Crear solicitud para que sirva también para actualizar. Básicamente se trata de cambiar el título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo, ya que el propio método actualizará o insertará en función del valor de <code>modoEditar</code>, que básicamente se determinaba a partir de lo que indicase la ruta.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/pages/crear/crear.component.html</code>:</p>
@@ -5960,7 +6077,7 @@ export class CrearComponent implements OnInit {
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxFlexAlign="center" fxLayoutAlign="center center"&gt;
   &lt;form [formGroup]="formHorario" autocomplete="off"&gt;
-    &lt;h1&gt;{{ editMode ? "Editar" : "Crear" }} reserva&lt;/h1&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;h1&gt;{{ modoEditar ? "Editar" : "Crear" }} solicitud&lt;/h1&gt; <i class="conum" data-value="1"></i><b>(1)</b>
     &lt;hr /&gt;
 
 ....
@@ -5972,7 +6089,7 @@ export class CrearComponent implements OnInit {
             (click)="save()"
             [disabled]="!isValidForm()"
           &gt;
-            {{ editMode ? "Actualizar" : "Crear" }} <i class="conum" data-value="2"></i><b>(2)</b>
+            {{ modoEditar ? "Actualizar" : "Crear" }} <i class="conum" data-value="2"></i><b>(2)</b>
           &lt;/button&gt;
         &lt;/div&gt;
       &lt;/mat-card&gt;
@@ -5981,20 +6098,31 @@ export class CrearComponent implements OnInit {
 &lt;/div&gt;</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Añadir <code>Editar</code> o <code>Crear</code> a la cabecera en función del valor de <code>modoEditar</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configurar el texto del botón con <code>Actualizar</code> o <code>Crear</code> en función del valor de <code>modoEditar</code></td>
+</tr>
+</table>
 </div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">La seguridad ha de estar en el backend</div>
 <div class="paragraph">
-<p>Para que filtre si alguien está intentando modificar una reserva que no le corresponda &#8230;&#8203;.</p>
+<p>Para que filtre si alguien está intentando modificar una solicitud que no le corresponda &#8230;&#8203;.</p>
 </div>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="trueactualizar-el-componente-del-listado-de-solicitudes"><a class="anchor" href="#trueactualizar-el-componente-del-listado-de-solicitudes"></a>13.4. Actualizar el componente del listado de solicitudes</h3>
 <div class="paragraph">
-<p>Programación de la llamada a la actualización en el listado solicitudes</p>
+<p>Para terminar, tendremos que añadir el botón de modificar al listado de solicitudes y programar el método que se ejecutará al pulsar el botón. Comencemos programando la llamada al método de actualización. Básicamente, lo que hará será redirigir a la ruta donde está el componente de editar/crear.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/pages/solicitudes/consultar/consultar.component.ts</code>:</p>
@@ -6002,10 +6130,11 @@ export class CrearComponent implements OnInit {
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="ts" class="language-ts hljs">import { Component, OnInit } from '@angular/core';
+import { SolicitudesService } from '../../../../services/solicitudes.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router'; <i class="conum" data-value="1"></i><b>(1)</b>
-import { ReservationsService } from '../../../../services/reservations.service';
 import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dialogo-eliminar.component';
+import { Router } from '@angular/router'; <i class="conum" data-value="1"></i><b>(1)</b>
 
 @Component({
   selector: 'app-consultar',
@@ -6013,33 +6142,26 @@ import { DialogoEliminarComponent } from '../../components/dialogo-eliminar/dial
   styleUrls: ['./consultar.component.css'],
 })
 export class ConsultarComponent implements OnInit {
-  reservations: any = [];
-  columns: any;
-  dataSource: any;
-  displayedColumns: any;
+  solicitudes: any = [];
+
+  dataSource: any = [];
+  displayedColumns = ['nombre', 'cargo', 'unidad', 'telefono', 'acciones'];
 
   constructor(
-    private reservationsService: ReservationsService,
+    private solicitudesService: SolicitudesService,
+    private snackBar: MatSnackBar,
     public dialog: MatDialog,
     private router: Router <i class="conum" data-value="2"></i><b>(2)</b>
   ) {}
-
   ngOnInit(): void {
-    this.reservationsService.findAll().subscribe((res) =&gt; {
-      this.reservations = res;
-      this.displayData();
+    this.solicitudesService.findAll().subscribe((res) =&gt; {
+      this.dataSource = res;
+      if (this.dataSource.length == 0) {
+        this.snackBar.open('No hay solicitudes', '', {
+          duration: 1500,
+        });
+      }
     });
-  }
-
-  displayData() {
-    this.dataSource = this.reservations;
-    this.displayedColumns = [
-      'nombre',
-      'cargo',
-      'unidad',
-      'telefono',
-      'acciones',
-    ];
   }
 
   editar(element: any) { <i class="conum" data-value="3"></i><b>(3)</b>
@@ -6047,32 +6169,46 @@ export class ConsultarComponent implements OnInit {
   }
 
   eliminar(element: any) {
-    const dialogRef = this.dialog.open(DialogoEliminarComponent, {
+    this.dialog.open(DialogoEliminarComponent, {
       data: element,
     });
   }
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;
-&lt;3&gt;
-&lt;4&gt;</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Importación de `Router</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inyección del <code>Router</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Método al que llamará el botón de <code>Editar</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Redirigir a la ruta de editar solicitudes</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Creación del botón de Actualización de solicitudes en la pantalla de Consultar solicitudes para iniciar el proceso de actualización.</p>
+<p>Finalzaremos añadiendo un botón de Actualización de solicitudes en la pantalla de Consultar solicitudes que llame al método de actualización.</p>
 </div>
 <div class="paragraph">
-<p>Archivo `main</p>
+<p>Archivo <code>main/pages/solicitudes/consultar/consultar.component.html</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column" fxFlexAlign="center" fxLayoutAlign="center center"&gt;
+<pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column" fxLayoutAlign="center center"&gt;
   &lt;h1&gt;Listado de solicitudes&lt;/h1&gt;
-  &lt;div&gt;
+  &lt;div *ngIf="dataSource.length &gt; 0"&gt;
     &lt;hr /&gt;
-    &lt;mat-card *ngIf="reservations.length &gt; 0"&gt;
+    &lt;mat-card&gt;
       &lt;table mat-table [dataSource]="dataSource" class="mat-elevation-z8"&gt;
         &lt;ng-container matColumnDef="nombre"&gt;
           &lt;th mat-header-cell *matHeaderCellDef&gt;Nombre&lt;/th&gt;
@@ -6094,7 +6230,7 @@ export class ConsultarComponent implements OnInit {
           &lt;td mat-cell *matCellDef="let element"&gt;{{ element.telefono }}&lt;/td&gt;
         &lt;/ng-container&gt;
 
-        &lt;!-- Botones de acción --&gt;
+        &lt;!-- Get Details --&gt;
         &lt;ng-container matColumnDef="acciones"&gt;
           &lt;th mat-header-cell *matHeaderCellDef&gt;Acciones&lt;/th&gt;
           &lt;td mat-cell *matCellDef="let element"&gt;
@@ -6116,6 +6252,7 @@ export class ConsultarComponent implements OnInit {
             &lt;/button&gt;
           &lt;/td&gt;
         &lt;/ng-container&gt;
+
         &lt;tr mat-header-row *matHeaderRowDef="displayedColumns"&gt;&lt;/tr&gt;
         &lt;tr mat-row *matRowDef="let row; columns: displayedColumns"&gt;&lt;/tr&gt;
       &lt;/table&gt;
@@ -6124,9 +6261,44 @@ export class ConsultarComponent implements OnInit {
 &lt;/div&gt;</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Botón de modificación</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Llamada al método de modificación pasándole la solicitud a modificar</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>&lt;1&gt;
-&lt;2&gt;</p>
+<p>Veamos el resultado en funcionamiento. Partimos de una pantalla con un conjunto de solicitudes. Al lado de cada solicitud aparecerá un botón para poder modificarla.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/SolicitudesAntesDeModificar.png" alt="SolicitudesAntesDeModificar">
+</div>
+</div>
+<div class="paragraph">
+<p>Si pulsamos el botón <code>Editar</code> de la solicitud a modificar nos redirigirá a la pantalla de edición de solicitudes. En la cabecera aparecerá <code>Editar solicitud</code> ya que se ha entrado al componente en modo <em>Editar</em>. Recordemos que se trata del componente de Crear solicitud que hemos modificado para que sirva tanto para crear como para modificar solicitudes.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/EditarSolicitud.png" alt="EditarSolicitud">
+</div>
+</div>
+<div class="paragraph">
+<p>Aprovecharemos y haremos una modificación en el cargo con el realiza la solicitud. Vemos que también aparece modificado el texto del botón, que ahora es <code>Modificar</code>. Si pulsamos el botón nos llevará al listado de solicitudes donde aparecerá la solicitud modificada.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/SolicitudModificada.png" alt="SolicitudModificada">
+</div>
+</div>
+<div class="paragraph">
+<p>Si ahora seleccionáramos la opción de crear solicitud veríamos que se muestra correctamente la pantalla de Crear. Ahora la cabecera y el botón son los correspondientes a la creación de solicitudes.</p>
 </div>
 </div>
 </div>
@@ -6134,7 +6306,7 @@ export class ConsultarComponent implements OnInit {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-03-04 21:16:44 +0100
+Last updated 2022-03-05 01:42:39 +0100
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
