@@ -49,7 +49,7 @@ Disponibles los repositorios usados en este tutorial.
 
 ## Creación de la aplicación
 
-El objetivo inicial es tener creado el proyecto con las librerías que vaya a usar.
+El objetivo de esta sección es crear el proyecto de la aplicación junto con las librerías que vaya a usar.
 
 ### Creación de la aplicación con el CLI de Angular
 
@@ -66,9 +66,9 @@ $ ng new angular-espacios
 
 .El archivo `app.routing.module.ts`
 ****
-Podemos crear la aplicación de Angular para que ya tenga configurado un archivo para las rutas principales de la aplicación. Las rutas indican a `Router` la pantalla que hay que mostrar cuando un usuario selecciona ir a la ruta indicada, bien porque hay un enlace en la aplicación que lleva ahí (p.e. un elemento del menú), o bien cualquier link o botón de la aplicación.
+Al crear la aplicación de Angular podemos indicar al CLI que deje configurado un archivo para las rutas principales de la aplicación. Las rutas indican a `Router` la pantalla (realmente un componente) que hay que mostrar cuando un usuario selecciona ir a la ruta indicada en la URL. Esta ruta puede ser escrita directamente en la barra de direcciones, aunque lo más habitual es que se llegue a ella al seleccionar un enlace o botón en la aplicación (p.e. un elemento del menú o un botón de Crear).
 
-Las rutas las definiremos en la constante `routes` que aparece en el código siguiente. El código que se muestra es el archivo `app.routing.module.ts`, que es el que el CLI de Angular crea cuando aceptamos la opción _Angular routing_ al crear el proyecto.
+Las rutas las definiremos en la constante `routes` que aparece en el código siguiente. El código que se muestra es el archivo `app.routing.module.ts`, que es el que el CLI de Angular genera cuando indicamos que queremos añadir _Angular routing_ al crear el proyecto.
 
 [source, ts]
 ----
@@ -83,23 +83,28 @@ const routes: Routes = []; <1>
 })
 export class AppRoutingModule { }
 ----
-<1> Array donde guardaremos las rutas principales admitidas por la aplicación y la pantalla que mostrará. 
+<1> Array donde guardaremos las rutas principales admitidas por la aplicación y la pantalla que mostrará.
+
+[NOTE]
+====
+Al especificar una ruta no siempre tiene que indicarse el componente de la pantalla que se quiere mostrar al dirigir la aplicación a la ruta. También puede indicarse un módulo de rutas de un bloque funcional de la aplicación (p.e. productos, clientes) si se usa la técnica de _lazy loading_, que veremos más adelante
+====
 ****
 
 ### Instalación de librerías
 
-En este proyecto usaremos:
+En este proyecto usaremos las librerías siguientes:
 
-* https://material.angular.io/[Angular Material] como librería de componentes. Nos proporcionará botones, tarjetas, desplegables para selección de fechas (_date-pickers_), y demás.
-* https://github.com/angular/flex-layout[Angular Flex-Layout] es una librería para la organización de componentes.
+* https://material.angular.io/[Angular Material] como librería de componentes de la interfaz de usuario. Nos proporcionará botones, tarjetas, desplegables para selección de fechas (_date-pickers_), cuadros de diálogo, barras para presentar mensajes (_snackbars_) y demás.
+* https://github.com/angular/flex-layout[Angular Flex-Layout] es una librería para la organización o disposición de componentes en la pantalla.
 
 [NOTE]
 ====
-Usaremos Angular Flex-Layout para la organización de componentes porque es lo que usa http://angular-material.fusetheme.com/[Fuse Angular], el template que se usa actualmente para el desarrollo de las aplicaciones de STIC.
+Podíamos haber usado https://getbootstrap.com/docs/5.1/layout/grid/[Bootstrap] para la organización de los componentes en las pantalla de la aplicación. Sin embargo, usaremos Angular Flex-Layout porque es lo que usa http://angular-material.fusetheme.com/[Fuse Angular], el template que se usa actualmente para el desarrollo de las aplicaciones de STIC.
 ====
 
 
-Instalación de Angular Material con las opciones predeterminadas
+Para la instalación de Angular Material ejecutaremos el comando siguiente eligiendo las opciones por defecto, salvo en la de los tipos, que seleccionaremos que _sí_ para usar los estilos tipográficos de Angular.
 
 [source, bash]
 ----
@@ -113,10 +118,7 @@ ngular.io?theme=indigo-pink ]
 ? Set up browser animations for Angular Material? Yes
 ----
 
-Elegiremos las opciones por defecto, salvo en la de los tipos que seleccionaremos que sí para elegir los estilos tipográficos de Angular.
-
-
-Instalación de Angular Flex-Layout
+La instalación de Angular Flex-Layout la haremos con
 
 [source, bash]
 ----
@@ -125,12 +127,15 @@ $ npm i -s @angular/flex-layout @angular/cdk
 
 [NOTE]
 ====
-Plugin de Angular Flex-Layout para Visual Studio: https://marketplace.visualstudio.com/items?itemName=1tontech.angular-material
+Para una mayor comodidad a la hora de escribir código, puedes instalar el plugin de Angular Flex-Layout para Visual Studio: https://marketplace.visualstudio.com/items?itemName=1tontech.angular-material
 ====
 
 ## Creación del scaffolding de la aplicación
 
-En esta sección crearemos todos los módulos, componentes y rutas que tendrá la aplicación. La aplicación constará de una barra lateral a la izquierda, un pie inferior y una zona central donde ser presentarán las pantallas de la aplicación. La figura siguiente ilustra la disposición de estos elementos.
+En esta sección crearemos los módulos, componentes y rutas que tendrá la aplicación. La aplicación constará de una barra lateral a la izquierda, un pie inferior y una zona central donde ser presentarán las pantallas de la aplicación. La figura siguiente ilustra la disposición de estos elementos.
+
+
+image::layout.png[]
 
 ### Creación del módulo `shared`
 
@@ -143,7 +148,7 @@ $ ng g module shared
 
 ### Actualización de los módulos de `app.module.ts`
 
-Como el módulo `shared` es un módulo transversal a la aplicación, lo incluiremos en `app.module.ts`. También incluiremos ahí el módulo de Flex-Layout que usaremos para la distribución de elementos en las pantallas de la aplicación. A continuación se muestran los cambios introducidos en `app.module.ts` para importar `SharedModule` y `FlexLayoutModule`
+Para que el módulo `shared` pueda ser usado desde el componente de la aplicación (`app.component`), hay que incluir el módulo `shared` en `app.module.ts`. También incluiremos en `app-module.ts` el módulo de Flex-Layout que usaremos para la distribución de elementos en la aplicación. A continuación se muestran los cambios introducidos en `app.module.ts` para importar `SharedModule` y `FlexLayoutModule`
 
 [source, ts]
 ----
@@ -180,21 +185,20 @@ export class AppModule {}
 ****
 Angular Flex-Layout es una librería de layout para la distribución de elementos en la interfaz de usuario. En este tutorial nos ajustaremos al funcionamiento básico:
 
-En una etiqueta `<div>` incluiremos `fxLayout="row"` si queremos que los componentes que hay dentro del `div` se alineen uniformemente en horizontal (en una fila -`row`) o incluiremos `fxLayout="column"` si queremos que los componentes que hay dentro del `div` se alineen uniformemente en vertical (en una columna -`column`).
+En una etiqueta `<div>` incluiremos `fxLayout="row"` si queremos que los componentes que hay dentro del `<div>` se alineen uniformemente en horizontal (a lo largo de una fila -`row`) o incluiremos `fxLayout="column"` si queremos que los componentes que hay dentro del `<div>` se alineen uniformemente en vertical (a lo largo de una columna -`column`).
 
-La distribución interna dentro del `div` la haremos con `fxLayoutAlign`, que admite 2 parámetros. El primero representa a la dirección usada en xLayout
-` (horizontal o vertical) y el segundo representa a su perpendicular. Es decir:
+La distribución interna dentro del `<div>` la haremos con `fxLayoutAlign`, que admite 2 parámetros. El primero representa a la dirección usada en `fxLayout` (horizontal o vertical) y el segundo representa a su perpendicular. Es decir:
 
 * Con `fxLayout="row"`, `fxLayoutAlign="<row-alignment> <column-alignment>"`
 * Con `fxLayout="column"`, `fxLayoutAlign="<column-alignment> <row-alignment>"`
 
 Los valores predeterminados son
 
-* `start` (distribución desde el inicio, uno a continuación del otro) para la primera componente
-* `stretch` (estirar ocupando todo) para la componente contraria (la perpendicular)
+* `start` (distribución desde el inicio, uno a continuación del otro) para la primera componente.
+* `stretch` (estirar ocupando todo) para la componente contraria (la perpendicular).
 
 
-Consultar estos enlaces para más información:
+Para más información, consultar estos enlaces:
 
 * https://www.excellarate.com/blogs/getting-started-with-angular-flex-layout/[Getting started with Angular Flex-Layout]
 * https://tburleson-layouts-demos.firebaseapp.com/#/docs[Layout Demos]
@@ -202,7 +206,7 @@ Consultar estos enlaces para más información:
 
 ### Creación de las barras laterales
 
-Para cada barra, crearemos un componente, y lo incluiremos dentro del componente `shared`.
+Para cada barra crearemos un componente, al que incluiremos dentro del componente `shared`.
 
 [source, bash]
 ----
@@ -214,10 +218,10 @@ Al crear los componentes dentro de la carpeta del módulo `shared`, el CLI de An
 
 [IMPORTANT]
 ====
-Para que un componente pueda ser usado fuera del módulo en el que está definido, debe incluirse en el módulo `exports` del módulo. Los módulos que importen dichjo módulo ya sí podrán tener acceso a dichos componentes.
+Para que un componente pueda ser usado fuera del módulo en el que está definido, debe incluirse en el módulo `exports` del módulo. Así, los módulos que importen dicho módulo ya sí podrán tener acceso a dichos componentes.
 ====
 
-A continuación, modificaremos el módulo `shared`  `shared/shared.module.ts` para exportar los componentes de las barras laterales y de pie, y que se puedan usar fuera de su módulo.
+A continuación, modificaremos el módulo `shared/shared.module.ts` para exportar los componentes de las barras laterales y de pie, de forma que se puedan usar fuera de su módulo.
 
 [source, ts]
 ----
@@ -237,11 +241,9 @@ export class SharedModule {}
 
 ### Configuración del layout de la aplicación
 
-Crearemos un layout típico como el siguiente en el que tenemos una disposición horizontal con la barra laterial la izquierda y un bloque de dos componentes verticales a continuación.
+Como hemos comentado, crearemos un layout en el que tenemos una disposición horizontal con la barra laterial la izquierda y un bloque de dos componentes verticales a continuación.
 
-$$$$$$$
-
-Preparación de `app.component.html`
+Definiremos este layout en `app.component.html`
 
 [source, html]
 ----
@@ -259,11 +261,12 @@ Preparación de `app.component.html`
   </div>
 </div>
 ----
-<1> Disposición en filas y alineación desde el inicio en horizontal y ocupando todo en vertical
+<1> Disposición de componenes en fila. Alineación desde el inicio en horizontal y ocupando todo en vertical
+<2> Disposición de componentes en columna
 
 ### Creación de un módulo para los módulos de Angular Material
 
-La aplicación de este tutorial usa varios componentes de Angular, como botones, un módulo _steeper_ para crear un asistente con varios pasos, un módulo de calendario, y demás. Lo más adecuado y eficiente es hacer que cada módulo de la aplicación sólo importe los módulos de los componentes que va a utilizar. Sin embargo, en este tutorial, por comodidad y facilidad crearemos un módulo que denominaremos `Material` que exportará todos los módulos de componentes de Angular Material que va a usar la aplicación en su conjunto. Posteriormente, importaremos este módulo desde el resto de módulos de la aplicación. Habrá módulos que necesiten todos los módulos de nuestro módulo `Material`. Sin embargo, habrá otros que quizá no los usen todos.
+La aplicación de este tutorial usa varios componentes de Angular, como botones, cuadros de diálogo, un módulo de calendario, barra de presentación de mensajes y demás. Lo más adecuado y eficiente es hacer que cada módulo de la aplicación sólo importe los módulos de los componentes Material que va a utilizar. Sin embargo, en este tutorial, por comodidad y facilidad crearemos un módulo que denominaremos `Material` que exportará todos los módulos de componentes de Angular Material que va a usar la aplicación en su conjunto. Posteriormente, importaremos este módulo desde el resto de módulos de la aplicación. Es cierto que habrá módulos que necesiten todos los módulos de nuestro módulo `Material`, mientras que habrá otros que quizá no los usen todos. Como hemos dicho esto no es lo más correcto, pero lo haremos aquí por comodidad.
 
 Para crear el módulo `Material` ejecutaremos
 
@@ -274,9 +277,9 @@ $ ng g module material
 .Módulos de Angular Material
 ****
 
-Para saber los módulos que tenemos que importar para usar un componente de Angular Material, en la sección de componentes de la https://material.angular.io/[documentación oficial de Angular Material] seleccionaremos el componente deseado, y en la pestaña `API` se indica el módulo que hay que importar para usar el componente de Material.
+Para saber los módulos que tenemos que importar para usar un componente de Angular Material, en la sección de componentes de la https://material.angular.io/[documentación oficial de Angular Material] seleccionaremos el componente deseado. En la pestaña `API` se indica el módulo que hay que importar para usar el componente de Material.
 
-La figura siguiente ilustra el módulo para usar un botón Material.
+La figura siguiente ilustra el módulo que hay que importar para usar un botón Material.
 
 image::MatButtonModule.png[]
 
@@ -287,19 +290,17 @@ A continuación se indican los componentes Material que usará la aplicación de
 * `Button` para los botones de la aplicación.
 * `Card` para agrupar elementos en tarjetas.
 * `DatePicker` para la selección de fechas. 
-* `Dialog` para cuadros de diálogo
-* `Form field` para los campos de los formularios
-* `Icon` para uso de iconos Material
-* `Input` para elementos `input` de los formularios
-* `List` para la creación de listas
-* `Select` para listas desplegables
-* `Snackbar` para barra de mensajes
-* `Steeper` para definir un asistente con pasos
-* `Table` para presentación de datos en tablas
+* `Dialog` para cuadros de diálogo.
+* `Form field` para los campos de los formularios.
+* `Icon` para uso de iconos Material.
+* `Input` para elementos `input` de los formularios.
+* `List` para la creación de listas.
+* `Select` para listas desplegables.
+* `Snackbar` para barra de mensajes.
+* `Steeper` para definir un asistente con pasos.
+* `Table` para presentación de datos en tablas.
 
-También incluiremos el módulo de `Flex-Layout` para la distribución de elementos en la pantalla.
-
-Incluiremos estos módulos en nuestro módulo `angular/angular.module.ts`:
+También incluiremos el módulo de `Flex-Layout` para la distribución de elementos en la pantalla. Así quedaría nuestro módulo `angular/angular.module.ts`:
 
 [source, ts]
 ----
@@ -348,13 +349,13 @@ import { MatTableModule } from '@angular/material/table';
 export class MaterialModule {}
 
 ----
-<1> Lista de módulos Material exportados 
+<1> Lista de módulos Material exportados para que puedan ser usado al importar este módulo
 <2> Módulo de Flex-Layout
 <3> Módulos Material para nuestra aplicación
 
 [TIP]
 ====
-Para una mayor legibilidad del código, se recomienda dejar ordenada las listas de `imports` y `exports` . También se recomienda usar grupos de `imports` y `exports`  (p.e. separando los módulos de Angular, de los genéricos de nuestra aplicación y otro bloque para los específicos).
+Para una mayor legibilidad del código, se recomienda dejar ordenada las listas de `imports` y `exports` . También se recomienda dejar líneas en blanco entre los grupos de `imports` y `exports` para mejorar la legibilidad (p.e. separando los módulos de Angular, de los genéricos de nuestra aplicación y otro bloque para los específicos).
 ====
 
 ### Creación de los módulos de la aplicación
@@ -365,11 +366,15 @@ A partir de la organización o descomposición funcional a un primer nivel de la
 * El módulo de espacios permitirá realizar consultas sobre ocupación de espacios.
 * El módulo `home` incluye el componente de inicio de la aplicación, que se mostrará al inicio o al tratar de ir a una ruta no disponible.
 
+A continuación se muestra un diagrama que ilustra esta organización funcional.
+
+image::OrganizacionFuncional.png[]
+
 Para reducir el tiempo y el tamaño de la carga inicial de la aplicación utilizaremos la técnica de _lazy loading_.
 
 .Lazy loading
 ****
-De forma predeterminada, al iniciar la aplicación se cargan todos los módulos presentes en `app.module.ts`. Si colocamos ahí todos los módulos de la aplicación, en aplicaciones grandes con gran cantidad de módulos se ralentizará su carga y funcionamiento inicial. Esta situación se puede prevenir con lo que se conoce como _lazy loading_, que consiste en separar los distintos módulos de la aplicación y cargarlos conforme vayan siendo necesarios. El concepto _necesario_ básicamente hace referencia a que el usuario acceda a las rutas de la aplicación que utilizan los componentes de un módulo. Esto tiene un resultado inmediato y es la reducción de los tiempos de carga.
+De forma predeterminada, al iniciar la aplicación se cargan todos los módulos presentes en `app.module.ts`. Si colocamos ahí todos los módulos de la aplicación, en aplicaciones grandes con gran cantidad de módulos se ralentizará su carga y funcionamiento inicial. Esta situación se puede prevenir con lo que se conoce como _lazy loading_, que consiste en separar los distintos módulos de la aplicación y cargarlos conforme vayan siendo necesarios. El concepto _necesario_ básicamente hace referencia a que el usuario acceda a las rutas de la aplicación que utilizan los componentes de un módulo. Esto tiene un impacto inmediato en la reducción de los tiempos de carga.
 
 Implementaremos _lazy loading_ definiendo un módulo exclusivo de routing `app-routing.module.ts` que será importado en `app.module.ts`. Sin embargo, `app-routing.module.ts` pospone la carga de cada módulo concreto a la activación de la ruta asociada a la funcionalidad que proporciona cada módulo.
 
@@ -440,7 +445,7 @@ Dentro de la carpeta de cada módulo encontraremos:
 ****
 En la carpeta `pages` de la aplicación Angular incluiremos componentes Angular que van a ser directamente alcanzables por una ruta. Por ejemplo: `<url-base>/solicitudes/crear`
 
-En la carpeta `components` se incluirán componentes que no estarán directamen asociados a una ruta de la aplicación, pero que serán usados por otros componentes (que pondran estar en `components` o en `pages`).
+En la carpeta `components` se incluirán componentes que no estarán directamente asociados a una ruta de la aplicación, pero que serán usados por otros componentes (que pondran estar en `pages` o su vez también en `components` porque sean usados por otros componentes).
 ****
 
 La figura siguiente ilustra cómo quedaría la carpeta de un módulo:
@@ -475,8 +480,13 @@ A grandes rasgos la aplicación quedará organizada de esta forma:
 *** `espacios-routing.module.ts`
 *** `espacios.module.ts`
 *** `pages`
-**** `espacios.component.html`
-**** `espacios.component.ts`
+**** `consultar`
+** `solicitudes`
+*** `solicitudes-routing.module.ts`
+*** `solicitudes.module.ts`
+*** `pages`
+**** `consultar`
+**** `crear`
 ****
 
 Crearemos los componentes con estas instrucciones
@@ -491,9 +501,9 @@ $ ng g c main/solicitudes/pages/crear
 
 ### Creación de las rutas
 
-Aquí configuraremos:
+Ahora vamos a crear cada una de las rutas permitidas en la aplicación. Una vez creadas, habremos indicado el componente que mostrará la aplicación al ir a cada ruta. En esta sección configuraremos:
 
-* el archivo `app-routing.module.ts` para hacer _lazy loading_ indicando la ruta raíz del módulo y la ubicación de la clase del módulo.
+* el archivo `app-routing.module.ts` para hacer _lazy loading_ indicando la ruta raíz de cada bloque funcional de la aplicación (p.e. `home`, `solicitudes`, `espacios`) y la ubicación de la clase del módulo de rutas correspondiente.
 * cada uno de los archivos de rutas parciales de cada módulo.
 
 Archivo de rutas desde `app-routing.module.ts`:
@@ -536,15 +546,15 @@ export class AppRoutingModule {}
 <1> Configuración de la URL de la ruta de un módulo
 <2> _Lazy loading_ del módulo indicando el archivo y la clase del módulo
 <3> Configuración de la ruta vacía
-<4> Módulo asociado a la ruta vacía
-<5> Expresión regular para indicar que redirija cualquier otro `path` no indicado al `path` vacío configurado anteriormente
+<4> Módulo asociado a la ruta vacía (**después del resto**)
+<5> Expresión regular para indicar que redirija cualquier otro `path` no indicado al `path` que consideramos predeterminado (en nuestro caso, el vacío)
 
 [NOTE]
 ====
-Los `path` son evaluados de arriba abajo. Hay que tener cuidado de no poner un `path` demasiado genérico arriba porque impediría la evaluación de otros `path` que estén configurados después.
+Los `path` son evaluados de arriba abajo. Hay que tener cuidado de no poner un `path` demasiado genérico arriba porque impediría la evaluación de otros `path` que estén configurados después. Por eso, se colocan al final los path `''` y `**`.
 ====
 
-A continuación, creremos los archivos de rutas de cada módulo de la aplicación.
+A continuación, creremos los archivos de rutas de cada módulo de la aplicación. En ellos se indica por un lado la ruta parcial a añadir a la ruta de su módulo global; por otro lado, se indica el componente asociado a la ruta parcial y que se mostrará, por tanto, al activar cada ruta.
 
 Archivo `main/home/home.routing.ts`:
 
@@ -633,14 +643,23 @@ const routes: Routes = [
 export class SolicitudesRoutingModule {}
 ----
 
-A continuación, comprobaremos que las rutas funcionan correctamente. Escribiremos las siguientes URL en el navegador y deben ser respetardas y no redirigirnos a la ruta predeterminada.
+A continuación, comprobaremos que las rutas definidas funcionan correctamente. Escribiremos las siguientes URL en el navegador y deben ser respetadas aunque aún no muestren nada. Es decir, no deben redirigirnos a la ruta predeterminada, señal de que es una ruta incorrecta.
 
 * http://localhost:4200/
 * http://localhost:4200/espacios/consultar
 * http://localhost:4200/solicitudes/crear
 * http://localhost:4200/solicitudes/consultar
 
-Las siguientes rutas no serán reconocidas y seremos redirigidos a las rutas predetermninadas de cada módulo:
+.Correspondencia entre rutas y componentes
+****
+De acuerdo con la figura que mostramos de los bloques funcionales de la aplicación y sus operaciones asociadas, si observamos, las rutas anteriores se corresponderían con los cuadros azules. Estos representan a componentes que implementarán la funcionalidad en cuestión **y que tendrán una ruta asociada**. (A la operación de modificar solicitud no le hemos creado ruta aún. Ya veremos el motivo cuando tratemos más adelante la modificación de datos).
+
+Los componentes amarillos representan a funcionalidad que se implementará mediante cuadros de diálogo y que por tanto no tendrán pantalla asociada y no necesitarán un ruta.
+
+image::OrganizacionFuncional.png[]
+****
+
+Por contra, las siguientes rutas no serán reconocidas y seremos redirigidos a las rutas predeterminadas de cada módulo:
 
 * http://localhost:4200/novale
 * http://localhost:4200/espacios
@@ -679,10 +698,10 @@ export class SharedModule {}
 
 [NOTE]
 ====
-No olvidar añadir `RouterModule` a los `imports` del módulo de la barra de navegación.
+No olvidar añadir `RouterModule` a los `imports` del módulo de la barra de navegación. De no hacerlo, las selecciones en el menú de la barra lateral no abrirían ningún componente.
 ====
 
-A continuación se muestra el código de la barra lateral con el menú de operaciones de la aplicación.
+A continuación se muestra el código de la barra lateral con el menú de operaciones de la aplicación. Se trata de un botón `Home`, un desplegable con acciones de solicitudes y un desplegable con acciones para espacios. Posteriormente agregaremos el botón de Créditos.
 
 Archivo `shared/sidebar/sidebar.component.html`:
 
@@ -721,7 +740,7 @@ Archivo `shared/sidebar/sidebar.component.html`:
 </div>
 ----
 
-La barra del pie estará formada por tres botones con los enlaces a aviso legal y las políticas de privacidad y accesibilidad.
+La barra del pie estará formada por tres botones con los enlaces al Aviso legal y a las políticas de privacidad y accesibilidad.
 
 Archivo `shared/footbar/footbar.component.html`
 
@@ -799,12 +818,25 @@ image::Home.png[]
 
 ### Formulario de creación de solicitudes
 
-Trabajaremos con formularios reactivos. Esto nos permitirá desviar la lógica a la parte TypeScript del componente y dejar más limpia la parte HTML del componente. Cada objeto de la pantalla HTML tendrá su homólogo en la parte TypeScript lo que permitirá acceder y modificar sus datos, quedando el HTML y el TS totalmente conectado. Esto supone:
+En este tutorial trabajaremos con formularios reactivos. Esto nos permitirá desviar la lógica asociada al formulario a la parte TypeScript del componente y dejar más limpia la parte HTML del componente. Cada objeto del formulario HTML tendrá su homólogo en la parte TypeScript, que permitirá acceder, modificar, y en general, controlar sus datos, quedando así el HTML y el TypeScript del formulario totalmente conectados. Esto supone:
 
-* Importar `ReactiveFormsModule` en el módulo de solicitudes 
-* Crear un objeto formulario en la parte TyepScript del componente 
+* Importar `ReactiveFormsModule` en el módulo de solicitudes para poder trabajar con formularios reactivos.
+* Crear un objeto formulario en la parte TypeScript del componente.
 
-Comenzamos con las importaciones al módulo que contiene el componente en el que está nuestro componente de formulario. Hay que importar el módulo `ReactiveFormsModule` y nuestro módulo Material 
+.Formularios reactivos
+****
+$$$$
+definición del formgroup y correspondencia html
+Inyección de fombuilder
+formcontrolname
+
+****
+
+A continuación se muestra un mock del aspecto deseado del formulario de creación de solicitudes integrado en la aplicación.
+
+image::MockCrearSolicitud.png[]
+
+Comenzamos con las importaciones al módulo que contiene el componente en el que está nuestro componente de formulario. Como se trata de un formulario reactivo y en el usaremos componentes Material, tendremos que importar el módulo `ReactiveFormsModule` y nuestro módulo de uso de componentes Material.
 
 Archivo `main/solicitudes/solicitudes.module.ts`:
 
@@ -847,11 +879,11 @@ Uncaught (in promise): NullInjectorError: R3InjectorError(SolicitudesModule)[For
 A continuación crearemos la parte TypeScript del componente de creación de solicitudes. Se trata de:
 
 * Definir el objeto formulario con los campos que habrá en la pantalla
-* Para cada campo se define si tiene valores predeterminados, si está desactivado y sus validadores.
+* Para cada campo se define si tiene valores predeterminados, si el campo está desactivado y sus validadores.
 
-En un formulario reactivo los campos se definen como pares JSON con el nombre del campo y un array en el que se puede indicar valores predeterminados, validadores, si está desactivado, y demás.
+Definiremos los campos como pares JSON con los nombres del campo, los arrays indicando los valores predeterminados, validadores, si están desactivados, y demás.
 
-Este componente tendrá que implementar un método `save` que sea llamado por la parte HTML del componente cuando se quiera crear la solicitud. Será un método que por ahora simplemente imprimirá por consola los valores introducidos a modo de comprobación. Posteriormente, se llamará a un servicio que crearemos más adelante y que se dedicará a almacenar la solicitud.
+Este componente tendrá que implementar un método `save` que será llamado por la parte HTML del componente cuando se quiera crear la solicitud. Por ahora será un método que simplemente imprimirá por consola los valores introducidos a modo de comprobación. Posteriormente, llamará a un servicio que crearemos más adelante y que se dedicará a almacenar la solicitud.
 
 Archivo `main/solicitudes/pages/solicitudes.component.ts`:
 
@@ -914,10 +946,10 @@ export class CrearComponent implements OnInit {
 ----
 <1> Los campos son creados en JSON como valores del método `group` del objeto `FormBuilder` que representa al formulario.
 <2> Definición del nombre del campo y su configuración (valores predeterminados, validadores, si está desactivado, ...)
-<3> Uso del validador `Required`. Va después del valor inicial
+<3> Uso del validador `Required`. Va después del elemento dedicado al valor inicial
 <4> Se puede usar una lista de validadores
 <5> Validador de longitud mínima
-<6> Array para inicializar la lista de cargos
+<6> Array para inicializar una lista de cargos de ejemplo
 <7> Array para inicializar la lista de día de la semana en un listbox
 <8> Array para inicializar las horas en un listbox
 <9> Inyección de `FormBuilder` 
@@ -926,19 +958,19 @@ export class CrearComponent implements OnInit {
 
 .Validadores
 ****
-Angular proporciona una serie de validadores útiles para la validación de campos. Destacan `required, email, min(<valor>), max(<valor>), minLength(<valor>), maxLength(<valor>)` y `pattern(<expresión-regular>)`. `email` permite validar si el valor introducido se ajusta a un email. Con `pattern` se pueden definir expresiones regulares para la validación de datos de los controles del formulario.
+Angular proporciona una serie de validadores útiles para la validación de campos. Destacan `required, email, min(<valor>), max(<valor>), minLength(<valor>), maxLength(<valor>)` y `pattern(<expresión-regular>)`. El validador `email` permite comprobar si el valor introducido se ajusta a un email. Con el validador `pattern` se pueden definir expresiones regulares para la validación de datos de los controles del formulario.
 
-El uso de validadores deja un código muy limpio comparado con hacerlo mediante métodos propios que además de ser implementados en la parte TypeScript deberían ser llamados en la parte HTML. Además, la posibilidad de usar varios incluyéndolos en un array facilita mucho las validaciones compuestas.
+El uso de validadores deja un código muy limpio comparado con hacerlo mediante métodos propios. Implementar validadores con métodos propios implicaría que además de tener que implementarlos en la parte TypeScript, habría que llamarlos desde la parte HTML. Además, la posibilidad de usar varios validadores mediante su inclusión en un array facilita mucho las validaciones compuestas.
 
-Por último, el formulario (sus datos) no será considerado como válido mientras todos sus campos no hayan cumplido con sus validadores.
+Por último, el formulario (sus datos) no será considerado como válido mientras todos sus campos no hayan satisfecho todos sus validadores.
 
 Más información en la https://angular.io/api/forms/Validators[documentación oficial].
 ****
 
-A continuación crearemos la parte visual del compomente. Se trata de un formulario reactivo ligado al objeto `formHorario` creado en la parte TS. Organizaremos sus elementos en tres tarjetas (datos personales, datos de la actividad, horario de la reserva). Usaremos un compomente `Datepicker` de Material para la selección de fechas. Las horas las seleccionaremos mediante listas desplegables. Se trata de la primera aproximación al formulario. Por ahora:
+A continuación crearemos la parte visual del componente. Como hemos comentado, se trata de un formulario reactivo ligado al objeto `formHorario` creado en la parte TypeScript. Tal y como se mostró en la figura del mock del formulario de creación de solicitudes, organizaremos sus elementos en tres tarjetas (Datos personales, Datos de la actividad, Horario de la reserva). Para la selección de fechas usaremos un componente `Datepicker` de Material. Las horas las seleccionaremos mediante listas desplegables. Se trata de la primera aproximación al formulario. Por ahora:
 
-* No usamos servicios de recuperación de los datos del usuario
-* Las horas las gestionaremos por ahora con listas desplegables con valores sólo para las horas, sin minutos.
+* No usamos servicios de recuperación de los datos del usuario. Más adelante, al introducir el email se recuperarán el resto de datos personales mediante un servicio.
+* Por ahora gestionaremos las horas con listas desplegables con valores sólo para las horas, sin minutos.
 
 Archivo `main/solicitudes/pages/solicitudes.component.html`:
 
@@ -1087,32 +1119,32 @@ Archivo `main/solicitudes/pages/solicitudes.component.html`:
   </form>
 </div>
 ----
-<1> Objeto formulario ligado al formulario reactivo `formHorario` definido en el TS
+<1> Objeto formulario ligado al formulario reactivo `formHorario` definido en la parte TypeScript
 <2> Tarjeta para elementos de datos personales
 <3> Creación de campo de formulario Material
 <4> Etiqueta
 <5> Input de tipo Material
-<6> Vinculación del campo al elemento `email` al elemento del formulario de la parte TS
-<7> Listbox inicializado con los valores de la parte TS
+<6> Vinculación del campo `email` del formulario a su homólogo en la parte TypeScript
+<7> Listbox inicializado con los valores de ejemplo definidos en la parte TypeScript
 <8> Tarjeta para los datos de la actividad
 <9> Elemento para los datos del rango de fechas
 <10> Elemento para la selección del rango de fechas
 <11> Desplegable para la selección de días
 <12> Desplegable para la selección de la hora de inicio
 <13> Desplegable para la selección de la hora de fin
-<14> Llamada al método que gestionará el formulario
+<14> Botón con llamada al método que gestionará el formulario
 
 Si pulsamos el botón `Crear` y no se cumple alguno de los validadores, los campos no válidos aparecerán marcados en rojo. Y si activamos en el navegador las Herramientas para desarrolladores, como el método `save` hace un `console.log` del objeto `formHorario`, vemos que su estado es `INVALID`. Esto se debe a que no se está cumpliendo alguno de sus validadores.
 
-A continuación veremos cómo mostrar mensajes de error en las validaciones y cómo desactivar el botón del formulario hasta que éste sea válido.
-
 image::CrearReservaInvalid.png[]
+
+A continuación veremos cómo mostrar mensajes de error en las validaciones y cómo desactivar el botón del formulario hasta que éste sea válido.
 
 #### Añadiendo mensajes de error en las validaciones
 
-Necesitamos un método genérico que nos indique si un campo tiene errores o no. En nuestro caso, los campos tendrán errores si no se cumplen algunos de los validadores. Introduciremos además la condición de que hayan sido tocados para que no se inicialmente no se consideren erróneos los campos que aún no han sido tocados.
+Cuando no se cumple un validador, el campo en cuestión debería mostrar alguna señal. Necesitamos por tanto métodos que nos devuelvan si los campos son válidos o no. Pero en lugar de tener varios métodos que indiquen si un campo tiene errores o no, vamos a construir un método genérico, un método al que le podamos pasar un campo como parámetro y nos indique si el campo tiene errores o no. En nuestro caso, los campos tendrán errores si no se cumplen algunos de los validadores. No obstante, para mejorar la experiencia de usuario, no queremos que se muestren mensajes de error al abrir el formulario, cuando un usuario aún no ha introducido datos, ya que aunque no se cumplirán los validadores porque los campos aún están vacíos, no conviene abrir un formulario indicando que ya se tienen errores. Para mostrar un error sobre un campo deberíamos esperar a que al menos haya sido tocado. Por tanto, en el método de comprobación de las validaciones introduciremos además la condición de que los campos hayan sido tocados para que inicialmente no se consideren erróneos los campos que aún no han sido tocados.
 
-Archivo `main/solicitudes/pages/solicitudes.component.ts`:
+A continuación se muestra el método `isNotValidField()` que devuelve que un campo no es válido si ha sido tocado y contiene errores. Archivo `main/solicitudes/pages/solicitudes.component.ts`:
 
 [source, ts]
 ----
@@ -1126,7 +1158,7 @@ Archivo `main/solicitudes/pages/solicitudes.component.ts`:
   ...
 ----
 
-Definimos una clase `invalid-mat-form-field` en `styles.css` para personalizar los mensajes de error en los campos no válidos
+Para personalizar la presentación de los mensajes de error en los campos no válidos definimos una clase `invalid-mat-form-field` en `styles.css` 
 
 [source, css]
 ----
@@ -1136,7 +1168,7 @@ Definimos una clase `invalid-mat-form-field` en `styles.css` para personalizar l
 }
 ----
 
-Por último, añadimos la presentación condicional del error en un elemento `<span>` si `isNotValidField` devuelve que el campo no es válido.
+Por último, si `isNotValidField` devuelve que el campo no es válido añadimos la presentación (condicional) del error en un elemento `<span>` 
 
 Archivo `main/solicitudes/pages/solicitudes.component.html`:
 
@@ -1174,7 +1206,12 @@ image::IsNotValidField.png[]
 
 #### Desactivación condicional del botón Crear
 
-Queremos que el botón Crear no esté disponible si el formulario no es válido. Para ello, comenzaremos añadiendo un método al TS del componente que indique si el formulario es válido o no basándonse en la propiedad `valid` de los formularios.
+Otra funcionalidad interesante es hacer que el botón `Crear` no esté habilitado si el formulario no es válido. Dado que los formularios disponen de la propiedad `valid`  que indica si el formulario es válido, podemos aprovechar el valor de esta propiedad para controlar la activación del botón `Crear`. Para ello, comenzaremos añadiendo un método al TypeScript del componente que indique si el formulario es válido o no basándonse en la propiedad `valid` de los formularios.
+
+[NOTE]
+====
+El formulario es `valid` si se cumplen todos los validadores de sus campos.
+====
 
 Archivo `main/solicitudes/pages/crear/crear.component.ts`:
 
@@ -1204,78 +1241,17 @@ Archivo `main/solicitudes/pages/crear/crear.component.html`:
           </button>
 ...
 ----
-<1> Desactivación del botón Crear si el formulario no es válido
+<1> Desactivación del botón `Crear` si el formulario no es válido
 
-Si ahora alguno de los campos no cumple sus validaciones el formulario no será válido y el botón Crear estará desactivado.
+Si ahora alguno de los campos no cumple sus validaciones el formulario no será válido y el botón `Crear` estará desactivado.
 
 image::BotonCrearDisabled.png[]
 
-## Creación de un servidor JSON para datos de prueba
-
-Con el fin de poder simular el funcionamiento de servicios de backend sin necesidad de montar un backend y su complejidad asociada, para desarrollar la aplicación en Angular podemos usar algo con menor funcionalidad pero que nos permita realizar nuestras operaciones CRUD básicas. 
-
-https://github.com/typicode/json-server[JSON-server] nos ofrece la posibilidad de tener de forma muy sencilla un prototipo de API REST totalmente funcional sin necesidad de programar nada.
-
-Se instala de forma sencilla con
-
-[source, bash]
-----
-$ npm install -g json-server
-----
-
-A continuación, hay que crear un archivo JSON con los datos que va a manejar inicialmente la API.
-
-Incluiremos un archivo `db.json` en nuestro proyecto para que contemos con un conjunto inicial de datos.
-
-[source, json]
-----
-{
-  "personas": [
-    {
-      "email": "mtorres@ual.es",
-      "nombre": "Manuel Torres Gil",
-      "telefono": "84030",
-      "unidad": "Departamento de Informática",
-      "cargo": [
-        "Profesor Titular de Universidad",
-        "Director de Secretariado de Innovación Tecnológica"
-      ],
-      "docente": true
-    },
-    {
-      "email": "ggf906@ual.es",
-      "nombre": "Francisco José García García",
-      "telefono": "N/D",
-      "unidad": "STIC",
-      "cargo": ["Gestor Informática"],
-      "docente": false
-    }
-  ]
-}
-----
-
-Iniciamos JSON Server con
-
-[source, bash]
-----
-$ json-server --watch db.json
-----
-
-El puerto predeterminado en que se ofrece la API REST es el 3000. Así, tendríamos una API REST funcional en http://localhost:3000/personas
-
-Para iniciar JSON Server en otro puerto, pasamos al final el parámetro `--port` seguido de un número de puerto.
-
-[source, bash]
-----
-$ json-server --watch db.json --port 3002
-----
-
-En este caso tendríamos la API REST funcional en http://localhost:3002/personas.
-
-
 ## Creación de un servicio de datos de persona
 
-En esta sección crearemos un servicio que recupere datos de persona. Comenzaremos creando un servicio.
+En esta sección crearemos un servicio que recupere datos de persona. Para ello, usaremos una API REST de prueba que contiene datos de personas, espacios y permite el almacenamiento de solicitudes. En el <<Anexo I. Creación de un servidor JSON para datos de prueba>> se describe cómo se crea esa API. 
+
+Comenzaremos creando un servicio para la recuperación de los datos de personas.
 
 [source, bash]
 ----
@@ -1284,12 +1260,12 @@ $ ng g service services/persona
 
 [NOTE]
 ====
-Los servicios los organizaremos en una carpeta `services`
-
+Los servicios de nuestra aplicación los organizaremos en una carpeta `services`
 ====
+
 .Inclusión de los servicios en la organización básica de los archivos de la aplicación
 ****
-A grandes rasgos la aplicación quedará organizada de esta forma:
+A grandes rasgos la aplicación quedará ahora organizada de esta forma:
 
 * `app.module.ts`
 * `app-routing.ts`
@@ -1322,13 +1298,13 @@ A grandes rasgos la aplicación quedará organizada de esta forma:
 *** `espacios-routing.module.ts`
 *** `espacios.module.ts`
 *** `pages`
-**** `espacios.component.html`
-**** `espacios.component.ts`
+**** `crear`
+**** `consultar`
 ****
 
 .Importación de HttpClientModule
 ****
-El servicio usará la clase HttpClient. Para usar esta clase es necesario que previamente se haya importado HttpClientModule. La mayoría de las aplicaciones realizan esta importación en app.module.ts.
+Los servicios Angular usan la clase `HttpClient`. Para usar esta clase es necesario que previamente se haya importado `HttpClientModule`. La mayoría de las aplicaciones realizan esta importación en `app.module.ts`.
 
 Archivo `app.module.ts`
 
@@ -1343,7 +1319,7 @@ Archivo `app.module.ts`
 ----
 <1> Incorporación a la lista de `imports` de la aplicación
 
-No importar este módulo provocaría este error al usar el servicio indicando que no existe provider para HttpClient:
+No importar este módulo provocaría el error siguiente a la hora de usar el servicio indicando que no existe _provider_ para `HttpClient`:
 
 image::errorHttpClientModule.png[]
 ****
@@ -1381,8 +1357,8 @@ export class AppModule {}
 
 Para implementar el servicio:
 
-* Inyectaremos `HttpClient` en el constructor para poder realizar peticiones HTTP
-* Inicializaremos la URL de acceso a la API
+* Inyectaremos `HttpClient` en el constructor para poder realizar peticiones HTTP.
+* Inicializaremos la URL de acceso a la API.
 * Implementaremos un método que permita la recuperación de una persona por su email.
     
 Servicio en `services/people.ts`:
@@ -1397,25 +1373,33 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PeopleService {
-  url = 'http://localhost:3000/personas';
-  constructor(private http: HttpClient) {}
+  url = 'http://localhost:3000/personas'; <1>
+  constructor(private http: HttpClient) {} <2>
 
-  findOne(email: any): Observable<any> {
+  findOne(email: any): Observable<any> { <3>
     return this.http.get(`${this.url}?email=${email}`);
   }
 }
 ----
+<1> Configuracion de la ruta base
+<2> Inyección de `HttpClient` para realizar operaciones HTTP contra la API REST
+<3> Método que devuelve un observable con los datos de una persona a partir de su email.
+
+[NOTE]
+====
+En la https://github.com/typicode/json-server#filter[documentación de JSON Server] se indica cómo filtrar y ordenar resultados.
+====
 
 #### Uso de variables de entorno
 
-En el ejemplo anterior, teníamos la URL en el propio código de la aplicación. Esto presenta problemas de mantenimiento porque si cambia la URL tendremos que hacer cambios en todos los archivos en los que aparezca. Además, tendremos que ir cambiando el valor en función de si estamos en un entorno de desarrollo o en el entorno de producción.
+En el ejemplo anterior, teníamos la URL de la API REST en el propio código de la aplicación (lo que se conoce como _hardcoded_). Esto presenta problemas de mantenimiento porque si cambiase la URL tendríamos que hacer cambios en todos los archivos en los que se esté usando. Pero otro detalle muy importante, es que probablemente tendremos que cambiar el valor en función de si estamos en el entorno de desarrollo o en el entorno de producción.
 
-Angular permite la definición de archivos de variables de entorno y permite tener archivos separados para los entornos de desarrollo y producción. Los procesos de despligue tomarán los valores del archivo del entorno de producción, mientras que cuando estemos desarrollando `ng serve` toma los valores del entorno de desarrollo.
+Angular permite la definición de archivos de variables de entorno y permite tener archivos separados para los entornos de desarrollo y producción. Los procesos de despliegue en los entornos de CI/CD tomarán los valores del archivo del entorno de producción, mientras que cuando estemos desarrollando, `ng serve` toma los valores del entorno de desarrollo al ejecutar la aplicación.
 
 Estos son los archivos de variables de entorno que manejaremos en nuestra aplicación Angular:
 
-* `environments/environments.ts`: Variables de entorno para desarrollo
-* `environments/environments.prod.ts`: Variables de entorno para producción
+* `environments/environments.ts`: Variables de entorno para desarrollo.
+* `environments/environments.prod.ts`: Variables de entorno para producción.
 
 A continuación se muestra el archivo de variables de entorno para desarrollo.
 
@@ -1456,10 +1440,10 @@ export class PeopleService {
 
 [IMPORTANT]
 ====
-Hay que tener cuidado a la hora de importar las variables de entorno y no importar el de producción.
+Hay que tener cuidado a la hora de importar las variables de entorno y no importar el de producción (`environment.prod`).
 ====
 
-También habría que configurar las variables de entorno de producción. A continuación se muestra un ejemplo para producción.
+También habría que configurar las variables de entorno de producción. A continuación se muestra un ejemplo para producción en el que no se ha puesto un servidor específico para la API REST.
 
 Archivo `environments/environments.prod.ts`:
 
@@ -1485,11 +1469,11 @@ Hasta ahora, al inicializar el formulario de creación de solicitudes, los datos
   }
 ----
 
-Sin embargo, el funcionamiento esperado es que estos datos sean inicializados a partir del email introducido en el formulario. Actualmente contamos con el método `findOne()` en el servicio `PersonaService` que permite recuperar los datos de una persona a partir de su email. Sin embargo, esto aún no está siendo explotado por la aplicación. Veamos cómo hacerlo.
+Sin embargo, el funcionamiento esperado es que estos datos fuesen cargados a partir del email introducido en el formulario. Actualmente contamos con el método `findOne()` en el servicio `PersonaService` que permite recuperar los datos de una persona a partir de su email. Sin embargo, esto aún no está siendo explotado por la aplicación. Veamos cómo hacerlo.
 
 En primer lugar, dejaremos el método `ngOnInit()` vacío. Ahora la inicialización se delegará en un método dedicado a ello. Dicho método será llamado cada vez que se introduzca un email en el formulario.
 
-Necesitaremos dos métodos:
+Realmente necesitaremos dos métodos:
 
 * Un método `buscarPersona()` que llamará al servicio de búsqueda de personas por email.
 * Un método `actualizarCamposPersona()` que será el que actualice el formulario con los datos recuperados por el método anterior. El método `actualizarCamposPersona()` será llamado cuando se introduzca un email en el formulario.
@@ -1522,7 +1506,7 @@ obtenemos la respuesta siguiente:
 ]
 ----
 
-*Vemos que la persona es un objeto que pertenece a un array.*
+Importante: Vemos que la persona es un objeto que pertenece a un array.
 ====
 
 Archivo `main/solicitudes/pages/crear/crear.component.ts`:
@@ -1622,14 +1606,14 @@ export class CrearComponent implements OnInit {
 <3> Inyección del servicio en el constructor
 <4> Ahora ya no se inicializan los datos de la persona desde `ngOnInit`
 <5> Método para la búsqueda de una persona mediante su email
-<6> Llamada al servicio que recupera los datos de una persona
-<7> Almacenamiento de los datos recuperados en la variable de instancia `persona`. *Vimos que la persona está en la primera posición del array*
+<6> Llamada al método del servicio que recupera los datos de una persona
+<7> Almacenamiento de los datos recuperados en la variable de instancia `persona`. *Vimos que la persona recuperada está en la primera posición del array*
 <8> Método de actualización de datos en el formulario
 <9> Acceso al valor del `email` introducido en el formulario
 <10> Llamada al método de búsqueda de personas por email
 <11> Actualización de datos en el formulario si se recupera una persona
 
-Ahora ya sólo falta llamar al método `actulizarCamposPersona()` desde el cuadro de texto del email.
+Ahora ya sólo falta llamar al método `actulizarCamposPersona()` desde el cuadro de texto del email de la parte HTML del componente.
 
 Archivo `main/solicitudes/pages/crear/crear.component.html`:
 
@@ -1665,15 +1649,11 @@ Archivo `main/solicitudes/pages/crear/crear.component.html`:
 
 image::DatosPersonaDesdeServicio.png[]
 
-Tras introducir un email registrado en el backend, se cargarán los datos de la persona. No obstante, vemos un comportamiento anómalo. Los datos no aparecen actualizados al retirar el foco de email por primera vez. Parece que hubiera que cambiar dos veces el foco, entrando y saliendo dos veces del email. Este comportamient anómalo se debe a que los datos de la persona están llegando tarde y no están al perder el foco la primera vez, pero sí parece que ya están disponibles si se vuelve a cambiar el foco.
-
-A continuación veremos cómo solucionar este problema.
+Tras introducir un email registrado en el backend, se cargarán los datos de la persona. No obstante, vemos un comportamiento anómalo. Los datos no aparecen actualizados al retirar el foco de email por primera vez. Parece que hubiera que cambiar dos veces el foco, entrando y saliendo dos veces del email. Este comportamiento anómalo se debe a que los datos de la persona están llegando tarde y no están aún al perder el foco la primera vez, pero sí parece que ya están disponibles si se vuelve a cambiar el foco por segunda vez. Es decir, los datos están llegando entre los dos cambios de foco. A continuación veremos cómo solucionar este problema.
 
 #### Actualizaciones con datos asíncronos.
 
-Para evitar el problema de que los datos que devuelve el servicio llegan con retraso y no están a tiempo para presentarlos en la pantalla esperaremos a que lleguen los datos antes de proceder a su presentación en pantalla.
-
-El problema radica en que el método `buscarPersona()` actualizaba tarde los datos de la persona. El código siguiente ilustra los cambios que hacemos en el código
+Para evitar el problema de que los datos que devuelve el servicio lleguen con retraso y no estén a tiempo para presentarlos en la pantalla esperaremos a que lleguen los datos antes de proceder a su presentación en pantalla. El problema radica en que el método `buscarPersona()` actualizaba tarde los datos de la persona. El código siguiente ilustra los cambios que hacemos en el código
 
 [source, ts]
 ----
@@ -1699,7 +1679,7 @@ El problema radica en que el método `buscarPersona()` actualizaba tarde los dat
 Posteriormente consumiremos el valor devuelto por `lastValueFrom` con `async/await`.
 ****
 
-También habrá que cambiar la llamada a `buscarPersona()` desde `actualizarDatosPersona()`. Quderá así:
+También habrá que cambiar la llamada a `buscarPersona()` desde `actualizarDatosPersona()`. Quedará así:
 
 [source, ts]
 ----
@@ -1723,11 +1703,12 @@ También habrá que cambiar la llamada a `buscarPersona()` desde `actualizarDato
     }
   }
 ----
-<1> Ahora el método es async porque dentro contiene un `await`
+<1> Ahora el método es `async` porque dentro contiene un `await`
 <2> Antigua forma de llamada a `buscarPersona()`
-<3> Carga de datos en persona
+<3> Carga de datos en persona. Recordemos que la API devolvía la persona en un array y había que recuperar el primero.
 
-Ahora, la carga de datos en persona no se realiza hasta que no se hayan recuperado sus datos del servicio.
+Ahora, la carga de datos en persona no se realiza hasta que no se hayan recuperado sus datos del servicio y se habrá corregido aquel comportamiento anómalo.
+
 
 #### Mejora del código de actualización del formulario con `patchValue`
 
@@ -1772,16 +1753,16 @@ Así, el código anterior quedaría de la siguiente forma, mucho más limpio.
 
 #### Limpieza de datos cuando la persona no existe
 
-Si probamos a introducir una persona que no existe, comprobaremos que no se actalizan los datos, lo que podría inducir a error. Si el formulario estaba vacío y se introduce un email inexistente, no se mostrarán datos. Pero, si ya había datos y se introduce un nuevo email, se mantendrán los datos de la persona anterior, lo que no es correcto.
+Si probamos a introducir una persona que no existe, comprobaremos que no se actualizan los datos, lo que podría inducir a error. Si el formulario estaba vacío y se introduce un email inexistente, no se mostrarán datos, por lo que este fallo pasaría desapercibido. Pero si ya había datos y se introduce un nuevo email inexistente en la API REST, se mantendrán los datos de la persona anterior, lo que no es correcto.
 
-La solución planteada consiste en crear un método que limpie el formulario si no se recuperan datos (`persona` no contiene datos). Para mejorar la experiencia de usuario usaremos el compoente Material Snackbar que muestra una barra al pie útil para mensajes.
+La solución planteada consiste en crear un método que limpie el formulario si no se recuperan datos (`persona` no contiene datos). Para mejorar la experiencia de usuario usaremos el componente Snackbar de Material, que muestra una barra al pie útil para mensajes.
 
 [NOTE]
 ====
-El módulo `SnackbarModule` que contiene al componente `MatSnackbar` es uno de los módulos que tenemos incluidos en nuestro módulo `Material`, lo que como está importado en el módulo del componente de solicitudes, permite usar todos los compomentes de nuetro módulo Material.
+El módulo `SnackbarModule` que contiene al componente `MatSnackbar` es uno de los módulos que tenemos incluidos en nuestro módulo `Material`. Como está importado en el módulo del componente de solicitudes, permite usar todos los compomentes de nuestro módulo Material.
 ====
 
-A continuación se muestra el código completo de cómo quedaría el componente con el nuevo método de limpieza de datos con emails no existentes.
+A continuación se muestra el código completo de cómo quedaría el componente con el nuevo método de limpieza de datos cuando se introducen emails no existentes.
 
 Archivo `main/solicitudes/pages/crear/crear.component.ts`:
 
@@ -1886,13 +1867,13 @@ export class CrearComponent implements OnInit {
 
 ----
 <1> Importación del componente `MatSnackBar`
-<2> Inyección del componente `MatSnakcBar` para poder usarlo más adelante.
+<2> Inyección del componente `MatSnakcBar` para poder usarlo en el compomente.
 <3> Llamada al método de limpieza si `persona` no tiene datos
 <4> Método de limpieza del formulario
 <5> Limpieza de los datos del formulario
-<6> Presentación del mensaje de error durante 1500 ms (1.5 segudos)
+<6> Presentación del mensaje de error en la snackbar durante 1500 ms (1.5 segudos)
 
-A continuación se muestra el mensaje el borrado de los datos del fomrulario y la presentación del mensaje de error en la barra tras introducir un email que no existe.
+A continuación se muestra el efecto de borrado de los datos del formulario y la presentación del mensaje de error en la barra tras introducir un email que no existe.
 
 image::PersonaNoDisponible.png[]
 
@@ -1903,49 +1884,9 @@ En esta sección veremos cómo guardar los datos en el backend. Básicamente ten
 * Crear el servicio que se encargará del almacenamiento en el backend.
 * Actualizar el método `save()` para que llame al servicio de almacenamiento anterior.
 
-### Actualización de los datos de JSON Server
-
-Vamos a contar con un nuevo elemento en nuestro backend de pruebas para las solicitudes. Para ello, basta con añadir el elemento siguiente a `db.json`.
-
-[source, json]
-----
-{
-  "personas": [
-    {
-      "email": "mtorres@ual.es",
-      "nombre": "Manuel Torres Gil",
-      "telefono": "84030",
-      "unidad": "Departamento de Informática",
-      "cargo": [
-        "Profesor Titular de Universidad",
-        "Director de Secretariado de Innovación Tecnológica"
-      ],
-      "docente": true
-    },
-    {
-      "email": "ggf906@ual.es",
-      "nombre": "Francisco José García García",
-      "telefono": "N/D",
-      "unidad": "STIC",
-      "cargo": ["Gestor Informática"],
-      "docente": false
-    }
-  ],
-  "solicitudes": [] <1>
-}
-----
-<1> Nueva colección añadida
-
-Como tenemos iniciado JSON Server en modo `watch`, los cambios introducidos generan nuevos endpoints de forma inmediata en 
-
-[source, code]
-----
-http://localhost:3000/solicitudes
-----
-
 ### Creación del servicio de almacenamiento
 
-Comenzamos creando un nuevo servicio para las reservas
+Comenzamos creando un nuevo servicio para las solicitudes
 
 [source, bash]
 ----
@@ -1954,7 +1895,7 @@ $ ng g service services/solicitudes
 
 ### Modificación de las variables de entorno
 
-Hasta ahora tenemos una URL desde donde recuperamos los datos de las personas. Este servicio realmente es ajeno al de la aplicación de espacios de este tutorial. Nuestra aplicación contará con servicios para gestión de solicitudes y consulta de espacios. Todos ellos los vamos a incluir en la misma URL y será diferentes de la URL de la API de personas que, como hemos comentado, es algo externo a esta aplicación de espacios. Por tanto, tendremos variables de entorno diferentes.
+Hasta ahora tenemos una URL desde donde recuperamos los datos de las personas. Este servicio realmente podría ser ajeno al de la aplicación de espacios de este tutorial. Lo normal es que nuestra aplicación de espacios cuente con servicios para gestión de solicitudes y consulta de espacios. Todos ellos los vamos a incluir en la misma URL y posiblemente será diferente de la URL de la API de personas que, como hemos comentado, es algo externo a esta aplicación de espacios. Por tanto, tendremos variables de entorno diferentes.
 
 Archivo `environments/environments.ts`:
 
@@ -1985,9 +1926,7 @@ export const environment = {
 };
 ----
 
-Creación del método de almacenamiento en el servicio.
-
-Archivo `services/reservations.service.ts`:
+El método de almacenamiento en el servicio en el archivo `services/reservations.service.ts` sería algo así:
 
 [source, ts]
 ----
@@ -2008,7 +1947,7 @@ export class ReservationsService {
 ----
 <1> Método que almacena los datos y devuelve un observable
 
-A continuación modificaremos el método `save()` del componente de crear solicitudes para que llame al servicio anterior. Además, para ofrecer una mejor experiencia de usuario, mostraremos un mensaje en la _snackbar_ indicando que se ha creado la solicitud y redirigiremos al usuario a la pantalla del listado de solicitudes. Allí podrá ver su solicitud, aunque aún no podrá ver nada ya que no está implementada. En la sección siguiente implementaremos la funcionalidad de mostrar el listado de solicitudes.
+A continuación modificaremos el método `save()` del componente de crear solicitudes para que llame al servicio anterior. Además, para ofrecer una mejor experiencia de usuario, mostraremos un mensaje en la _snackbar_ indicando que se ha creado la solicitud y redirigiremos al usuario a la pantalla del listado de solicitudes. Allí podrá ver su solicitud creada, aunque aún no podrá ver nada ya que no está implementada. En la sección siguiente implementaremos la funcionalidad de mostrar el listado de solicitudes.
 
 Archivo `main/solicitudes/pages/crear/crear.component.ts`:
 
@@ -2133,11 +2072,11 @@ export class CrearComponent implements OnInit {
 <6> Presentación de la _snackbar_ con el mensaje de solicitud creada
 <7> Redirigir a la página de listado de solicitudes
 
-## Lista de reservas
+## Lista de solicitudes
 
-En esta sección crearemos la página que muestra las solicitudes creadas. Inicialmente las mostrará todas y después incorporaremos las posibilidad de filtrado para la consulta de solicitudes.
+En esta sección crearemos la página que muestra las solicitudes creadas. Inicialmente las mostrará todas. Después se podría añadir la posibilidad de filtrado para la consulta de solicitudes realizadas.
 
-### Servicio de lista de reservas
+### Servicio de lista de solicitudes
 
 Comenzaremos añadiendo al servicio `Solicitudes` un método que recupere todas las solicitudes.
 
@@ -2164,11 +2103,11 @@ export class SolicitudesService {
 }
 ----
 <1> Método para recuperar las solicitudes. Devuelve un observable
-<2> Llamada al método del servicio que recupera las solicitudes
+<2> Llamada al endpoint que recupera las solicitudes
 
 ### Carga de datos en el componente de listado de solicitudes
 
-Para la presentación de datos usaremos el componente `Table` de Angular Material, que ya tenemos incluido en nuestro módulo `Material`. Este componente tiene una parte TypeScript y una parte HTML. En la parte TypeScript básicamente debemos inicializar el conjunto de datos a mostrar y una lista de columnas a mostrar. Como peculiaridad, indicar que hay que cargar de forma independiente cada columna de datos. Veamos cómo hacerlo:
+Para la presentación de datos usaremos el componente `Table` de Angular Material, que ya tenemos incluido en nuestro módulo `Material`. Este componente tiene una parte TypeScript y una parte HTML. En la parte TypeScript básicamente debemos inicializar el conjunto de datos a mostrar y la lista de columnas a mostrar. Como peculiaridad, indicar que hay que cargar de forma independiente cada columna de datos. Ea decir, la tabla se carga por columnas, no por filas. Veamos cómo hacerlo:
 
 Archivo `main/solicitudes/pages/consultar/consultar.component.ts`:
 
@@ -2211,7 +2150,7 @@ export class ConsultarComponent implements OnInit {
 <7> Almacenar los datos recuperados del servicio
 <8> Mostrar mensaje de error si no hay datos
 
-A continuación vamos con la parte de la presentación de los datos (el código está copiado tal cual de la documentación)
+A continuación vamos con la parte de la presentación de los datos (el código está copiado tal cual de la documentación cambiando los nombres de campo)
 
 [source, html]
 ----
@@ -2249,7 +2188,7 @@ A continuación vamos con la parte de la presentación de los datos (el código 
 </div>
 ----
 <1> Presentación de la tabla si contiene datos
-<2> Inicialización de la tabla con su fuente de datos definida en la parte TS
+<2> Inicialización de la tabla con su fuente de datos definida en la parte TypeScript
 <3> Definición de la columna del nombre
 <4> Etiqueta que se quiere presentar en esta columna
 <5> Indicar el campo del que se recuperarán los datos 
@@ -3873,3 +3812,134 @@ image::SolicitudModificada.png[]
 
 Si ahora seleccionáramos la opción de crear solicitud veríamos que se muestra correctamente la pantalla de Crear. Ahora la cabecera y el botón son los correspondientes a la creación de solicitudes.
 
+:numbered!: 
+
+## Anexo I. Creación de un servidor JSON para datos de prueba
+
+Con el fin de poder simular el funcionamiento de servicios de backend sin necesidad de montar un backend y su complejidad asociada, para desarrollar la aplicación en Angular podemos usar algo con menor funcionalidad pero que nos permita realizar nuestras operaciones CRUD básicas. 
+
+https://github.com/typicode/json-server[JSON-server] nos ofrece la posibilidad de tener de forma muy sencilla un prototipo de API REST totalmente funcional sin necesidad de programar nada.
+
+Se instala de forma sencilla en nuestro equipo de trabajo con
+
+[source, bash]
+----
+$ npm install -g json-server
+----
+
+A continuación, hay que crear un archivo JSON con los datos que va a manejar la API. Después iniciamos JSON Server con
+
+[source, bash]
+----
+$ json-server --watch db.json
+----
+
+Incluiremos un archivo `db.json` en nuestro proyecto para que contemos con un conjunto inicial de datos.
+
+[source, json]
+----
+{
+  "personas": [
+    {
+      "email": "mtorres@ual.es",
+      "nombre": "Manuel Torres Gil",
+      "telefono": "84030",
+      "unidad": "Departamento de Informática",
+      "cargo": [
+        "Profesor Titular de Universidad",
+        "Director de Secretariado de Innovación Tecnológica"
+      ],
+      "docente": true
+    },
+    {
+      "email": "ggf906@ual.es",
+      "nombre": "Francisco José García García",
+      "telefono": "N/D",
+      "unidad": "STIC",
+      "cargo": [
+        "Gestor Informática"
+      ],
+      "docente": false
+    }
+  ],
+  "espacios": [
+    {
+      "edificio": "Aulario I",
+      "aula": "Aula 2",
+      "fecha": "07/02/2022",
+      "reservas": [
+        {
+          "hora": "09:00 - 12:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 12103230 ) - Lengua Clásica: Latín",
+          "profesor": ""
+        }
+      ]
+    },
+    {
+      "edificio": "Aulario I",
+      "aula": "Aula 1",
+      "fecha": "07/02/2022",
+      "reservas": [
+        {
+          "hora": "09:00 - 12:00",
+          "descripcion": "GRUPO UNICO",
+          "asignatura": "( 67104216 ) - Gestión Integral de la Imagen",
+          "profesor": ""
+        }
+      ]
+    },
+    {
+      "edificio": "Aulario II",
+      "aula": "Aula 1",
+      "fecha": "07/02/2022",
+      "reservas": [
+        {
+          "hora": "09:00 - 12:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 31103209 ) - Lexicología y Semántica Inglesas",
+          "profesor": ""
+        },
+        {
+          "hora": "12:00 - 15:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 12104226 ) - Historia de la Lengua Española II",
+          "profesor": ""
+        },
+        {
+          "hora": "16:00 - 19:00",
+          "descripcion": "GRUPO UNICO",
+          "asignatura": "( 40153329 ) - Teoría de Códigos y Criptografía",
+          "profesor": ""
+        }
+      ]
+    }
+  ],
+  "solicitudes": []
+}
+----
+
+El puerto predeterminado en que se ofrece la API REST es el 3000. Así, tendríamos una API REST funcional en:
+
+[source, code]
+----
+http://localhost:3000/personas
+http://localhost:3000/espacios
+http://localhost:3000/solicitudes
+----
+
+Para iniciar JSON Server en otro puerto, pasamos al final el parámetro `--port` seguido de un número de puerto.
+
+[source, bash]
+----
+$ json-server --watch db.json --port 3002
+----
+
+En este caso tendríamos la API REST funcional en 
+
+[source, code]
+----
+http://localhost:3002/personas
+http://localhost:3002/espacios
+http://localhost:3002/solicitudes
+----
