@@ -508,7 +508,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#trueprogramación-del-componente">9.2. Programación del componente</a></li>
 <li><a href="#trueconfiguración-de-las-importaciones-del-módulo">9.3. Configuración de las importaciones del módulo</a></li>
 <li><a href="#trueprogramación-de-la-presentación-de-datos">9.4. Programación de la presentación de datos</a></li>
-<li><a href="#trueincorporación-de-funcionalidad-de-filtrado">9.5. Incorporación de funcionalidad de filtrado</a>
+<li><a href="#trueincorporación-de-la-funcionalidad-de-filtrado">9.5. Incorporación de la funcionalidad de filtrado</a>
 <ul class="sectlevel3">
 <li><a href="#trueflujo-de-datos-entre-los-componentes">9.5.1. Flujo de datos entre los componentes</a></li>
 <li><a href="#trueprogramación-de-la-parte-typescript-del-componente-de-tabla-de-datos">9.5.2. Programación de la parte TypeScript del componente de tabla de datos</a></li>
@@ -539,7 +539,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#truecreación-del-método-de-eliminación-de-solicitudes">11.2. Creación del método de eliminación de solicitudes</a></li>
 <li><a href="#trueprogramación-de-la-lógica-del-cuadro-de-diálogo-de-eliminación">11.3. Programación de la lógica del cuadro de diálogo de eliminación</a></li>
 <li><a href="#truepresentación-de-los-datos-en-el-cuadro-de-diálogo-de-eliminación">11.4. Presentación de los datos en el cuadro de diálogo de eliminación</a></li>
-<li><a href="#truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes">11.5. Presentación del botón de eliminación en el listado de solicitudes</a></li>
+<li><a href="#trueprogramación-de-la-llamada-a-la-eliminación-desde-el-listado-de-solicitudes">11.5. Programación de la llamada a la eliminación desde el listado de solicitudes.</a></li>
+<li><a href="#truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes">11.6. Presentación del botón de eliminación en el listado de solicitudes</a></li>
 </ul>
 </li>
 <li><a href="#trueactualización-de-solicitudes">12. Actualización de solicitudes</a>
@@ -568,13 +569,55 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="trueresumen"><a class="anchor" href="#trueresumen"></a>Resumen</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>xxx</p>
+<p>Angular es uno de los frameworks Javascript más utilizados en el momento junto a React y Vue.js. Angular ofrece una solución completa para el manejo de rutas, formularios, inyección de dependencias y building, entre otros. Además, el uso en STIC de NestJS para backend, el cual tiene una arquitectura muy basada en Angular, ha propiciado que sea la tecnología actual elegida en STIC para el desarrollo frontend. Así, tenemos la arquitectura de Angular tanto en frontend como en backend, facilitando a los equipos de desarrollo el cambio entre desarrollo frontend y backend.</p>
+</div>
+<div class="paragraph">
+<p>En este tutorial se abordan los principales temas y desafíos con los que nos solemos encontrar en cada aplicación en el ámbito de gestión. Se hace a través del desarrollo de una aplicación de ejemplo sencilla y se tratan desde temas metodológicos, como la organización de carpetas y archivos del proyecto, hasta los temas particulares del desarrollo de aplicaciones CRUD, como formularios reactivos, manejo de rutas, paso de datos entre componentes e interacción con servicios REST.</p>
 </div>
 <div class="ulist">
 <div class="title">Objetivos</div>
 <ul>
 <li>
-<p>xxx</p>
+<p>Aprender las técnicas básicas y habituales de Angular mediante el desarrollo de una aplicación CRUD.</p>
+</li>
+<li>
+<p>Definir una estructura de carpetas y archivos adecuada para el desarrollo y posterior mantenimiento.</p>
+</li>
+<li>
+<p>Usar las rutas para la navegación de la aplicación y la selección de componentes.</p>
+</li>
+<li>
+<p>Crear servicios que interactúen con una API REST.</p>
+</li>
+<li>
+<p>Manejar correctamente la asincronía de los servicios REST.</p>
+</li>
+<li>
+<p>Crear y utilizar formularios reactivos y validadores de datos.</p>
+</li>
+<li>
+<p>Compartir datos entre componentes.</p>
+</li>
+<li>
+<p>Crear páginas con opciones de filtrado.</p>
+</li>
+<li>
+<p>Crear cuadros de diálogo informativos y de validación.</p>
+</li>
+<li>
+<p>Desarrollar una aplicación Angular sin necesidad de tener un backend definitivo.</p>
+</li>
+<li>
+<p>Utilizar la técnica del <em>lazy loading</em>.</p>
+</li>
+<li>
+<p>Usar variables de entorno.</p>
+</li>
+<li>
+<p>Utilizar Angular Material para la intefaz de la aplicación.</p>
+</li>
+<li>
+<p>Utilizar Angular Flex-Layout para la organización de elementos de la interfaz de usuario.</p>
 </li>
 </ul>
 </div>
@@ -586,14 +629,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Disponibles los repositorios usados en este tutorial.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>xxx</p>
-</li>
-</ul>
+<p>Disponibles el <a href="https://github.com/ualmtorres/angular-espacios.git">repositorio</a> usado en este tutorial.</p>
 </div>
 </td>
 </tr>
@@ -604,7 +640,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="trueintroducción"><a class="anchor" href="#trueintroducción"></a>1. Introducción</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>$$$</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1908,10 +1946,10 @@ export class HomeModule {}</code></pre>
 <div class="content">
 <div class="title">Formularios reactivos</div>
 <div class="paragraph">
-<p>
-definición del formgroup y correspondencia html
-Inyección de fombuilder
-formcontrolname</p>
+<p> TO DO
+* definición del formgroup y correspondencia html
+* Inyección de fombuilder
+* formcontrolname</p>
 </div>
 </div>
 </div>
@@ -3988,12 +4026,28 @@ export class ConsultarComponent implements OnInit {
 <h2 id="truelista-de-espacios"><a class="anchor" href="#truelista-de-espacios"></a>9. Lista de espacios</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>De forma análoga a como acabamos de hacer con el listado de solicitudes vamos a implementar la parte del listado de solicitudes, que guarda bastante parecido con el anterior. Comenzaremos creando un listado completo y posteriormente le añadiremos capacidades de filtrado.</p>
+<p>De forma análoga a como acabamos de hacer con el listado de solicitudes vamos a implementar la parte del listado de espacios, el cual guarda bastante parecido con el anterior. Comenzaremos creando un listado total y posteriormente le añadiremos capacidades de filtrado.</p>
+</div>
+<div class="paragraph">
+<p>La forma de proceder será la de siempre:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Construcción del servicio que interactúa con el backend.</p>
+</li>
+<li>
+<p>Programación de la parte TypeScript del componente para que interactúe con el servicio anterior.</p>
+</li>
+<li>
+<p>Creación de la parte HTML de presentación del componente conectada a su parte TypeScript creada en el paso anterior.</p>
+</li>
+</ul>
 </div>
 <div class="sect2">
 <h3 id="truegeneración-del-servicio"><a class="anchor" href="#truegeneración-del-servicio"></a>9.1. Generación del servicio</h3>
 <div class="paragraph">
-<p>En esta sección crearemos un servicio que recupere datos de persona. Comenzaremos creando un servicio.</p>
+<p>En esta sección crearemos un servicio que recupere datos de espacios. Comenzaremos creando un servicio.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4001,10 +4055,7 @@ export class ConsultarComponent implements OnInit {
 </div>
 </div>
 <div class="paragraph">
-<p>A continuación añadiremos un método que recupere todos los espacios.</p>
-</div>
-<div class="paragraph">
-<p>Método de recuperación de espacios en el servicio <code>services/espacios.ts</code>:</p>
+<p>A continuación le añadiremos un método que recupere todos los espacios programando un método para ello en el servicio <code>services/espacios.ts</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4049,81 +4100,20 @@ export class EspaciosService {
 </td>
 <td class="content">
 <div class="paragraph">
-<p>La variable de entorno se reutiliza. Sólo necesitamos la URL del servidor. El resto se añade en cada módulo funcional de la API.</p>
+<p>La variable de entorno se reutiliza. Ya la usamos en el servicio de solicitudes. Sólo necesitamos la URL del servidor. El resto de la ruta se añade en cada módulo funcional de la API (p.e. <code>espacios</code>, <code>solicitudes</code>).</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Para que haya datos de prueba, añadiremos este nuevo elemento al archivo <code>db.json</code> de JSON Server para tener el endpoint de acceso a los espacios (<code><a href="http://localhost:3000/espacios" class="bare">http://localhost:3000/espacios</a></code>)</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code data-lang="json" class="language-json hljs">{
-...
-  "espacios": [
-    {
-      "edificio": "Aulario I",
-      "aula": "Aula 2",
-      "fecha": "07/02/2022",
-      "reservas": [
-        {
-          "hora": "09:00 - 12:00",
-          "descripcion": "GRUPO A",
-          "asignatura": "( 12103230 ) - Lengua Clásica: Latín",
-          "profesor": ""
-        }
-      ]
-    },
-    {
-      "edificio": "Aulario I",
-      "aula": "Aula 1",
-      "fecha": "07/02/2022",
-      "reservas": [
-        {
-          "hora": "09:00 - 12:00",
-          "descripcion": "GRUPO UNICO",
-          "asignatura": "( 67104216 ) - Gestión Integral de la Imagen",
-          "profesor": ""
-        }
-      ]
-    },
-    {
-      "edificio": "Aulario II",
-      "aula": "Aula 1",
-      "fecha": "07/02/2022",
-      "reservas": [
-        {
-          "hora": "09:00 - 12:00",
-          "descripcion": "GRUPO A",
-          "asignatura": "( 31103209 ) - Lexicología y Semántica Inglesas",
-          "profesor": ""
-        },
-        {
-          "hora": "12:00 - 15:00",
-          "descripcion": "GRUPO A",
-          "asignatura": "( 12104226 ) - Historia de la Lengua Española II",
-          "profesor": ""
-        },
-        {
-          "hora": "16:00 - 19:00",
-          "descripcion": "GRUPO UNICO",
-          "asignatura": "( 40153329 ) - Teoría de Códigos y Criptografía",
-          "profesor": ""
-        }
-      ]
-    }
-  ],
-...
-}</code></pre>
-</div>
+<p>Este servicio atacará a la API REST de prueba que estamos usando en este tutorial y que está disponible en <a href="#trueanexo-i-creación-de-un-servidor-json-para-datos-de-prueba">Anexo I. Creación de un servidor JSON para datos de prueba</a>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="trueprogramación-del-componente"><a class="anchor" href="#trueprogramación-del-componente"></a>9.2. Programación del componente</h3>
 <div class="paragraph">
-<p>A continuación ya podemos programar el componente TypeScript de espacios <code>main/espacios/pages/consultar/consultar.component.ts</code>:</p>
+<p>Una vez creado el servicio, ya podemos programar el componente TypeScript que lo usará para recuperar datos de espacios y entregarlos a la parte HTML del componente. Lo haremos en el archivo <code>main/espacios/pages/consultar/consultar.component.ts</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4152,15 +4142,15 @@ export class ConsultarComponent implements OnInit {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Variable donde volcaremos los datos de los espacios</td>
+<td>Variable donde volcaremos los datos de los espacios recuperados por el servicio</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Inyección del servivio de espacios</td>
+<td>Inyección del servicio de espacios</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Método para recuperar los espacios. Devuelve un observable</td>
+<td>Recuperación de los espacios al iniciar el componente</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -4176,7 +4166,7 @@ export class ConsultarComponent implements OnInit {
 <div class="sect2">
 <h3 id="trueconfiguración-de-las-importaciones-del-módulo"><a class="anchor" href="#trueconfiguración-de-las-importaciones-del-módulo"></a>9.3. Configuración de las importaciones del módulo</h3>
 <div class="paragraph">
-<p>A continuación se configurar las importaciones de <code>main/espacios/espacios.module.ts</code> para incluir nuestro módulo de <code>Material</code>:</p>
+<p>Como el componente de presentación de espacios usará componentes Material, hay que asegurarse que nuestro módulo de componentes Material está incluido en el módulo del componente de espacios, que es con el estamos trabajando para la lista de espacios. A continuación se muestra la configuración de las importaciones de <code>main/espacios/espacios.module.ts</code> para que esté incluido nuestro módulo de <code>Material</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4206,7 +4196,62 @@ export class EspaciosModule {}</code></pre>
 <div class="sect2">
 <h3 id="trueprogramación-de-la-presentación-de-datos"><a class="anchor" href="#trueprogramación-de-la-presentación-de-datos"></a>9.4. Programación de la presentación de datos</h3>
 <div class="paragraph">
-<p>A continuación se muestra cómo presentamos los datos en el componente de espacios. Básicamente se trata de explotar la variable <code>espacios</code> que es la que contiene los datos. Para ello, se iterará sobre ella y se mostrarán los datos en tarjetas Material. Dentro de cada espacio, puede haber una lista de reservas. Por tanto, habrá que crear un bucle anidado que itere sobre las reservas de un espacio.</p>
+<p>En esta sección vamos a ver cómo presentamos los datos en el componente de espacios. Básicamente se trata de explotar la variable <code>espacios</code> inicializada en la parte TypeScript del componente y que es la que contiene los datos. Para ello, se iterará sobre <code>espacios</code> y se mostrarán los datos en tarjetas Material. Dentro de cada espacio, puede haber una lista de reservas, tal y como se muestra a continuación. Por tanto, habrá que crear un bucle anidado que itere sobre las reservas de un espacio.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="json" class="language-json hljs">    { <i class="conum" data-value="1"></i><b>(1)</b>
+      "edificio": "Aulario II",
+      "aula": "Aula 1",
+      "fecha": "07/02/2022",
+      "reservas": [ <i class="conum" data-value="2"></i><b>(2)</b>
+        {
+          "hora": "09:00 - 12:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 31103209 ) - Lexicología y Semántica Inglesas",
+          "profesor": ""
+        },
+        {
+          "hora": "12:00 - 15:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 12104226 ) - Historia de la Lengua Española II",
+          "profesor": ""
+        },
+        {
+          "hora": "16:00 - 19:00",
+          "descripcion": "GRUPO UNICO",
+          "asignatura": "( 40153329 ) - Teoría de Códigos y Criptografía",
+          "profesor": ""
+        }
+      ]
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Datos correspondientes a la ocupación de un espacio en un día concreto</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Lista de reservas realizadas en un espacio en un día concreto</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Consideramos que la API REST devuelve ocupaciones diarias de un espacio. Cada día en un espacio es considerado de forma independiente a otro día en el mismo espacio. En la parte de <code>espacios</code> del <a href="#trueanexo-i-creación-de-un-servidor-json-para-datos-de-prueba">Anexo I. Creación de un servidor JSON para datos de prueba</a> se ve claramente esta situación.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/espacios/pages/consultar/consultar.component.html</code>:</p>
@@ -4268,14 +4313,27 @@ export class EspaciosModule {}</code></pre>
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>Aquí se muestra el resultado. Por ahora se muestran todas las solicitudes. En el apartado siguiente veremos cómo se le pueden incorporar funcionalidades de filtrado.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/ListaDeEspacios.png" alt="ListaDeEspacios">
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="trueincorporación-de-funcionalidad-de-filtrado"><a class="anchor" href="#trueincorporación-de-funcionalidad-de-filtrado"></a>9.5. Incorporación de funcionalidad de filtrado</h3>
+<h3 id="trueincorporación-de-la-funcionalidad-de-filtrado"><a class="anchor" href="#trueincorporación-de-la-funcionalidad-de-filtrado"></a>9.5. Incorporación de la funcionalidad de filtrado</h3>
 <div class="paragraph">
-<p>En esta sección vamos a ver cómo llevar el código anterior del listado de solicitudes a un componente específico. Haremos esto porque vamos a estructurar la página de espacios en dos componentes. Uno para un componente de filtrado con cuadros de lista y de entrada de datos para especificar condiciones de filtrado. Otro para el componente de presentación de la tabla de datos.</p>
+<p>En esta sección vamos a ver cómo llevar el código anterior del listado de solicitudes a un componente específico. Haremos esto porque vamos a estructurar la página de espacios en dos componentes. Uno para un componente de filtrado con cuadros de lista y de entrada de datos para especificar condiciones de filtrado. Otro para el componente de presentación de la tabla de datos. La figura siguiente ilustra un esbozo de la página mostrando la funcionalidad de filtrado de espacios.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/MockListadoDeEspacios.png" alt="MockListadoDeEspacios">
+</div>
 </div>
 <div class="paragraph">
-<p>Comencemos generando el componente de tabla de espacios para resultados de búsqueda y del formulario de búsqueda</p>
+<p>Comencemos generando el componente de la tabla de espacios para resultados de búsqueda y el del formulario de búsqueda.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4291,7 +4349,15 @@ $ ng g component main/espacios/components/form-buscar</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Es habitual colocar los componentes de un módulo funcional en una carpeta <code>components</code>, que está al mismo nivel que la carpeta <code>pages</code>.</p>
+<p>Es habitual colocar los componentes de un módulo funcional en una carpeta <code>components</code> al mismo nivel que la carpeta <code>pages</code> del módulo funcional.</p>
+</div>
+<div class="paragraph">
+<p>Al final, deberemos tener una estructura similar a la de esta figura.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/CarpetasEspacios.png" alt="CarpetasEspacios">
+</div>
 </div>
 </td>
 </tr>
@@ -4300,7 +4366,7 @@ $ ng g component main/espacios/components/form-buscar</code></pre>
 <div class="sect3">
 <h4 id="trueflujo-de-datos-entre-los-componentes"><a class="anchor" href="#trueflujo-de-datos-entre-los-componentes"></a>9.5.1. Flujo de datos entre los componentes</h4>
 <div class="paragraph">
-<p>La organización y el flujo de datos entre componentes es el siguiente:</p>
+<p>Los componentes individuales (formulario  y tabla de resultados) y el componente que los englobla tienen una forma de comunicarse y compartir datos. La organización y el flujo de datos entre componentes es el siguiente:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4329,14 +4395,41 @@ $ ng g component main/espacios/components/form-buscar</code></pre>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/$$$$$$$$.png" alt="$$$$$$$$">
+<img src="./images/FlujoPadreHijosCompleto.png" alt="FlujoPadreHijosCompleto">
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Cómo compartir datos entre componentes padre/hijo</div>
+<div class="paragraph">
+<p> TO DO </p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/FlujoPadreHijosBasico.png" alt="FlujoPadreHijosBasico">
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Para más información sobre cómo compartir datos entre componentes padre/hijo consultar la <a href="https://angular.io/guide/inputs-outputs">documentación oficial</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="trueprogramación-de-la-parte-typescript-del-componente-de-tabla-de-datos"><a class="anchor" href="#trueprogramación-de-la-parte-typescript-del-componente-de-tabla-de-datos"></a>9.5.2. Programación de la parte TypeScript del componente de tabla de datos</h4>
 <div class="paragraph">
-<p>En esta parte sólo tendremos que añadir el decorador <code>@Input</code> y asociarle una variable, que será la que usen otros componentes para inyectarle datos.</p>
+<p>Este componente se dedica a gestionar los datos de la tabla de datos de los espacios recuperados por el servicio. Como los datos de los espacios están en el componente padre, el componente de tabla de datos tendrá que añadir el decorador <code>@Input</code> y asociarle una variable, que será la que usen otros componentes para inyectarle datos.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/espacios/component/tabla-espacios/tabla-espacios.component.ts</code>:</p>
@@ -4377,13 +4470,16 @@ export class TablaEspaciosComponent implements OnInit {
 <div class="paragraph">
 <p>El decorador <code>@Input</code> ofrece un medio para inyectar datos a un componente desde otro componente externo. El componente de destino asociará a este decorador una variable en la que se recibirán los datos enviados desde otros componentes. El componente que envía los datos envía los datos mediante un atributo HTML. El atributo de envío coincide con la variable usada en el <code>@Input</code>.</p>
 </div>
+<div class="paragraph">
+<p>$$$Figura</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="truerefactorización-en-un-componente-dedicado-a-la-tabla-de-datos"><a class="anchor" href="#truerefactorización-en-un-componente-dedicado-a-la-tabla-de-datos"></a>9.5.3. Refactorización en un componente dedicado a la tabla de datos</h4>
 <div class="paragraph">
-<p>Ahora llevaremos el código que creamos para el HTML del listado de espacios hasta el HTML de la tabla de datos, tal cual, respetando el uso de <code>espacios</code>.</p>
+<p>Ahora llevaremos el código que creamos para el HTML del listado de espacios hasta el HTML de la tabla de datos, tal cual, respetando el uso de <code>espacios</code>. Lo podemos llevar tal cual porque la presentación no va a variar y los datos los inyectaremos desde el padre al componete hijo a través de su <code>@Input</code> para <code>espacios</code>.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/espacios/component/tabla-espacios/tabla-espacios.component.html</code>:</p>
@@ -4423,7 +4519,7 @@ export class TablaEspaciosComponent implements OnInit {
 <div class="sect3">
 <h4 id="trueconfiguración-de-la-página-de-listado-de-espacios"><a class="anchor" href="#trueconfiguración-de-la-página-de-listado-de-espacios"></a>9.5.4. Configuración de la página de listado de espacios</h4>
 <div class="paragraph">
-<p>Ahora la página de listado de espacios, que antes mostraba directamente el listado de espacios, se convertirá en una página que incluye al componente de formulario de búsqueda y al de filtrado de datos, tal y como se muestra a continuación.</p>
+<p>Ahora la página de listado de espacios, que antes mostraba directamente el listado de espacios, se convertirá en una página contenedor o en una página padre que incluye dos ( componente de formulario de búsqueda y componente de filtrado de datos), tal y como se muestra a continuación.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4446,7 +4542,7 @@ export class TablaEspaciosComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Selector para incluir el componente de tabla de datos y pasándole al decorador <code>@Input</code> definido como <code>espacios</code> el valor que tenemos almacenado en <code>espacios</code> de este componente, el componente padre.</td>
+<td>Selector para incluir el componente de tabla de datos. Se le pasa al decorador <code>@Input</code> definido como <code>espacios</code> el valor que tenemos almacenado en <code>espacios</code> de este componente, el componente padre.</td>
 </tr>
 </table>
 </div>
@@ -4462,21 +4558,18 @@ export class TablaEspaciosComponent implements OnInit {
 <p>se interpreta así: la primera parte es el nombre del <code>Input</code> en el componente de destino; la segunda parte es el valor que le pasamos.</p>
 </div>
 <div class="paragraph">
-<p>La página se verá así.</p>
+<p>La página se verá así. Vemos que aún no aparece el formulario para el filtrado. Lo crearemos en breve. Antes, hay que adaptar el módulo de estos componentes de espacios para incluir formularios reactivos. Pero ya hemos conseguido segregar la tabla de datos a un componente hijo.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="./images/ListaDeEspaciosSinFormularioDeBusqueda.png" alt="ListaDeEspaciosSinFormularioDeBusqueda">
 </div>
 </div>
-<div class="paragraph">
-<p>Vemos que aún no aparece el formulario para el filtrado. Lo crearemos en breve. Antes, hay que adaptar el módulo de estos componentes de espacios para incluir formularios reactivos</p>
-</div>
 </div>
 <div class="sect3">
 <h4 id="truemodificación-del-módulo-de-espacios"><a class="anchor" href="#truemodificación-del-módulo-de-espacios"></a>9.5.5. Modificación del módulo de espacios</h4>
 <div class="paragraph">
-<p>Hay que hace una modificación ligera al módulo de espacios para importar el módulo de formularios reactivos. Lo va a necesitar el componente del formulario de filtrado de espacios.</p>
+<p>Hay que hace una modificación ligera al módulo de espacios para importar el módulo de formularios reactivos. Lo va a necesitar el componente del formulario de filtrado de espacios, que lo crearemos como formulario reactivo.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4518,10 +4611,10 @@ export class EspaciosModule {}</code></pre>
 <div class="sect3">
 <h4 id="trueadaptación-del-servicio-de-búsqueda-para-que-acepte-parámetros-de-filtrado"><a class="anchor" href="#trueadaptación-del-servicio-de-búsqueda-para-que-acepte-parámetros-de-filtrado"></a>9.5.6. Adaptación del servicio de búsqueda para que acepte parámetros de filtrado</h4>
 <div class="paragraph">
-<p>En el servicio de espacios, el método <code>findAll()</code> devolvía todos los espacios y no ofrecía posibilidad de filtrado. A continuación se muestra una modificación para que permita como parámetros de filtrado los que le pueda pasar el formulario de filtrado.</p>
+<p>En el servicio de espacios, el método <code>findAll()</code> actualmente devuelve todos los espacios y no ofrece posibilidad de filtrado. A continuación se muestra una modificación para que permita parámetros de filtrado. Dichos parámetros serán los que recojan los datos del formulario de filtrado.</p>
 </div>
 <div class="paragraph">
-<p>El filtro de búsqueda llega como un objeto JSON clave-valor, donde la clave es el nombre del campo a filtrar y el valor, el valor de filtrado. La idea es ir concatenando uno detrás de otro los parámetros de filtrado como se muestra a continuación. Nótese que también se ordena para que aparezcan primero los espacios con las solicitudes ordenadas en el tiempo.</p>
+<p>El filtro de búsqueda llega como un objeto JSON clave-valor, donde la clave es el nombre del campo a filtrar y el valor, el valor de filtrado. La idea es ir concatenando en las peticiones los parámetros de filtrado uno detrás de otro, como se muestra a continuación. Nótese que también se ordena para que aparezcan primero los espacios con las solicitudes ordenadas en el tiempo.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4536,7 +4629,7 @@ export class EspaciosModule {}</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>En la URL anterior <code>%20</code> representa un espacio en blanco para consultar las solcitudes en <code>Aula 1</code>.</p>
+<p>En la URL anterior <code>%20</code> representa un espacio en blanco para consultar las solicitudes en <code>Aula 1</code>.</p>
 </div>
 </td>
 </tr>
@@ -4592,6 +4685,18 @@ export class EspaciosService {
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Inicialización de la variable que almacena el filtro</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><em>Pipeline</em> que va añadiendo filtros de búsqueda al filtro</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="truecreación-de-un-formulario-inicial-de-búsqueda"><a class="anchor" href="#truecreación-de-un-formulario-inicial-de-búsqueda"></a>9.5.7. Creación de un formulario inicial de búsqueda</h4>
@@ -4599,7 +4704,12 @@ export class EspaciosService {
 <p>Se trata de programar el formulario reactivo del componente de búsqueda, tanto en su parte TypeScript como en su parte HTML.</p>
 </div>
 <div class="paragraph">
-<p>Comenzaremos con un formulario básico que aún no implementará la funcionalidad de búsqueda. Sí tendrá ya un método <code>buscar()</code>, pero su cuerpo aún estará vacío. Iremos construyendo el formulario de búsqueda de forma incremental.</p>
+<p>Comenzaremos con un formulario básico que aún no implementará la funcionalidad de búsqueda. Sí tendrá ya un método <code>buscar()</code>, pero su cuerpo aún estará vacío. Iremos construyendo el formulario de búsqueda de forma incremental. La figura siguiente ilustra un mock del formulario a construir.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/FormularioFiltrado.png" alt="FormularioFiltrado">
+</div>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/espacios/componentes/form-buscar/form-buscar.ts</code>:</p>
@@ -4648,7 +4758,7 @@ export class FormBuscarComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Inyección de <code>FormBuilder</code></td>
+<td>Inyección de <code>FormBuilder</code> paa usar formularios reactivos</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -4657,7 +4767,7 @@ export class FormBuscarComponent implements OnInit {
 </table>
 </div>
 <div class="paragraph">
-<p>A continuación crearemos la parte de presentación del formulario de búsqueda:</p>
+<p>A continuación crearemos la parte de presentación del formulario de búsqueda de acuerdo con el mock anterior:</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/espacios/componentes/form-buscar/form-buscar.html</code>:</p>
@@ -4786,7 +4896,7 @@ export class FormBuscarComponent implements OnInit {
 </table>
 </div>
 <div class="paragraph">
-<p>Una vez creadas las partes TS y HTML del componente de formulario, sólo falta añadirlo como componente hijo al componente de consulta de espacios.</p>
+<p>Una vez creadas las partes TypeScript y HTML del componente de formulario, sólo falta añadirlo como componente hijo al componente de consulta de espacios.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/espacios/pages/consultar/consultar.component.html</code>:</p>
@@ -4796,7 +4906,7 @@ export class FormBuscarComponent implements OnInit {
 <pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px"&gt;
   &lt;div fxFlex&gt;
     &lt;h1&gt;Lista de espacios&lt;/h1&gt;
-    &lt;app-form-buscar&gt;&lt;/app-form-buscar&gt;
+    &lt;app-form-buscar&gt;&lt;/app-form-buscar&gt; <i class="conum" data-value="1"></i><b>(1)</b>
   &lt;/div&gt;
   &lt;div fxLayoutAlign="center stretch"&gt;
     &lt;app-tabla-espacios [espacios]="espacios"&gt;&lt;/app-tabla-espacios&gt;
@@ -4804,8 +4914,16 @@ export class FormBuscarComponent implements OnInit {
 &lt;/div&gt;</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Incorporación del formulario de búsqueda como componente</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Si ahora seleccionamos la página de consulta de espacios veremos que ya sí aparece el formulario. Nuestra página de consulta de espacios está formada por el componente de formulario y el de tabla de resultados. Sin embargo, si seleccionamos <code>Aulario II</code> y <code>Aula 1</code> como criterios de búsqueda y pulsamos <code>Buscar</code> vemos que no se filtran los resultados.</p>
+<p>Si ahora vamos a la página de consulta de espacios veremos que ya sí aparece el formulario. Nuestra página de consulta de espacios está formada por el componente de formulario y el de tabla de resultados, tal y como indicaba el mock. Sin embargo, si seleccionamos <code>Aulario II</code> y <code>Aula 1</code> como criterios de búsqueda y pulsamos <code>Buscar</code> vemos que no se filtran los resultados.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -4813,7 +4931,7 @@ export class FormBuscarComponent implements OnInit {
 </div>
 </div>
 <div class="paragraph">
-<p>Esto se debe a que aún no se están recuperando los parámetros de filtrado del formulario ni se están pasando al servicio de búsqueda para que devuelva un resultado filtrado. Lo veremos a continuación.</p>
+<p>Esto se debe a que aún no se están recuperando los parámetros de filtrado del formulario ni se están pasando al servicio de búsqueda para que devuelva un resultado filtrado. Ews decir, el componente de formulario está creado e incluido en su componente padre, pero ni se recogen sus datos de filtro de búsqueda y por tanto no se hace nada con ellos para restringir la tabla de resultados. A continuación veremos cómo solucionar este problema.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4824,7 +4942,7 @@ export class FormBuscarComponent implements OnInit {
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Modificar el TS del componente hijo (el formulario de búsqueda) para implementar la función de configuración del filtro de búsqueda y para enviar los datos al componente padre (la página de consulta de espacios).</p>
+<p>Modificar el TypeScript del componente hijo (el formulario de búsqueda) para implementar la función de configuración del filtro de búsqueda y para enviar los datos al componente padre (la página de consulta de espacios).</p>
 </li>
 <li>
 <p>Implementar la función de búsqueda con parámetros en el componente padre (la página de espacios).</p>
@@ -4837,7 +4955,7 @@ export class FormBuscarComponent implements OnInit {
 <div class="sect4">
 <h5 id="trueconfiguración-del-filtro-de-búsqueda-en-el-componente-hijo"><a class="anchor" href="#trueconfiguración-del-filtro-de-búsqueda-en-el-componente-hijo"></a>Configuración del filtro de búsqueda en el componente hijo</h5>
 <div class="paragraph">
-<p>Los componentes Angular envían sus datos a otros componentes (en este caso el formulario de búsqueda envía a la página de espacios) generando un evento personalizado a través del cual publica sus datos. Los datos que publicaremos serán los valores del filtro de búsqueda recogidos mediante el formulario. Veamos cómo hacerlo.</p>
+<p>Los componentes Angular envían sus datos a otros componentes (en este caso el formulario de búsqueda envía a la página de espacios) generando un evento personalizado a través del cual publican sus datos. En este caso los datos que publicaremos serán los valores del filtro de búsqueda recogidos mediante el formulario. Veamos cómo hacerlo.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/espacios/components/form-buscar/form-buscar.component.ts</code>:</p>
@@ -4977,7 +5095,7 @@ export class ConsultarComponent implements OnInit {
 <div class="sect4">
 <h5 id="truerecogida-de-datos-en-el-componente-padre"><a class="anchor" href="#truerecogida-de-datos-en-el-componente-padre"></a>Recogida de datos en el componente padre</h5>
 <div class="paragraph">
-<p>Aquí se trata de escuchar al evento que va a publicar el componente del formulario de búsqueda y disparar una acción, que consisitirá en la llamada al método de búsqueda.</p>
+<p>Aquí se trata de escuchar al evento que está publicando el componente del formulario de búsqueda y disparar una acción, que consisitirá en la llamada al método de búsqueda.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/espacios/pages/consultar/consultar.component.html</code>:</p>
@@ -5014,7 +5132,7 @@ export class ConsultarComponent implements OnInit {
 <p>La utilización de un evento publicado por parte de otro componente se hace siguiendo este patrón:</p>
 </div>
 <div class="paragraph">
-<p>Llamar a un método como respuesta al evento publicado y pasándole al método como parámetro los datos recibidos a través de un objeto <code>$event</code>).</p>
+<p>Llamar a un método como respuesta al evento publicado y pasándole al método como parámetro los datos recibidos a través de un objeto <code>$event</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5029,7 +5147,7 @@ export class ConsultarComponent implements OnInit {
 </table>
 </div>
 <div class="paragraph">
-<p>Si ahora volvemos a seleccionar <code>Aulario II</code> y <code>Aula 1</code> como criterios de búsqueda y pulsamos Buscar vemos que ya sí se filtran los resultados.</p>
+<p>Si ahora volvemos a seleccionar <code>Aulario II</code> y <code>Aula 1</code> como criterios de búsqueda y pulsamos <code>Buscar</code> vemos que ya sí se filtran los resultados.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -5058,7 +5176,7 @@ export class ConsultarComponent implements OnInit {
 <div class="sect2">
 <h3 id="truecuadro-de-diálogo-informativo"><a class="anchor" href="#truecuadro-de-diálogo-informativo"></a>10.1. Cuadro de diálogo informativo</h3>
 <div class="paragraph">
-<p>Comenzaremos creando un cuadro de diálogo informativo, que son los más sencillos. Se trata de un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón <code>Créditos</code> que vamos a añadir a la barra lateral.</p>
+<p>Comenzaremos creando un cuadro de diálogo informativo, que son los más sencillos. A modo de ejemplo, se trata de un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón <code>Créditos</code> que vamos a añadir a la barra lateral.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -5068,7 +5186,7 @@ export class ConsultarComponent implements OnInit {
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Para usar cuadros de diálogo es necesario el módulo Material <code>MatDialogModule</code>. Nuestro módulo <code>Material</code> ya lo tenía incorporado. Si no disponemos de un modo tan genérico como nuestro <code>Material</code> que puede ser demasiado en algunos casos, <code>MatDialogModule</code> tiene que estar en el módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.</p>
+<p>Para usar cuadros de diálogo es necesario el módulo Material <code>MatDialogModule</code>. Nuestro módulo <code>Material</code> ya lo tenía incorporado. Si no disponemos de un modo tan genérico como nuestro <code>Material</code>, que como ya hemos indicado puede ser demasiado en algunos casos, <code>MatDialogModule</code> tiene que estar en el módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.</p>
 </div>
 </td>
 </tr>
@@ -5083,7 +5201,7 @@ export class ConsultarComponent implements OnInit {
 </div>
 </div>
 <div class="paragraph">
-<p>A continuación vamos a implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar). Para ello, implementaremos un método que denominaremos <code>aceptar()</code> a modo de prueba. Necesitaremos trabajar un objetp <code>MatDialogRef</code>.</p>
+<p>A continuación vamos a implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar). Para ello, implementaremos un método que denominaremos <code>aceptar()</code> a modo de prueba. Necesitaremos trabajar un objeto <code>MatDialogRef</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -5093,7 +5211,7 @@ export class ConsultarComponent implements OnInit {
 </td>
 <td class="content">
 <div class="paragraph">
-<p>De acuerdo con la documentación de Angular Material, al abrir un cuadro de diálogo, éste devolverá una instancia de <code>MatDialogRef. Este `MatDialogRef</code> proporciona un `
+<p>De acuerdo con la documentación de Angular Material, al abrir un cuadro de diálogo, éste devolverá una instancia de <code>MatDialogRef</code>. Este <code>MatDialogRef</code> proporciona un `
 <em>handle</em> sobre el cuadro de diálogo abierto. Aquí lo usaremos para cerrar el cuadro de diálogo.</p>
 </div>
 </td>
@@ -5146,7 +5264,7 @@ export class DialogoCreditosComponent implements OnInit {
 </table>
 </div>
 <div class="paragraph">
-<p>A continuación crearemos el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. <code>mat-dialog-title, mat-dialog-content, mat-dialog-actions</code> y el estilo <code>mat-typography</code>.</p>
+<p>A continuación crearemos el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. <code>mat-dialog-title, mat-dialog-content, mat-dialog-actions</code> y el estilo <code>mat-typography</code>).</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>shared/sidebar/components/dialogo-creditos/dialogo-creditos.html</code>:</p>
@@ -5265,10 +5383,27 @@ export class SidebarComponent implements OnInit {
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>La figura siguiente ilustra el resultado.</p>
+</div>
 <div class="imageblock">
 <div class="content">
 <img src="./images/DialogoInformativo.png" alt="DialogoInformativo">
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Hemos creado este cuadro informativo con un botón de cerrar y otro de aceptar al que le hemos añadido comportamiento. Un cuadro de información real sólo tendría un botón para cerrar. Hemos añadido otro botón al que asignar comportamiento para aprender a tratar con ello, aunque en este caso sea irrelevante.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -5277,7 +5412,7 @@ export class SidebarComponent implements OnInit {
 <h2 id="trueeliminación-de-solicitudes"><a class="anchor" href="#trueeliminación-de-solicitudes"></a>11. Eliminación de solicitudes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>En esta sección vamoa ver cómo podemos realizar eliminaciones en nuestra aplicación. Para ello, dado que en la sección anterior hemos visto cómo presentar un cuadro de diálogo, nos apoyaremos en esa técnica para mostrar en un cuadro de diálogo informativo los datos que se van a eliminar antes de proceder a su eliminación.</p>
+<p>En esta sección vamos a ver cómo podemos realizar eliminaciones en nuestra aplicación. Para ello, dado que en la sección anterior hemos visto cómo presentar un cuadro de diálogo, nos apoyaremos en esa técnica para mostrar en un cuadro de diálogo informativo los datos que se van a eliminar antes de proceder a su eliminación.</p>
 </div>
 <div class="paragraph">
 <p>La forma de proceder para la eliminación de solicitudes es incluir en el listado de solicitudes un botón de eliminar al lado de cada solicitud. El botón llamará a un método de eliminación al que pasaremos todos los datos de la solicitud que se vaya a eliminar. Con esos datos se podrá completar un cuadro de diálogo que permitirá la confirmación o la cancelación de la eliminación.</p>
@@ -5286,6 +5421,20 @@ export class SidebarComponent implements OnInit {
 <h3 id="truecreación-del-cuadro-de-diálogo-de-confirmación-de-eliminación"><a class="anchor" href="#truecreación-del-cuadro-de-diálogo-de-confirmación-de-eliminación"></a>11.1. Creación del cuadro de diálogo de confirmación de eliminación.</h3>
 <div class="paragraph">
 <p>Comencemos creando el componente del cuadro de diálogo de eliminación. Se trata de un componente que estará dentro de la carpeta de solicitudes.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Como convenio para nuestras aplicaciones de STIC, la eliminación tendrá su propio componente y se realizará mediante un cuadro de diálogo. Ese componente de eliminación se situará dentro de una carpeta <code>components</code> dentro del bloque funcional al que esté referido (p.e. <code>solicitudes</code>).</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5355,10 +5504,10 @@ export class SolicitudesService {
 <div class="sect2">
 <h3 id="trueprogramación-de-la-lógica-del-cuadro-de-diálogo-de-eliminación"><a class="anchor" href="#trueprogramación-de-la-lógica-del-cuadro-de-diálogo-de-eliminación"></a>11.3. Programación de la lógica del cuadro de diálogo de eliminación</h3>
 <div class="paragraph">
-<p>EL cuadro de diálogo de eliminación usará un <em>handle</em> para manejar (en nuestro caso cerrar) el cuadro de diálogo y se le inyectarán los datos que queremos mostrar (en nuestro caso los datos de la solicitud a eliminar).</p>
+<p>El cuadro de diálogo de eliminación usará un <em>handle</em> para manejar (en nuestro caso cerrar) el cuadro de diálogo y se le inyectarán los datos que queremos mostrar (en nuestro caso los datos de la solicitud a eliminar).</p>
 </div>
 <div class="paragraph">
-<p>También usará el servicio de reservas para proceder a la eliminación, una snackbar para la presentación de mensajes y un router para redirigir la aplicación a otra pantalla tras la eliminación.</p>
+<p>También usará el servicio de solicitudes para proceder a la eliminación, una snackbar para la presentación de mensajes y un router para redirigir la aplicación a otra pantalla tras la eliminación.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.ts</code>:</p>
@@ -5414,7 +5563,7 @@ export class DialogoEliminarComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Servicio de operaciones solicitudes</td>
+<td>Servicio de operaciones con solicitudes</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -5434,7 +5583,7 @@ export class DialogoEliminarComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Presentación de la snackbar</td>
+<td>Presentación de la snackbar informativa</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
@@ -5450,7 +5599,7 @@ export class DialogoEliminarComponent implements OnInit {
 <div class="sect2">
 <h3 id="truepresentación-de-los-datos-en-el-cuadro-de-diálogo-de-eliminación"><a class="anchor" href="#truepresentación-de-los-datos-en-el-cuadro-de-diálogo-de-eliminación"></a>11.4. Presentación de los datos en el cuadro de diálogo de eliminación</h3>
 <div class="paragraph">
-<p>La parte TypeScript del cuadro de diálogo tiene en una variable <code>data</code> los datos que se van a eliminar. Los mostraremos en el cuadro de diálogo para que los usuarios pueden comprobar lo que van a eliminar antes de proceder.</p>
+<p>Tal y como hemos creado en el apartado anterior, hemos dejado preparada la parte TypeScript del cuadro de diálogo con una variable <code>data</code> que contiene los datos que se van a eliminar. Los mostraremos en el cuadro de diálogo para que los usuarios pueden comprobar lo que van a eliminar antes de proceder.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.html</code>:</p>
@@ -5488,12 +5637,15 @@ export class DialogoEliminarComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Llamada al método <code>eliminar()</code> implmementado en la parte TypeScript del cuadro de diálogo</td>
+<td>Llamada al método <code>eliminar()</code> implementado en la parte TypeScript del cuadro de diálogo</td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="trueprogramación-de-la-llamada-a-la-eliminación-desde-el-listado-de-solicitudes"><a class="anchor" href="#trueprogramación-de-la-llamada-a-la-eliminación-desde-el-listado-de-solicitudes"></a>11.5. Programación de la llamada a la eliminación desde el listado de solicitudes.</h3>
 <div class="paragraph">
-<p>Programación de la llamada a la eliminación desde el listado de solicitudes.</p>
+<p>Ahora se tarta de programar la eliminación desde el listado. Se trata de implementar un método que abra el cuadro de diálogo y que le pase los datos de eliminación para poder mostrar a los usuarios lo que van a eliminar antes de proceder.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/pages/consultar/consultar.component.ts</code>:</p>
@@ -5523,9 +5675,9 @@ export class ConsultarComponent implements OnInit {
     public dialog: MatDialog <i class="conum" data-value="3"></i><b>(3)</b>
   ) {}
   ngOnInit(): void {
-    this.solicitudesService.findAll().subscribe((res) =&gt; { <i class="conum" data-value="4"></i><b>(4)</b>
+    this.solicitudesService.findAll().subscribe((res) =&gt; {
       this.dataSource = res;
-      if (this.dataSource.length == 0) { <i class="conum" data-value="5"></i><b>(5)</b>
+      if (this.dataSource.length == 0) {
         this.snackBar.open('No hay solicitudes', '', {
           duration: 1500,
         });
@@ -5533,9 +5685,9 @@ export class ConsultarComponent implements OnInit {
     });
   }
 
-  eliminar(element: any) { <i class="conum" data-value="6"></i><b>(6)</b>
-    this.dialog.open(DialogoEliminarComponent, { <i class="conum" data-value="7"></i><b>(7)</b>
-      data: element, <i class="conum" data-value="8"></i><b>(8)</b>
+  eliminar(element: any) { <i class="conum" data-value="4"></i><b>(4)</b>
+    this.dialog.open(DialogoEliminarComponent, { <i class="conum" data-value="5"></i><b>(5)</b>
+      data: element, <i class="conum" data-value="6"></i><b>(6)</b>
     });
   }
 }</code></pre>
@@ -5557,31 +5709,23 @@ export class ConsultarComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Recuperación de la lista de solicitudes</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Presentación de mensaje de error en la snakbar si no hay solicitudes</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Método <code>eliminar()</code> llamado desde la página del listado de solicitudes</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Abrir el cuadro de diálogo pasándole datos en <code>data</code></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Configurar <code>data</code> con los datos que reciba el método</td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes"><a class="anchor" href="#truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes"></a>11.5. Presentación del botón de eliminación en el listado de solicitudes</h3>
+<h3 id="truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes"><a class="anchor" href="#truepresentación-del-botón-de-eliminación-en-el-listado-de-solicitudes"></a>11.6. Presentación del botón de eliminación en el listado de solicitudes</h3>
 <div class="paragraph">
-<p>Por último, ya sólo nos falta incluir un botón de eliminar en el componente  del listado de solicitudes y que llame al método que presenta el cuadro de diálogo de eliminación pasándole los datos de la solicitud a eliminar.</p>
+<p>Por último, ya sólo nos falta incluir un botón de eliminar en el componente  del listado de solicitudes, y que llame al método que presenta el cuadro de diálogo de eliminación pasándole los datos de la solicitud a eliminar.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/pages/consultar/consultar.component.html</code>:</p>
@@ -5590,7 +5734,7 @@ export class ConsultarComponent implements OnInit {
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;div fxLayout="column" fxLayoutAlign="center center"&gt;
   &lt;h1&gt;Listado de solicitudes&lt;/h1&gt;
-  &lt;div *ngIf="dataSource.length &gt; 0"&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+  &lt;div *ngIf="dataSource.length &gt; 0"&gt;
     &lt;hr /&gt;
     &lt;mat-card&gt;
       &lt;table mat-table [dataSource]="dataSource" class="mat-elevation-z8"&gt;
@@ -5614,7 +5758,7 @@ export class ConsultarComponent implements OnInit {
           &lt;td mat-cell *matCellDef="let element"&gt;{{ element.telefono }}&lt;/td&gt;
         &lt;/ng-container&gt;
 
-        &lt;!-- Get Details --&gt;
+        &lt;!-- Columna de accciones --&gt;
         &lt;ng-container matColumnDef="acciones"&gt;  <i class="conum" data-value="2"></i><b>(2)</b>
           &lt;th mat-header-cell *matHeaderCellDef&gt;Acciones&lt;/th&gt;
           &lt;td mat-cell *matCellDef="let element"&gt; <i class="conum" data-value="3"></i><b>(3)</b>
@@ -5657,7 +5801,7 @@ export class ConsultarComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Incorporación del icono de la papelera al botón</td>
+<td>Incorporación al botón del icono de la papelera</td>
 </tr>
 </table>
 </div>
@@ -5697,7 +5841,7 @@ export class ConsultarComponent implements OnInit {
 <div class="ulist">
 <ul>
 <li>
-<p>Implementar los métodos de localización y modificación de una solicitud.</p>
+<p>Implementar los métodos de búsqueda y modificación de una solicitud.</p>
 </li>
 <li>
 <p>Crear de una nueva ruta en la aplicación para la operación de modificación.</p>
@@ -5706,7 +5850,7 @@ export class ConsultarComponent implements OnInit {
 <p>Adaptar el componente de crear para que también valga para modificar.</p>
 </li>
 <li>
-<p>Crear el método de editar solcitud en el componente de listado de solicitudes.</p>
+<p>Crear el método de editar solicitud en el componente de listado de solicitudes.</p>
 </li>
 <li>
 <p>Añadir el botón de modificar solicitud y conectarlo al método de editar solicitud anterior.</p>
@@ -5716,7 +5860,7 @@ export class ConsultarComponent implements OnInit {
 <div class="sect2">
 <h3 id="truecreación-del-método-de-actualización-de-una-solicitud"><a class="anchor" href="#truecreación-del-método-de-actualización-de-una-solicitud"></a>12.1. Creación del método de actualización de una solicitud</h3>
 <div class="paragraph">
-<p>La actualización de una solicitud realmente implica dos operaciones diferentes. Una de búsqueda de la solicitud para la recuperación de sus datos y presentarlos en el formulario de modificación, y otra que se encargue de la modificación en sí misma. De esto se van a encargar los métodos <code>findOne</code> y <code>update</code>, respectivamente, que se muestran acontinuación.</p>
+<p>La actualización de una solicitud realmente implica dos operaciones diferentes. Una de búsqueda de la solicitud para la recuperación de sus datos y presentarlos en el formulario de modificación. Otra que se encargue de la modificación en sí misma. De esto se van a encargar los métodos <code>findOne</code> y <code>update</code>, respectivamente, que se muestran a continuación.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>services/solicitudes.service.ts</code>:</p>
@@ -5763,7 +5907,7 @@ export class SolicitudesService {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Método para la búsqueda y recuperación de los datos de la solicitud a mofificar</td>
+<td>Método para la búsqueda y recuperación de los datos de la solicitud a modificar</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -5783,7 +5927,21 @@ export class SolicitudesService {
 <div class="sect2">
 <h3 id="truecreación-de-la-ruta-de-modificación-de-solicitudes"><a class="anchor" href="#truecreación-de-la-ruta-de-modificación-de-solicitudes"></a>12.2. Creación de la ruta de modificación de solicitudes</h3>
 <div class="paragraph">
-<p>Necesitamos una nueva ruta para editar una solicitud. A esa ruta asociaremos el componente que se mostrará en la aplicación. Realmente no se es necesario un nuevo componente de Modificar solicitud. Se puede encargar el mismo componente de Crear solicitud. Habrá que adaptarlo. Básicamente es lo mismo pero incluyendo el <code>id</code> de la solicitud a modificar. Además, tendrá que incorporarse un método <code>PATCH</code> para la modificación. Lo veremos más adelante. Ahora vamos a crear la nueva ruta para modificar una solicitud</p>
+<p>Necesitamos una nueva ruta para editar una solicitud. A esa ruta asociaremos el componente que se mostrará en la aplicación. Realmente no es necesario un nuevo componente de <em>Modificar solicitud</em>. Se puede encargar el mismo componente de <em>Crear solicitud</em>. Eso sí, habrá que adaptarlo. Básicamente es lo mismo pero incluyendo el <code>id</code> de la solicitud a modificar. Además, tendrá que incorporarse un método <code>PATCH</code> para la modificación. Lo veremos más adelante. Por ahora, comencemos creando la nueva ruta para modificar una solicitud</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Cuando creamos el módulo de rutas de solicitudes no añadimos una ruta específica para modificar. Esto se debió porque hasta ese momento cada ruta estaba asociada a un componente diferente. Para no provocar confusión en aquel momento llevando dos rutas a un mismo componente, se optó por no incluir la ruta de modificación de solicitudes en su módulo de rutas y posponer su creación hasta este momento.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/solictudes.routing.ts</code>:</p>
@@ -5822,15 +5980,12 @@ export class SolicitudesRoutingModule {}</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Nueva ruta para modificación de solicitudes</td>
+<td>Nueva ruta para modificación de solicitudes mostrando el componente de crear solicitudes</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Si ahora escribimos la ruta</p>
-</div>
-<div class="paragraph">
-<p>comprobamos que la ruta es aceptada. Sin embargo, se muestra el componente de Crear, tal y como hemos indicado en el archivo de rutas.</p>
+<p>Si ahora escribimos la ruta <code><a href="http://localhost/solicitudes/editar/1" class="bare">http://localhost/solicitudes/editar/1</a></code> comprobamos que la ruta es aceptada. Además, se muestra el componente de Crear solicitud, tal y como hemos indicado en el archivo de rutas.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -5838,16 +5993,16 @@ export class SolicitudesRoutingModule {}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Lo esperado en la aplicación es que muestre una pantalla de modificación con los datos de la solicitud a modificar. Obviamente esto aún no se puede mostrar porque aún está por implementar. Veamos cómo hacerlo en los apartados siguientes.</p>
+<p>Sin embargo, lo esperado en la aplicación es que hubiese mostrado una pantalla de modificación con los datos de la solicitud a modificar. Obviamente esto aún no se puede mostrar porque aún está por implementar. Veamos cómo hacerlo en los apartados siguientes.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="trueun-componente-para-crear-y-editar"><a class="anchor" href="#trueun-componente-para-crear-y-editar"></a>12.3. Un componente para crear y editar</h3>
 <div class="paragraph">
-<p>Hasta ahora tenemos un componente para crear solicitudes. Lo inmediato sería crear uno nuevo para editar solicitudes. Sin embargo, si nos paramos a pensar, el componente de editar es prácticamente igual al de crear salvo que al editar se cuenta con el <code>id</code> de la solicitud que se está editando y al crear, el <code>id</code> es creado a posteriori. Por tanto, podríamos plantear un único componente que usemos para las dos operaciones. Para ello, usaremos una variable que indicará si estamos en modo de edición o en modo de creación. En función de su valor, se mostrará un texto u otro en la cabecera y en los botones, y se llamará al método de creación o de eliminación. Veamos cómo hacerlo.</p>
+<p>Hasta ahora tenemos un componente para crear solicitudes. Lo inmediato sería crear uno nuevo para editar solicitudes. Sin embargo, si nos paramos a pensar, el componente de <em>Editar</em> es prácticamente igual al de <em>Crear</em> salvo que al editar se cuenta con el <code>id</code> de la solicitud que se está editando, y al crear, el <code>id</code> es creado a posteriori. Por tanto, podríamos plantearnos en tener un único componente que usaríamos para las dos operaciones. En ese caso, tendremos que usar una variable que indicará si estamos en modo de edición o en modo de creación. En función de su valor, se mostrará un texto u otro en la cabecera y en los botones (texto de creación o de modificación), y se llamará al método correspondiente (de creación o de eliminación). Veamos cómo hacerlo.</p>
 </div>
 <div class="paragraph">
-<p>Comencemos adaptación la parte TypeScript del componente de Crear solicitud para que también valga para editar.</p>
+<p>Comencemos con la adaptación de la parte TypeScript del componente de <em>Crear solicitud</em> para que también valga para editar.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/pages/crear/crear.component.ts</code>:</p>
@@ -6001,15 +6156,15 @@ export class CrearComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Permite acceder a componentes de la URL</td>
+<td>Permite acceder a componentes de la URL (necesitamos acceder al <code>id</code> de la solicitud a editar)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Configurar el modo Crear como el modo predeterminado (editar es falso)</td>
+<td>Configurar el modo <em>Crear</em> como el modo predeterminado (editar es falso)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Asignar a <code>id</code> el componente <code>id</code> de la ruta de la URL. Las partes de la ruta están definidas en el módulo de rutas <code>solicitudes-routing.module.ts</code></td>
+<td>Asignar a la variable <code>id</code> el componente <code>id</code> de la ruta de la URL. Las partes de la ruta están definidas en el módulo de rutas <code>solicitudes-routing.module.ts</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
@@ -6053,14 +6208,14 @@ export class CrearComponent implements OnInit {
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Para asignar cada elemento de una solicitud a su elemento correspondiente del formulario se puede hacer de uno en uno, pero resulta muy pesado y es propenso a errores. En cambio, si los nombres de los elementos del formulario coinciden con los nombre de los elementos de la solicitud leída de la base d datos, se puede hacer con una sola línea mediante <code>patchValue</code> (un motivo más para mantener la consistencia en la denominación de variables)</p>
+<p>Para asignar cada elemento de una solicitud a su elemento correspondiente del formulario se puede hacer de uno en uno, pero resulta muy pesado y es propenso a errores. En cambio, si los nombres de los elementos del formulario coinciden con los nombre de los elementos de la solicitud leída de la base de datos, se puede hacer con una sola línea mediante <code>patchValue</code> (un motivo más para mantener la consistencia en la denominación de variables)</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Ahora tocaría modificar la parte de la presentación del formulario de Crear solicitud para que sirva también para actualizar. Básicamente se trata de cambiar el título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo, ya que el propio método actualizará o insertará en función del valor de <code>modoEditar</code>, que básicamente se determinaba a partir de lo que indicase la ruta.</p>
+<p>Ahora tocaría modificar la parte de la presentación del formulario de <em>Crear solicitud</em> para que sirva también para actualizar. Básicamente se trata de cambiar el texto del título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo, ya que el propio método actualizará o insertará en función del valor de <code>modoEditar</code>, que recordemos que se determinaba a partir de lo que indicase la ruta.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/solicitudes/pages/crear/crear.component.html</code>:</p>
@@ -6180,7 +6335,7 @@ export class ConsultarComponent implements OnInit {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Método al que llamará el botón de <code>Editar</code></td>
+<td>Método llamado al pulsar el botón de <code>Editar</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -6189,7 +6344,7 @@ export class ConsultarComponent implements OnInit {
 </table>
 </div>
 <div class="paragraph">
-<p>Finalzaremos añadiendo un botón de Actualización de solicitudes en la pantalla de Consultar solicitudes que llame al método de actualización.</p>
+<p>Finalizaremos añadiendo un botón de Actualización de solicitudes en la pantalla de Consultar solicitudes. El botón llamará al método de actualización que acabamos de crear.</p>
 </div>
 <div class="paragraph">
 <p>Archivo <code>main/pages/solicitudes/consultar/consultar.component.html</code>:</p>
@@ -6222,7 +6377,7 @@ export class ConsultarComponent implements OnInit {
           &lt;td mat-cell *matCellDef="let element"&gt;{{ element.telefono }}&lt;/td&gt;
         &lt;/ng-container&gt;
 
-        &lt;!-- Get Details --&gt;
+        &lt;!-- Columna de accciones --&gt;
         &lt;ng-container matColumnDef="acciones"&gt;
           &lt;th mat-header-cell *matHeaderCellDef&gt;Acciones&lt;/th&gt;
           &lt;td mat-cell *matCellDef="let element"&gt;
@@ -6282,7 +6437,7 @@ export class ConsultarComponent implements OnInit {
 </div>
 </div>
 <div class="paragraph">
-<p>Aprovecharemos y haremos una modificación en el cargo con el realiza la solicitud. Vemos que también aparece modificado el texto del botón, que ahora es <code>Modificar</code>. Si pulsamos el botón nos llevará al listado de solicitudes donde aparecerá la solicitud modificada.</p>
+<p>Aprovecharemos y haremos una modificación en el cargo con el realiza la solicitud. Vemos que también aparece modificado el texto del botón, que ahora es <code>Editar</code>. Si pulsamos el botón nos llevará al listado de solicitudes donde aparecerá la solicitud modificada.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -6439,7 +6594,7 @@ http://localhost:3002/solicitudes</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-03-07 21:23:59 +0100
+Last updated 2022-03-08 22:09:01 +0100
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

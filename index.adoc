@@ -27,25 +27,41 @@ image::logocloudstic.png[]
 ////
 COLOCA A CONTINUACION EL RESUMEN
 ////
-xxx
+Angular es uno de los frameworks Javascript más utilizados en el momento junto a React y Vue.js. Angular ofrece una solución completa para el manejo de rutas, formularios, inyección de dependencias y building, entre otros. Además, el uso en STIC de NestJS para backend, el cual tiene una arquitectura muy basada en Angular, ha propiciado que sea la tecnología actual elegida en STIC para el desarrollo frontend. Así, tenemos la arquitectura de Angular tanto en frontend como en backend, facilitando a los equipos de desarrollo el cambio entre desarrollo frontend y backend.
+
+En este tutorial se abordan los principales temas y desafíos con los que nos solemos encontrar en cada aplicación en el ámbito de gestión. Se hace a través del desarrollo de una aplicación de ejemplo sencilla y se tratan desde temas metodológicos, como la organización de carpetas y archivos del proyecto, hasta los temas particulares del desarrollo de aplicaciones CRUD, como formularios reactivos, manejo de rutas, paso de datos entre componentes e interacción con servicios REST.
 
 ////
 COLOCA A CONTINUACION LOS OBJETIVOS
 ////
 .Objetivos
-* xxx
+* Aprender las técnicas básicas y habituales de Angular mediante el desarrollo de una aplicación CRUD.
+* Definir una estructura de carpetas y archivos adecuada para el desarrollo y posterior mantenimiento.
+* Usar las rutas para la navegación de la aplicación y la selección de componentes.
+* Crear servicios que interactúen con una API REST.
+* Manejar correctamente la asincronía de los servicios REST.
+* Crear y utilizar formularios reactivos y validadores de datos.
+* Compartir datos entre componentes.
+* Crear páginas con opciones de filtrado.
+* Crear cuadros de diálogo informativos y de validación.
+* Desarrollar una aplicación Angular sin necesidad de tener un backend definitivo.
+* Utilizar la técnica del _lazy loading_.
+* Usar variables de entorno.
+* Utilizar Angular Material para la intefaz de la aplicación.
+* Utilizar Angular Flex-Layout para la organización de elementos de la interfaz de usuario.
+
 
 [TIP]
 ====
-Disponibles los repositorios usados en este tutorial.
-
-* xxx
+Disponibles el https://github.com/ualmtorres/angular-espacios.git[repositorio] usado en este tutorial.
 ====
 
 // Entrar en modo numerado de apartados
 :numbered:
 
 ## Introducción
+
+$$$
 
 ## Creación de la aplicación
 
@@ -825,10 +841,10 @@ En este tutorial trabajaremos con formularios reactivos. Esto nos permitirá des
 
 .Formularios reactivos
 ****
-$$$$
-definición del formgroup y correspondencia html
-Inyección de fombuilder
-formcontrolname
+$$$$ TO DO
+* definición del formgroup y correspondencia html
+* Inyección de fombuilder 
+* formcontrolname
 
 ****
 
@@ -2201,20 +2217,24 @@ image::ListarSolicitudes.png[]
 
 ## Lista de espacios
 
-De forma análoga a como acabamos de hacer con el listado de solicitudes vamos a implementar la parte del listado de solicitudes, que guarda bastante parecido con el anterior. Comenzaremos creando un listado completo y posteriormente le añadiremos capacidades de filtrado.
+De forma análoga a como acabamos de hacer con el listado de solicitudes vamos a implementar la parte del listado de espacios, el cual guarda bastante parecido con el anterior. Comenzaremos creando un listado total y posteriormente le añadiremos capacidades de filtrado.
+
+La forma de proceder será la de siempre:
+
+* Construcción del servicio que interactúa con el backend.
+* Programación de la parte TypeScript del componente para que interactúe con el servicio anterior.
+* Creación de la parte HTML de presentación del componente conectada a su parte TypeScript creada en el paso anterior.
 
 ### Generación del servicio
 
-En esta sección crearemos un servicio que recupere datos de persona. Comenzaremos creando un servicio.
+En esta sección crearemos un servicio que recupere datos de espacios. Comenzaremos creando un servicio.
 
 [source, bash]
 ----
 $ ng g service services/espacios
 ----
 
-A continuación añadiremos un método que recupere todos los espacios.
-
-Método de recuperación de espacios en el servicio `services/espacios.ts`:
+A continuación le añadiremos un método que recupere todos los espacios programando un método para ello en el servicio `services/espacios.ts`:
 
 [source, ts]
 ----
@@ -2240,75 +2260,14 @@ export class EspaciosService {
 
 [NOTE]
 ====
-La variable de entorno se reutiliza. Sólo necesitamos la URL del servidor. El resto se añade en cada módulo funcional de la API.
+La variable de entorno se reutiliza. Ya la usamos en el servicio de solicitudes. Sólo necesitamos la URL del servidor. El resto de la ruta se añade en cada módulo funcional de la API (p.e. `espacios`, `solicitudes`).
 ====
 
-Para que haya datos de prueba, añadiremos este nuevo elemento al archivo `db.json` de JSON Server para tener el endpoint de acceso a los espacios (`http://localhost:3000/espacios`)
-
-[source, json]
-----
-{
-...
-  "espacios": [
-    {
-      "edificio": "Aulario I",
-      "aula": "Aula 2",
-      "fecha": "07/02/2022",
-      "reservas": [
-        {
-          "hora": "09:00 - 12:00",
-          "descripcion": "GRUPO A",
-          "asignatura": "( 12103230 ) - Lengua Clásica: Latín",
-          "profesor": ""
-        }
-      ]
-    },
-    {
-      "edificio": "Aulario I",
-      "aula": "Aula 1",
-      "fecha": "07/02/2022",
-      "reservas": [
-        {
-          "hora": "09:00 - 12:00",
-          "descripcion": "GRUPO UNICO",
-          "asignatura": "( 67104216 ) - Gestión Integral de la Imagen",
-          "profesor": ""
-        }
-      ]
-    },
-    {
-      "edificio": "Aulario II",
-      "aula": "Aula 1",
-      "fecha": "07/02/2022",
-      "reservas": [
-        {
-          "hora": "09:00 - 12:00",
-          "descripcion": "GRUPO A",
-          "asignatura": "( 31103209 ) - Lexicología y Semántica Inglesas",
-          "profesor": ""
-        },
-        {
-          "hora": "12:00 - 15:00",
-          "descripcion": "GRUPO A",
-          "asignatura": "( 12104226 ) - Historia de la Lengua Española II",
-          "profesor": ""
-        },
-        {
-          "hora": "16:00 - 19:00",
-          "descripcion": "GRUPO UNICO",
-          "asignatura": "( 40153329 ) - Teoría de Códigos y Criptografía",
-          "profesor": ""
-        }
-      ]
-    }
-  ],
-...
-}
-----
+Este servicio atacará a la API REST de prueba que estamos usando en este tutorial y que está disponible en <<Anexo I. Creación de un servidor JSON para datos de prueba>>.
 
 ### Programación del componente
 
-A continuación ya podemos programar el componente TypeScript de espacios `main/espacios/pages/consultar/consultar.component.ts`:
+Una vez creado el servicio, ya podemos programar el componente TypeScript que lo usará para recuperar datos de espacios y entregarlos a la parte HTML del componente. Lo haremos en el archivo `main/espacios/pages/consultar/consultar.component.ts`:
 
 [source, ts]
 ----
@@ -2333,15 +2292,15 @@ export class ConsultarComponent implements OnInit {
 }
 
 ----
-<1> Variable donde volcaremos los datos de los espacios
-<2> Inyección del servivio de espacios
-<3> Método para recuperar los espacios. Devuelve un observable
+<1> Variable donde volcaremos los datos de los espacios recuperados por el servicio
+<2> Inyección del servicio de espacios
+<3> Recuperación de los espacios al iniciar el componente
 <4> Llamada al método del servicio que recupera los espacios
 <5> Carga de los datos leídos en la variable de espacios
 
 ### Configuración de las importaciones del módulo
 
-A continuación se configurar las importaciones de `main/espacios/espacios.module.ts` para incluir nuestro módulo de `Material`:
+Como el componente de presentación de espacios usará componentes Material, hay que asegurarse que nuestro módulo de componentes Material está incluido en el módulo del componente de espacios, que es con el estamos trabajando para la lista de espacios. A continuación se muestra la configuración de las importaciones de `main/espacios/espacios.module.ts` para que esté incluido nuestro módulo de `Material`:
 
 [source, ts]
 ----
@@ -2362,7 +2321,43 @@ export class EspaciosModule {}
 
 ### Programación de la presentación de datos
 
-A continuación se muestra cómo presentamos los datos en el componente de espacios. Básicamente se trata de explotar la variable `espacios` que es la que contiene los datos. Para ello, se iterará sobre ella y se mostrarán los datos en tarjetas Material. Dentro de cada espacio, puede haber una lista de reservas. Por tanto, habrá que crear un bucle anidado que itere sobre las reservas de un espacio.
+En esta sección vamos a ver cómo presentamos los datos en el componente de espacios. Básicamente se trata de explotar la variable `espacios` inicializada en la parte TypeScript del componente y que es la que contiene los datos. Para ello, se iterará sobre `espacios` y se mostrarán los datos en tarjetas Material. Dentro de cada espacio, puede haber una lista de reservas, tal y como se muestra a continuación. Por tanto, habrá que crear un bucle anidado que itere sobre las reservas de un espacio.
+
+[source, json]
+----
+    { <1>
+      "edificio": "Aulario II",
+      "aula": "Aula 1",
+      "fecha": "07/02/2022",
+      "reservas": [ <2>
+        {
+          "hora": "09:00 - 12:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 31103209 ) - Lexicología y Semántica Inglesas",
+          "profesor": ""
+        },
+        {
+          "hora": "12:00 - 15:00",
+          "descripcion": "GRUPO A",
+          "asignatura": "( 12104226 ) - Historia de la Lengua Española II",
+          "profesor": ""
+        },
+        {
+          "hora": "16:00 - 19:00",
+          "descripcion": "GRUPO UNICO",
+          "asignatura": "( 40153329 ) - Teoría de Códigos y Criptografía",
+          "profesor": ""
+        }
+      ]
+    }
+----
+<1> Datos correspondientes a la ocupación de un espacio en un día concreto
+<2> Lista de reservas realizadas en un espacio en un día concreto
+
+[NOTE]
+====
+Consideramos que la API REST devuelve ocupaciones diarias de un espacio. Cada día en un espacio es considerado de forma independiente a otro día en el mismo espacio. En la parte de `espacios` del <<Anexo I. Creación de un servidor JSON para datos de prueba>> se ve claramente esta situación.
+====
 
 Archivo `main/espacios/pages/consultar/consultar.component.html`:
 
@@ -2404,11 +2399,17 @@ Archivo `main/espacios/pages/consultar/consultar.component.html`:
 <4> Bucle anidado para recorrer las reservas de un espacio
 <5> Presentación de los datos de una reserva
 
-### Incorporación de funcionalidad de filtrado
+Aquí se muestra el resultado. Por ahora se muestran todas las solicitudes. En el apartado siguiente veremos cómo se le pueden incorporar funcionalidades de filtrado.
 
-En esta sección vamos a ver cómo llevar el código anterior del listado de solicitudes a un componente específico. Haremos esto porque vamos a estructurar la página de espacios en dos componentes. Uno para un componente de filtrado con cuadros de lista y de entrada de datos para especificar condiciones de filtrado. Otro para el componente de presentación de la tabla de datos.
+image::ListaDeEspacios.png[]
 
-Comencemos generando el componente de tabla de espacios para resultados de búsqueda y del formulario de búsqueda
+### Incorporación de la funcionalidad de filtrado
+
+En esta sección vamos a ver cómo llevar el código anterior del listado de solicitudes a un componente específico. Haremos esto porque vamos a estructurar la página de espacios en dos componentes. Uno para un componente de filtrado con cuadros de lista y de entrada de datos para especificar condiciones de filtrado. Otro para el componente de presentación de la tabla de datos. La figura siguiente ilustra un esbozo de la página mostrando la funcionalidad de filtrado de espacios.
+
+image::MockListadoDeEspacios.png[]
+
+Comencemos generando el componente de la tabla de espacios para resultados de búsqueda y el del formulario de búsqueda.
 
 [source, bash]
 ----
@@ -2418,12 +2419,16 @@ $ ng g component main/espacios/components/form-buscar
 
 [NOTE]
 ====
-Es habitual colocar los componentes de un módulo funcional en una carpeta `components`, que está al mismo nivel que la carpeta `pages`.
+Es habitual colocar los componentes de un módulo funcional en una carpeta `components` al mismo nivel que la carpeta `pages` del módulo funcional.
+
+Al final, deberemos tener una estructura similar a la de esta figura.
+
+image::CarpetasEspacios.png[]
 ====
 
 #### Flujo de datos entre los componentes
 
-La organización y el flujo de datos entre componentes es el siguiente:
+Los componentes individuales (formulario  y tabla de resultados) y el componente que los englobla tienen una forma de comunicarse y compartir datos. La organización y el flujo de datos entre componentes es el siguiente:
 
 * La página de espacios incluye los selectores de sus componentes: en este caso el de filtrado y el de tabla de datos.
 * El objeto que contiene los datos de los espacios está en el componente de espacios, digamos el componente padre.
@@ -2434,11 +2439,24 @@ La organización y el flujo de datos entre componentes es el siguiente:
 
 La figura siguiente ilustra los componentes, el flujo y la parte relevante del código para conseguirlo.
 
-image::$$$$$$$$.png[]
+image::FlujoPadreHijosCompleto.png[]
+
+.Cómo compartir datos entre componentes padre/hijo
+****
+
+$$ TO DO $$
+
+image::FlujoPadreHijosBasico.png[]
+
+[NOTE]
+====
+Para más información sobre cómo compartir datos entre componentes padre/hijo consultar la https://angular.io/guide/inputs-outputs[documentación oficial].
+====
+****
 
 #### Programación de la parte TypeScript del componente de tabla de datos
 
-En esta parte sólo tendremos que añadir el decorador `@Input` y asociarle una variable, que será la que usen otros componentes para inyectarle datos.
+Este componente se dedica a gestionar los datos de la tabla de datos de los espacios recuperados por el servicio. Como los datos de los espacios están en el componente padre, el componente de tabla de datos tendrá que añadir el decorador `@Input` y asociarle una variable, que será la que usen otros componentes para inyectarle datos.
 
 Archivo `main/espacios/component/tabla-espacios/tabla-espacios.component.ts`:
 
@@ -2465,11 +2483,13 @@ export class TablaEspaciosComponent implements OnInit {
 .El decorador `@Input`
 ****
 El decorador `@Input` ofrece un medio para inyectar datos a un componente desde otro componente externo. El componente de destino asociará a este decorador una variable en la que se recibirán los datos enviados desde otros componentes. El componente que envía los datos envía los datos mediante un atributo HTML. El atributo de envío coincide con la variable usada en el `@Input`.
+
+$$$Figura
 ****
 
 #### Refactorización en un componente dedicado a la tabla de datos
 
-Ahora llevaremos el código que creamos para el HTML del listado de espacios hasta el HTML de la tabla de datos, tal cual, respetando el uso de `espacios`.
+Ahora llevaremos el código que creamos para el HTML del listado de espacios hasta el HTML de la tabla de datos, tal cual, respetando el uso de `espacios`. Lo podemos llevar tal cual porque la presentación no va a variar y los datos los inyectaremos desde el padre al componete hijo a través de su `@Input` para `espacios`. 
 
 Archivo `main/espacios/component/tabla-espacios/tabla-espacios.component.html`:
 
@@ -2506,7 +2526,7 @@ Archivo `main/espacios/component/tabla-espacios/tabla-espacios.component.html`:
 
 #### Configuración de la página de listado de espacios
 
-Ahora la página de listado de espacios, que antes mostraba directamente el listado de espacios, se convertirá en una página que incluye al componente de formulario de búsqueda y al de filtrado de datos, tal y como se muestra a continuación.
+Ahora la página de listado de espacios, que antes mostraba directamente el listado de espacios, se convertirá en una página contenedor o en una página padre que incluye dos ( componente de formulario de búsqueda y componente de filtrado de datos), tal y como se muestra a continuación. 
 
 [source, html]
 ----
@@ -2521,7 +2541,7 @@ Ahora la página de listado de espacios, que antes mostraba directamente el list
 </div>
 ----
 <1> Selector para incluir el componente del formulario de búsqueda
-<2> Selector para incluir el componente de tabla de datos y pasándole al decorador `@Input` definido como `espacios` el valor que tenemos almacenado en `espacios` de este componente, el componente padre. 
+<2> Selector para incluir el componente de tabla de datos. Se le pasa al decorador `@Input` definido como `espacios` el valor que tenemos almacenado en `espacios` de este componente, el componente padre. 
 
 Al pasar datos a un componente a través de `@Input`, la sintaxis 
 
@@ -2532,15 +2552,13 @@ Al pasar datos a un componente a través de `@Input`, la sintaxis
 
 se interpreta así: la primera parte es el nombre del `Input` en el componente de destino; la segunda parte es el valor que le pasamos.
 
-La página se verá así.
+La página se verá así. Vemos que aún no aparece el formulario para el filtrado. Lo crearemos en breve. Antes, hay que adaptar el módulo de estos componentes de espacios para incluir formularios reactivos. Pero ya hemos conseguido segregar la tabla de datos a un componente hijo.
 
 image::ListaDeEspaciosSinFormularioDeBusqueda.png[]
 
-Vemos que aún no aparece el formulario para el filtrado. Lo crearemos en breve. Antes, hay que adaptar el módulo de estos componentes de espacios para incluir formularios reactivos
-
 #### Modificación del módulo de espacios
 
-Hay que hace una modificación ligera al módulo de espacios para importar el módulo de formularios reactivos. Lo va a necesitar el componente del formulario de filtrado de espacios.
+Hay que hace una modificación ligera al módulo de espacios para importar el módulo de formularios reactivos. Lo va a necesitar el componente del formulario de filtrado de espacios, que lo crearemos como formulario reactivo.
 
 [source, ts]
 ----
@@ -2573,9 +2591,9 @@ export class EspaciosModule {}
 
 #### Adaptación del servicio de búsqueda para que acepte parámetros de filtrado
 
-En el servicio de espacios, el método `findAll()` devolvía todos los espacios y no ofrecía posibilidad de filtrado. A continuación se muestra una modificación para que permita como parámetros de filtrado los que le pueda pasar el formulario de filtrado. 
+En el servicio de espacios, el método `findAll()` actualmente devuelve todos los espacios y no ofrece posibilidad de filtrado. A continuación se muestra una modificación para que permita parámetros de filtrado. Dichos parámetros serán los que recojan los datos del formulario de filtrado. 
 
-El filtro de búsqueda llega como un objeto JSON clave-valor, donde la clave es el nombre del campo a filtrar y el valor, el valor de filtrado. La idea es ir concatenando uno detrás de otro los parámetros de filtrado como se muestra a continuación. Nótese que también se ordena para que aparezcan primero los espacios con las solicitudes ordenadas en el tiempo.
+El filtro de búsqueda llega como un objeto JSON clave-valor, donde la clave es el nombre del campo a filtrar y el valor, el valor de filtrado. La idea es ir concatenando en las peticiones los parámetros de filtrado uno detrás de otro, como se muestra a continuación. Nótese que también se ordena para que aparezcan primero los espacios con las solicitudes ordenadas en el tiempo.
 
 [source, code]
 ----
@@ -2584,7 +2602,7 @@ http://localhost:3002/espacios?_sort=fecha&fecha=07/02/2022&aula=Aula%201
 
 [NOTE]
 ====
-En la URL anterior `%20` representa un espacio en blanco para consultar las solcitudes en `Aula 1`.
+En la URL anterior `%20` representa un espacio en blanco para consultar las solicitudes en `Aula 1`.
 ====
 
 [source, ts]
@@ -2636,12 +2654,16 @@ export class EspaciosService {
   }
 }
 ----
+<1> Inicialización de la variable que almacena el filtro
+<2> _Pipeline_ que va añadiendo filtros de búsqueda al filtro
 
 #### Creación de un formulario inicial de búsqueda
 
 Se trata de programar el formulario reactivo del componente de búsqueda, tanto en su parte TypeScript como en su parte HTML.
 
-Comenzaremos con un formulario básico que aún no implementará la funcionalidad de búsqueda. Sí tendrá ya un método `buscar()`, pero su cuerpo aún estará vacío. Iremos construyendo el formulario de búsqueda de forma incremental.
+Comenzaremos con un formulario básico que aún no implementará la funcionalidad de búsqueda. Sí tendrá ya un método `buscar()`, pero su cuerpo aún estará vacío. Iremos construyendo el formulario de búsqueda de forma incremental. La figura siguiente ilustra un mock del formulario a construir.
+
+image::FormularioFiltrado.png[]
 
 Archivo `main/espacios/componentes/form-buscar/form-buscar.ts`:
 
@@ -2678,12 +2700,13 @@ export class FormBuscarComponent implements OnInit {
 ----
 <1> Componentes del formulario reactivo
 <2> Variable para almacenar las horas con las que poblar el desplegable de horas
-<3> Inyección de `FormBuilder`
+<3> Inyección de `FormBuilder` paa usar formularios reactivos
 <4> Declaración del método `buscar()` que implementaremos más adelante
 
-A continuación crearemos la parte de presentación del formulario de búsqueda:
+A continuación crearemos la parte de presentación del formulario de búsqueda de acuerdo con el mock anterior:
 
 Archivo `main/espacios/componentes/form-buscar/form-buscar.html`:
+
 
 [source, html]
 ----
@@ -2780,7 +2803,7 @@ Archivo `main/espacios/componentes/form-buscar/form-buscar.html`:
 <7> Ligado del input en modo de formulario reactivo
 <8> Ligado del input en modo de formulario reactivo
 
-Una vez creadas las partes TS y HTML del componente de formulario, sólo falta añadirlo como componente hijo al componente de consulta de espacios.
+Una vez creadas las partes TypeScript y HTML del componente de formulario, sólo falta añadirlo como componente hijo al componente de consulta de espacios.
 
 Archivo `main/espacios/pages/consultar/consultar.component.html`:
 
@@ -2789,31 +2812,32 @@ Archivo `main/espacios/pages/consultar/consultar.component.html`:
 <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
   <div fxFlex>
     <h1>Lista de espacios</h1>
-    <app-form-buscar></app-form-buscar>
+    <app-form-buscar></app-form-buscar> <1>
   </div>
   <div fxLayoutAlign="center stretch">
     <app-tabla-espacios [espacios]="espacios"></app-tabla-espacios>
   </div>
 </div>
 ----
+<1> Incorporación del formulario de búsqueda como componente
 
-Si ahora seleccionamos la página de consulta de espacios veremos que ya sí aparece el formulario. Nuestra página de consulta de espacios está formada por el componente de formulario y el de tabla de resultados. Sin embargo, si seleccionamos `Aulario II` y `Aula 1` como criterios de búsqueda y pulsamos `Buscar` vemos que no se filtran los resultados.
+Si ahora vamos a la página de consulta de espacios veremos que ya sí aparece el formulario. Nuestra página de consulta de espacios está formada por el componente de formulario y el de tabla de resultados, tal y como indicaba el mock. Sin embargo, si seleccionamos `Aulario II` y `Aula 1` como criterios de búsqueda y pulsamos `Buscar` vemos que no se filtran los resultados.
 
 image::FormularioDeBusquedaQueNoBusca.png[]
 
-Esto se debe a que aún no se están recuperando los parámetros de filtrado del formulario ni se están pasando al servicio de búsqueda para que devuelva un resultado filtrado. Lo veremos a continuación.
+Esto se debe a que aún no se están recuperando los parámetros de filtrado del formulario ni se están pasando al servicio de búsqueda para que devuelva un resultado filtrado. Ews decir, el componente de formulario está creado e incluido en su componente padre, pero ni se recogen sus datos de filtro de búsqueda y por tanto no se hace nada con ellos para restringir la tabla de resultados. A continuación veremos cómo solucionar este problema.
 
 #### Incorporación de capacidades de búsqueda/filtrado
 
 Para finalizar con el formulario de búsqueda tenemos varias tareas pendientes:
 
-. Modificar el TS del componente hijo (el formulario de búsqueda) para implementar la función de configuración del filtro de búsqueda y para enviar los datos al componente padre (la página de consulta de espacios).
+. Modificar el TypeScript del componente hijo (el formulario de búsqueda) para implementar la función de configuración del filtro de búsqueda y para enviar los datos al componente padre (la página de consulta de espacios).
 . Implementar la función de búsqueda con parámetros en el componente padre (la página de espacios).
 . Recoger en la página de espacios los datos enviados desde el componente formulario.
 
 ##### Configuración del filtro de búsqueda en el componente hijo 
 
-Los componentes Angular envían sus datos a otros componentes (en este caso el formulario de búsqueda envía a la página de espacios) generando un evento personalizado a través del cual publica sus datos. Los datos que publicaremos serán los valores del filtro de búsqueda recogidos mediante el formulario. Veamos cómo hacerlo.
+Los componentes Angular envían sus datos a otros componentes (en este caso el formulario de búsqueda envía a la página de espacios) generando un evento personalizado a través del cual publican sus datos. En este caso los datos que publicaremos serán los valores del filtro de búsqueda recogidos mediante el formulario. Veamos cómo hacerlo.
 
 Archivo `main/espacios/components/form-buscar/form-buscar.component.ts`:
 
@@ -2916,7 +2940,7 @@ export class ConsultarComponent implements OnInit {
 
 ##### Recogida de datos en el componente padre
 
-Aquí se trata de escuchar al evento que va a publicar el componente del formulario de búsqueda y disparar una acción, que consisitirá en la llamada al método de búsqueda.
+Aquí se trata de escuchar al evento que está publicando el componente del formulario de búsqueda y disparar una acción, que consisitirá en la llamada al método de búsqueda.
 
 Archivo `main/espacios/pages/consultar/consultar.component.html`:
 
@@ -2938,7 +2962,7 @@ Archivo `main/espacios/pages/consultar/consultar.component.html`:
 ====
 La utilización de un evento publicado por parte de otro componente se hace siguiendo este patrón:
 
-Llamar a un método como respuesta al evento publicado y pasándole al método como parámetro los datos recibidos a través de un objeto `$event`).
+Llamar a un método como respuesta al evento publicado y pasándole al método como parámetro los datos recibidos a través de un objeto `$event`.
 
 [source, html]
 ----
@@ -2948,7 +2972,7 @@ Llamar a un método como respuesta al evento publicado y pasándole al método c
 El código anterior escucha a un evento `onSearchEspacio` publicado por el componente `app-form-buscar`. En respuesta, llama a un método `buscar()` pasándole a través de `$event` los datos publicados/enviados por el evento.
 ====
 
-Si ahora volvemos a seleccionar `Aulario II` y `Aula 1` como criterios de búsqueda y pulsamos Buscar vemos que ya sí se filtran los resultados.
+Si ahora volvemos a seleccionar `Aulario II` y `Aula 1` como criterios de búsqueda y pulsamos `Buscar` vemos que ya sí se filtran los resultados.
 
 image::EspaciosFiltrados.png[]
 
@@ -2964,11 +2988,11 @@ Un aspecto útil que debemos controlar es la presentación de información en cu
 
 ### Cuadro de diálogo informativo
 
-Comenzaremos creando un cuadro de diálogo informativo, que son los más sencillos. Se trata de un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón `Créditos` que vamos a añadir a la barra lateral.
+Comenzaremos creando un cuadro de diálogo informativo, que son los más sencillos. A modo de ejemplo, se trata de un cuadro de diálogo con información del proyecto. Se abrirá al pulsar un botón `Créditos` que vamos a añadir a la barra lateral.
 
 [NOTE]
 ====
-Para usar cuadros de diálogo es necesario el módulo Material `MatDialogModule`. Nuestro módulo `Material` ya lo tenía incorporado. Si no disponemos de un modo tan genérico como nuestro `Material` que puede ser demasiado en algunos casos, `MatDialogModule` tiene que estar en el módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.
+Para usar cuadros de diálogo es necesario el módulo Material `MatDialogModule`. Nuestro módulo `Material` ya lo tenía incorporado. Si no disponemos de un modo tan genérico como nuestro `Material`, que como ya hemos indicado puede ser demasiado en algunos casos, `MatDialogModule` tiene que estar en el módulo en el que está el componente desde el que se va a abrir el cuadro de diálogo.
 ==== 
 
 Comenzaremos creando el componente para el cuadro de diálogo. Como es algo informativo y común a toda la aplicación no lo incluiremos en la carpeta `main`. Lo colocaremos en `shared/sidebar/components`.
@@ -2978,11 +3002,11 @@ Comenzaremos creando el componente para el cuadro de diálogo. Como es algo info
 $ ng g component shared/sidebar/components/dialogoCreditos
 ----
 
-A continuación vamos a implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar). Para ello, implementaremos un método que denominaremos `aceptar()` a modo de prueba. Necesitaremos trabajar un objetp `MatDialogRef`.
+A continuación vamos a implementar la lógica del cuadro de diálogo (p.e. qué hacer al aceptar). Para ello, implementaremos un método que denominaremos `aceptar()` a modo de prueba. Necesitaremos trabajar un objeto `MatDialogRef`.
 
 [NOTE]
 ====
-De acuerdo con la documentación de Angular Material, al abrir un cuadro de diálogo, éste devolverá una instancia de `MatDialogRef. Este `MatDialogRef` proporciona un `
+De acuerdo con la documentación de Angular Material, al abrir un cuadro de diálogo, éste devolverá una instancia de `MatDialogRef`. Este `MatDialogRef` proporciona un `
 _handle_ sobre el cuadro de diálogo abierto. Aquí lo usaremos para cerrar el cuadro de diálogo.
 ====
 
@@ -3014,7 +3038,7 @@ export class DialogoCreditosComponent implements OnInit {
 <3> Mostrar un eco en la consola para saber que el método se ejecutó.
 <4> Cerrar el cuadro de diálogo.
 
-A continuación crearemos el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. `mat-dialog-title, mat-dialog-content, mat-dialog-actions` y el estilo `mat-typography`.
+A continuación crearemos el contenido del cuadro de diálogo (p.e. información del proyecto). Usaremos las directivas de estilo para los cuadros de diálogo de Material (p.e. `mat-dialog-title, mat-dialog-content, mat-dialog-actions` y el estilo `mat-typography`).
 
 Archivo `shared/sidebar/components/dialogo-creditos/dialogo-creditos.html`:
 
@@ -3099,17 +3123,29 @@ Archivo `shared/sidebar/sidebar.component.html`:
 ----
 <1> Botón que abre el cuadro de diálogo
 
+La figura siguiente ilustra el resultado.
+
 image::DialogoInformativo.png[]
+
+[NOTE]
+====
+Hemos creado este cuadro informativo con un botón de cerrar y otro de aceptar al que le hemos añadido comportamiento. Un cuadro de información real sólo tendría un botón para cerrar. Hemos añadido otro botón al que asignar comportamiento para aprender a tratar con ello, aunque en este caso sea irrelevante.
+====
 
 ## Eliminación de solicitudes
 
-En esta sección vamoa ver cómo podemos realizar eliminaciones en nuestra aplicación. Para ello, dado que en la sección anterior hemos visto cómo presentar un cuadro de diálogo, nos apoyaremos en esa técnica para mostrar en un cuadro de diálogo informativo los datos que se van a eliminar antes de proceder a su eliminación.
+En esta sección vamos a ver cómo podemos realizar eliminaciones en nuestra aplicación. Para ello, dado que en la sección anterior hemos visto cómo presentar un cuadro de diálogo, nos apoyaremos en esa técnica para mostrar en un cuadro de diálogo informativo los datos que se van a eliminar antes de proceder a su eliminación.
 
 La forma de proceder para la eliminación de solicitudes es incluir en el listado de solicitudes un botón de eliminar al lado de cada solicitud. El botón llamará a un método de eliminación al que pasaremos todos los datos de la solicitud que se vaya a eliminar. Con esos datos se podrá completar un cuadro de diálogo que permitirá la confirmación o la cancelación de la eliminación.
 
 ### Creación del cuadro de diálogo de confirmación de eliminación.
 
 Comencemos creando el componente del cuadro de diálogo de eliminación. Se trata de un componente que estará dentro de la carpeta de solicitudes.
+
+[NOTE]
+====
+Como convenio para nuestras aplicaciones de STIC, la eliminación tendrá su propio componente y se realizará mediante un cuadro de diálogo. Ese componente de eliminación se situará dentro de una carpeta `components` dentro del bloque funcional al que esté referido (p.e. `solicitudes`).
+====
 
 [source, bash]
 ----
@@ -3156,9 +3192,9 @@ export class SolicitudesService {
 
 ### Programación de la lógica del cuadro de diálogo de eliminación
 
-EL cuadro de diálogo de eliminación usará un _handle_ para manejar (en nuestro caso cerrar) el cuadro de diálogo y se le inyectarán los datos que queremos mostrar (en nuestro caso los datos de la solicitud a eliminar).
+El cuadro de diálogo de eliminación usará un _handle_ para manejar (en nuestro caso cerrar) el cuadro de diálogo y se le inyectarán los datos que queremos mostrar (en nuestro caso los datos de la solicitud a eliminar).
 
-También usará el servicio de reservas para proceder a la eliminación, una snackbar para la presentación de mensajes y un router para redirigir la aplicación a otra pantalla tras la eliminación.
+También usará el servicio de solicitudes para proceder a la eliminación, una snackbar para la presentación de mensajes y un router para redirigir la aplicación a otra pantalla tras la eliminación.
 
 Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.ts`:
 
@@ -3202,18 +3238,18 @@ export class DialogoEliminarComponent implements OnInit {
 ----
 <1> Inyección del _handle_ para manejar el cuadro de diálogo
 <2> Inyección de datos para el cuadro de diálogo
-<3> Servicio de operaciones solicitudes
+<3> Servicio de operaciones con solicitudes
 <4> Router para desviar la aplicación a otra página tras la eliminación
 <5> Snackbar para la presentación de mensajes
 <6> Método para eliminación de solicitudes
 <7> Llamada al método eliminación del servicio
-<8> Presentación de la snackbar
+<8> Presentación de la snackbar informativa
 <9> Cierre del cuadro de diálogo
 <10> Recargar la ruta de la página
 
 ### Presentación de los datos en el cuadro de diálogo de eliminación
 
-La parte TypeScript del cuadro de diálogo tiene en una variable `data` los datos que se van a eliminar. Los mostraremos en el cuadro de diálogo para que los usuarios pueden comprobar lo que van a eliminar antes de proceder.
+Tal y como hemos creado en el apartado anterior, hemos dejado preparada la parte TypeScript del cuadro de diálogo con una variable `data` que contiene los datos que se van a eliminar. Los mostraremos en el cuadro de diálogo para que los usuarios pueden comprobar lo que van a eliminar antes de proceder.
 
 Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component.html`:
 
@@ -3239,9 +3275,11 @@ Archivo `main/solicitudes/components/dialogo-eliminar/dialogo-eliminar.component
 ----
 <1> Presentación de elementos `nombre` y `cargo` del objeto `data`
 <2> Acción de cierre del cuadro proporionada por `[mat-dialog-close]`
-<3> Llamada al método `eliminar()` implmementado en la parte TypeScript del cuadro de diálogo
+<3> Llamada al método `eliminar()` implementado en la parte TypeScript del cuadro de diálogo
 
-Programación de la llamada a la eliminación desde el listado de solicitudes.
+### Programación de la llamada a la eliminación desde el listado de solicitudes.
+
+Ahora se tarta de programar la eliminación desde el listado. Se trata de implementar un método que abra el cuadro de diálogo y que le pase los datos de eliminación para poder mostrar a los usuarios lo que van a eliminar antes de proceder.
 
 Archivo `main/solicitudes/pages/consultar/consultar.component.ts`:
 
@@ -3270,9 +3308,9 @@ export class ConsultarComponent implements OnInit {
     public dialog: MatDialog <3>
   ) {}
   ngOnInit(): void {
-    this.solicitudesService.findAll().subscribe((res) => { <4>
+    this.solicitudesService.findAll().subscribe((res) => { 
       this.dataSource = res;
-      if (this.dataSource.length == 0) { <5>
+      if (this.dataSource.length == 0) { 
         this.snackBar.open('No hay solicitudes', '', {
           duration: 1500,
         });
@@ -3280,9 +3318,9 @@ export class ConsultarComponent implements OnInit {
     });
   }
 
-  eliminar(element: any) { <6>
-    this.dialog.open(DialogoEliminarComponent, { <7>
-      data: element, <8>
+  eliminar(element: any) { <4>
+    this.dialog.open(DialogoEliminarComponent, { <5>
+      data: element, <6>
     });
   }
 }
@@ -3290,15 +3328,13 @@ export class ConsultarComponent implements OnInit {
 <1> Servicio en el que está el método de eliminación de solicitudes
 <2> Snackbar para la presentación de mensajes de error
 <3> Inyección del cuadro de diálogo para poder abrirlo
-<4> Recuperación de la lista de solicitudes
-<5> Presentación de mensaje de error en la snakbar si no hay solicitudes
-<6> Método `eliminar()` llamado desde la página del listado de solicitudes
-<7> Abrir el cuadro de diálogo pasándole datos en `data`
-<8> Configurar `data` con los datos que reciba el método
+<4> Método `eliminar()` llamado desde la página del listado de solicitudes
+<5> Abrir el cuadro de diálogo pasándole datos en `data`
+<6> Configurar `data` con los datos que reciba el método
 
 ### Presentación del botón de eliminación en el listado de solicitudes
 
-Por último, ya sólo nos falta incluir un botón de eliminar en el componente  del listado de solicitudes y que llame al método que presenta el cuadro de diálogo de eliminación pasándole los datos de la solicitud a eliminar.
+Por último, ya sólo nos falta incluir un botón de eliminar en el componente  del listado de solicitudes, y que llame al método que presenta el cuadro de diálogo de eliminación pasándole los datos de la solicitud a eliminar.
 
 Archivo `main/solicitudes/pages/consultar/consultar.component.html`:
 
@@ -3306,7 +3342,7 @@ Archivo `main/solicitudes/pages/consultar/consultar.component.html`:
 ----
 <div fxLayout="column" fxLayoutAlign="center center">
   <h1>Listado de solicitudes</h1>
-  <div *ngIf="dataSource.length > 0"> <1>
+  <div *ngIf="dataSource.length > 0"> 
     <hr />
     <mat-card>
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -3330,7 +3366,7 @@ Archivo `main/solicitudes/pages/consultar/consultar.component.html`:
           <td mat-cell *matCellDef="let element">{{ element.telefono }}</td>
         </ng-container>
 
-        <!-- Get Details -->
+        <!-- Columna de accciones -->
         <ng-container matColumnDef="acciones">  <2>
           <th mat-header-cell *matHeaderCellDef>Acciones</th>
           <td mat-cell *matCellDef="let element"> <3>
@@ -3357,7 +3393,7 @@ Archivo `main/solicitudes/pages/consultar/consultar.component.html`:
 <2> Bloque para la columna de acciones
 <3> Configuración del valor de la celda a todo el registro mostrado (`element`)
 <4> Llamada al método `eliminar()` de la parte TypeScript pasándole todo el registro
-<5> Incorporación del icono de la papelera al botón
+<5> Incorporación al botón del icono de la papelera 
 
 Veamos el resultado en funcionamiento. Partimos de una pantalla con un conjunto de solicitudes. Al lado de cada solicitud aparecerá un botón para poder eliminarla.
 
@@ -3375,15 +3411,15 @@ image::SolicitudesTrasEliminar.png[]
 
 Para finalizar con la parte de operaciones CRUD vamos a añadir a la aplicación la posibilidad de actualizar solicitudes. Tendremos que:
 
-* Implementar los métodos de localización y modificación de una solicitud.
+* Implementar los métodos de búsqueda y modificación de una solicitud.
 * Crear de una nueva ruta en la aplicación para la operación de modificación.
 * Adaptar el componente de crear para que también valga para modificar.
-* Crear el método de editar solcitud en el componente de listado de solicitudes.
+* Crear el método de editar solicitud en el componente de listado de solicitudes.
 * Añadir el botón de modificar solicitud y conectarlo al método de editar solicitud anterior.
 
 ### Creación del método de actualización de una solicitud
 
-La actualización de una solicitud realmente implica dos operaciones diferentes. Una de búsqueda de la solicitud para la recuperación de sus datos y presentarlos en el formulario de modificación, y otra que se encargue de la modificación en sí misma. De esto se van a encargar los métodos `findOne` y `update`, respectivamente, que se muestran acontinuación.
+La actualización de una solicitud realmente implica dos operaciones diferentes. Una de búsqueda de la solicitud para la recuperación de sus datos y presentarlos en el formulario de modificación. Otra que se encargue de la modificación en sí misma. De esto se van a encargar los métodos `findOne` y `update`, respectivamente, que se muestran a continuación.
 
 Archivo `services/solicitudes.service.ts`:
 
@@ -3424,14 +3460,19 @@ export class SolicitudesService {
   }
 }
 ----
-<1> Método para la búsqueda y recuperación de los datos de la solicitud a mofificar
+<1> Método para la búsqueda y recuperación de los datos de la solicitud a modificar
 <2> Llamada al endpoint de recuperación de la solicitud a modificar
 <3> Método de actualización
 <4> Llamada al endpoint de actualización de la solicitud pasándole los datos de la solicitud modificada
 
 ### Creación de la ruta de modificación de solicitudes
 
-Necesitamos una nueva ruta para editar una solicitud. A esa ruta asociaremos el componente que se mostrará en la aplicación. Realmente no se es necesario un nuevo componente de Modificar solicitud. Se puede encargar el mismo componente de Crear solicitud. Habrá que adaptarlo. Básicamente es lo mismo pero incluyendo el `id` de la solicitud a modificar. Además, tendrá que incorporarse un método `PATCH` para la modificación. Lo veremos más adelante. Ahora vamos a crear la nueva ruta para modificar una solicitud
+Necesitamos una nueva ruta para editar una solicitud. A esa ruta asociaremos el componente que se mostrará en la aplicación. Realmente no es necesario un nuevo componente de _Modificar solicitud_. Se puede encargar el mismo componente de _Crear solicitud_. Eso sí, habrá que adaptarlo. Básicamente es lo mismo pero incluyendo el `id` de la solicitud a modificar. Además, tendrá que incorporarse un método `PATCH` para la modificación. Lo veremos más adelante. Por ahora, comencemos creando la nueva ruta para modificar una solicitud
+
+[NOTE]
+====
+Cuando creamos el módulo de rutas de solicitudes no añadimos una ruta específica para modificar. Esto se debió porque hasta ese momento cada ruta estaba asociada a un componente diferente. Para no provocar confusión en aquel momento llevando dos rutas a un mismo componente, se optó por no incluir la ruta de modificación de solicitudes en su módulo de rutas y posponer su creación hasta este momento.
+====
 
 Archivo `main/solicitudes/solictudes.routing.ts`:
 
@@ -3464,21 +3505,19 @@ const routes: Routes = [
 })
 export class SolicitudesRoutingModule {}
 ----
-<1> Nueva ruta para modificación de solicitudes
+<1> Nueva ruta para modificación de solicitudes mostrando el componente de crear solicitudes
 
-Si ahora escribimos la ruta 
-
-comprobamos que la ruta es aceptada. Sin embargo, se muestra el componente de Crear, tal y como hemos indicado en el archivo de rutas. 
+Si ahora escribimos la ruta `http://localhost/solicitudes/editar/1` comprobamos que la ruta es aceptada. Además, se muestra el componente de Crear solicitud, tal y como hemos indicado en el archivo de rutas. 
 
 image::RutaEditarSolicitud.png[]
 
-Lo esperado en la aplicación es que muestre una pantalla de modificación con los datos de la solicitud a modificar. Obviamente esto aún no se puede mostrar porque aún está por implementar. Veamos cómo hacerlo en los apartados siguientes.
+Sin embargo, lo esperado en la aplicación es que hubiese mostrado una pantalla de modificación con los datos de la solicitud a modificar. Obviamente esto aún no se puede mostrar porque aún está por implementar. Veamos cómo hacerlo en los apartados siguientes.
 
 ### Un componente para crear y editar
 
-Hasta ahora tenemos un componente para crear solicitudes. Lo inmediato sería crear uno nuevo para editar solicitudes. Sin embargo, si nos paramos a pensar, el componente de editar es prácticamente igual al de crear salvo que al editar se cuenta con el `id` de la solicitud que se está editando y al crear, el `id` es creado a posteriori. Por tanto, podríamos plantear un único componente que usemos para las dos operaciones. Para ello, usaremos una variable que indicará si estamos en modo de edición o en modo de creación. En función de su valor, se mostrará un texto u otro en la cabecera y en los botones, y se llamará al método de creación o de eliminación. Veamos cómo hacerlo.
+Hasta ahora tenemos un componente para crear solicitudes. Lo inmediato sería crear uno nuevo para editar solicitudes. Sin embargo, si nos paramos a pensar, el componente de _Editar_ es prácticamente igual al de _Crear_ salvo que al editar se cuenta con el `id` de la solicitud que se está editando, y al crear, el `id` es creado a posteriori. Por tanto, podríamos plantearnos en tener un único componente que usaríamos para las dos operaciones. En ese caso, tendremos que usar una variable que indicará si estamos en modo de edición o en modo de creación. En función de su valor, se mostrará un texto u otro en la cabecera y en los botones (texto de creación o de modificación), y se llamará al método correspondiente (de creación o de eliminación). Veamos cómo hacerlo.
 
-Comencemos adaptación la parte TypeScript del componente de Crear solicitud para que también valga para editar.
+Comencemos con la adaptación de la parte TypeScript del componente de _Crear solicitud_ para que también valga para editar.
 
 Archivo `main/solicitudes/pages/crear/crear.component.ts`:
 
@@ -3621,9 +3660,9 @@ export class CrearComponent implements OnInit {
 ----
 <1> Variable para indicar que se está en modo _Editar_
 <2> Variable para almacenar el `id` de la solicitud
-<3> Permite acceder a componentes de la URL
-<4> Configurar el modo Crear como el modo predeterminado (editar es falso)
-<5> Asignar a `id` el componente `id` de la ruta de la URL. Las partes de la ruta están definidas en el módulo de rutas `solicitudes-routing.module.ts`
+<3> Permite acceder a componentes de la URL (necesitamos acceder al `id` de la solicitud a editar)
+<4> Configurar el modo _Crear_ como el modo predeterminado (editar es falso)
+<5> Asignar a la variable `id` el componente `id` de la ruta de la URL. Las partes de la ruta están definidas en el módulo de rutas `solicitudes-routing.module.ts`
 <6> Si hay `id` en la URL (es decir, se está en modo _Editar_)
 <7> Buscar la solicitud mediante su `id`
 <8> Activar el modo _Editar_
@@ -3635,10 +3674,10 @@ export class CrearComponent implements OnInit {
 
 [NOTE]
 ====
-Para asignar cada elemento de una solicitud a su elemento correspondiente del formulario se puede hacer de uno en uno, pero resulta muy pesado y es propenso a errores. En cambio, si los nombres de los elementos del formulario coinciden con los nombre de los elementos de la solicitud leída de la base d datos, se puede hacer con una sola línea mediante `patchValue` (un motivo más para mantener la consistencia en la denominación de variables)
+Para asignar cada elemento de una solicitud a su elemento correspondiente del formulario se puede hacer de uno en uno, pero resulta muy pesado y es propenso a errores. En cambio, si los nombres de los elementos del formulario coinciden con los nombre de los elementos de la solicitud leída de la base de datos, se puede hacer con una sola línea mediante `patchValue` (un motivo más para mantener la consistencia en la denominación de variables)
 ====
 
-Ahora tocaría modificar la parte de la presentación del formulario de Crear solicitud para que sirva también para actualizar. Básicamente se trata de cambiar el título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo, ya que el propio método actualizará o insertará en función del valor de `modoEditar`, que básicamente se determinaba a partir de lo que indicase la ruta.
+Ahora tocaría modificar la parte de la presentación del formulario de _Crear solicitud_ para que sirva también para actualizar. Básicamente se trata de cambiar el texto del título de la página y el del botón. El método al que se llama para guardar sigue siendo el mismo, ya que el propio método actualizará o insertará en función del valor de `modoEditar`, que recordemos que se determinaba a partir de lo que indicase la ruta.
 
 Archivo `main/solicitudes/pages/crear/crear.component.html`:
 
@@ -3730,10 +3769,10 @@ export class ConsultarComponent implements OnInit {
 ----
 <1> Importación de `Router
 <2> Inyección del `Router`
-<3> Método al que llamará el botón de `Editar`
+<3> Método llamado al pulsar el botón de `Editar`
 <4> Redirigir a la ruta de editar solicitudes
 
-Finalzaremos añadiendo un botón de Actualización de solicitudes en la pantalla de Consultar solicitudes que llame al método de actualización.
+Finalizaremos añadiendo un botón de Actualización de solicitudes en la pantalla de Consultar solicitudes. El botón llamará al método de actualización que acabamos de crear.
 
 Archivo `main/pages/solicitudes/consultar/consultar.component.html`:
 
@@ -3765,7 +3804,7 @@ Archivo `main/pages/solicitudes/consultar/consultar.component.html`:
           <td mat-cell *matCellDef="let element">{{ element.telefono }}</td>
         </ng-container>
 
-        <!-- Get Details -->
+        <!-- Columna de accciones -->
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef>Acciones</th>
           <td mat-cell *matCellDef="let element">
@@ -3806,7 +3845,7 @@ Si pulsamos el botón `Editar` de la solicitud a modificar nos redirigirá a la 
 
 image::EditarSolicitud.png[]
 
-Aprovecharemos y haremos una modificación en el cargo con el realiza la solicitud. Vemos que también aparece modificado el texto del botón, que ahora es `Modificar`. Si pulsamos el botón nos llevará al listado de solicitudes donde aparecerá la solicitud modificada.
+Aprovecharemos y haremos una modificación en el cargo con el realiza la solicitud. Vemos que también aparece modificado el texto del botón, que ahora es `Editar`. Si pulsamos el botón nos llevará al listado de solicitudes donde aparecerá la solicitud modificada.
 
 image::SolicitudModificada.png[]
 
