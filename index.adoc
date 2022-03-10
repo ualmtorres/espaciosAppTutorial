@@ -70,7 +70,7 @@ Se trata sólo de una introducción a aspectos básicos. No obstante, temas tan 
 La aplicación a desarrollar ofrece básicamente dos funcionalidades:
 
 * Una relacionada con la consulta de espacios disponibles para reservar. Ofrecerá una lista de espacios con cada una de las reservas asignadas indicando para cada una de ellas el edificio y aula que ocupa, su fecha, hora, descripción, asignatura y profesor. Se permitirá su consulta mediante cada una de esas características.
-* Otra relacionada con la gestión de solicitudes. Permitirá las cuatro operaciones CRUD de creación, consulta, actualización y eliminación de solicitudes. De las solicitudes se guardarán datos personales de la persona que realiza la solicitud, el tipo de actividad, y el horario de la reserva. En el Anexo II
+* Otra relacionada con la gestión de solicitudes. Permitirá las cuatro operaciones CRUD de creación, consulta, actualización y eliminación de solicitudes. De las solicitudes se guardarán datos personales de la persona que realiza la solicitud, el tipo de actividad, y el horario de la reserva. En el <<Anexo II. Prototipo de la aplicación>> se muestra un prototipo de la aplicación y los comandos y navegación entre pantallas.
 
 ## Creación de la aplicación
 
