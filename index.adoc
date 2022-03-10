@@ -13,7 +13,7 @@ Codificación, idioma, tabla de contenidos, tipo de documento
 ////
 Nombre y título del trabajo
 ////
-# Gestión de espacios. Desarrollo de una aplicación en Angular (Tutorial en curso)
+# Gestión de espacios. Desarrollo de una aplicación en Angular
 Servicio de las Tecnologías de la Información y las Comunicaciones - Universidad de Almería
 
 image::logocloudstic.png[]
@@ -27,7 +27,7 @@ image::logocloudstic.png[]
 ////
 COLOCA A CONTINUACION EL RESUMEN
 ////
-Angular es uno de los frameworks Javascript más utilizados en el momento junto a React y Vue.js. Angular ofrece una solución completa para el manejo de rutas, formularios, inyección de dependencias y building, entre otros. Además, el uso en STIC de NestJS para backend, el cual tiene una arquitectura muy basada en Angular, ha propiciado que sea la tecnología actual elegida en STIC para el desarrollo frontend. Así, tenemos la arquitectura de Angular tanto en frontend como en backend, facilitando a los equipos de desarrollo el cambio entre desarrollo frontend y backend.
+Angular es uno de los frameworks Javascript más utilizados en el momento junto a React y Vue.js. Angular ofrece una solución completa para el manejo de rutas, formularios, inyección de dependencias y building, entre otros. Además, el uso en UAL-STIC de NestJS para backend, el cual tiene una arquitectura muy basada en Angular, ha propiciado que sea la tecnología actual elegida en UAL-STIC para el desarrollo frontend. Así, tenemos la arquitectura de Angular tanto en frontend como en backend, facilitando a los equipos de desarrollo el cambio entre desarrollo frontend y backend.
 
 En este tutorial se abordan los principales temas y desafíos con los que nos solemos encontrar en cada aplicación en el ámbito de gestión. Se hace a través del desarrollo de una aplicación de ejemplo sencilla y se tratan desde temas metodológicos, como la organización de carpetas y archivos del proyecto, hasta los temas particulares del desarrollo de aplicaciones CRUD, como formularios reactivos, manejo de rutas, paso de datos entre componentes e interacción con servicios REST.
 
@@ -53,7 +53,7 @@ COLOCA A CONTINUACION LOS OBJETIVOS
 
 [TIP]
 ====
-Disponibles el https://github.com/ualmtorres/angular-espacios.git[repositorio] usado en este tutorial.
+Disponible el https://github.com/ualmtorres/angular-espacios.git[repositorio] usado en este tutorial.
 ====
 
 // Entrar en modo numerado de apartados
@@ -61,7 +61,12 @@ Disponibles el https://github.com/ualmtorres/angular-espacios.git[repositorio] u
 
 ## Introducción
 
-$$$
+Angular es un framework JavaScript open source mantenido por Google. Es uno de los  frameworks Javascript más utilizados en el momento junto a React y Vue.js. Angular ofrece una solución completa para el manejo de rutas, formularios, inyección de dependencias y building, entre otros. Dado que en UAL-STIC se usa NestJS para backend, el cual tiene una arquitectura muy basada en Angular e Ionic para la APP, Angular es la tecnología más adeacuada para desarrollo frontend en UAL-STIC. De esta forma, tenemos la arquitectura de Angular tanto en frontend como en backend y en la APP.
+
+En este tutorial seguiremos los pasos para el desarrollo de una aplicación sencilla de gestión de espacios con el objeto de introducir los principales componentes y técnicas que se siguen en el desarrollo de una aplicación Angular. Trataremos la creación de una aplicación como un conjunto de componentes que se pueden comunicar entre sí, el uso de mecanismos de _routing_ para la presentación de componentes en función de la URL, uso de servicios, separación de la lógica de la presentación, manejo de formularios reactivos y uso de Angular Material.
+
+Se trata sólo de una introducción a aspectos básicos. No obstante, temas tan interesantes, útiles y necesarios como la autenticación, el uso de guardas para la protección de rutas, interceptores, logging y testing, entre otros, no están presentes en este tutorial. En tutoriales posteriores se irán tratando estos y otros temas de interés.
+
 
 ## Creación de la aplicación
 
@@ -116,7 +121,7 @@ En este proyecto usaremos las librerías siguientes:
 
 [NOTE]
 ====
-Podíamos haber usado https://getbootstrap.com/docs/5.1/layout/grid/[Bootstrap] para la organización de los componentes en las pantalla de la aplicación. Sin embargo, usaremos Angular Flex-Layout porque es lo que usa http://angular-material.fusetheme.com/[Fuse Angular], el template que se usa actualmente para el desarrollo de las aplicaciones de STIC.
+Podíamos haber usado https://getbootstrap.com/docs/5.1/layout/grid/[Bootstrap] para la organización de los componentes en las pantalla de la aplicación. Sin embargo, usaremos Angular Flex-Layout porque es lo que usa http://angular-material.fusetheme.com/[Fuse Angular], el template que se usa actualmente para el desarrollo de las aplicaciones de UAL-STIC.
 ====
 
 
@@ -832,21 +837,85 @@ Quedará algo así:
 
 image::Home.png[]
 
+### Formularios reactivos
+
+Los formularios reactivos ofrecen una solución limpia a la gestión de los datos que maneja un formulario (p.e. manipulación de su contenido y validación de datos). Por tanto, tendremos la lógica del formulario separada de su presentación.
+
+Para usar formularios reactivos en una aplicación tendremos que seguir estos pasos:
+
+. Importar el módulo `ReactiveFormsModule` en el módulo en el que esté el formulario.
+. En la parte Typescript del formulario:
+    .. Inyectar `FormBuilder` en el constructor.
+    .. Crear un objeto `FormGroup` que representa al formulario. En él se definen todos los campos que tendrá el formulario. **`FormGroup` permite la manipulación de los valores de los campos y permite obtener su validez**. 
+    
++
+[NOTE]
+====
+En realidad un objeto `FormGroup` está formado por una colección de objetos `FormControl`. Cada `FormControl` es el objeto TypeScript que representa a un elemento del formulario. Por tanto, el `FormGroup` está formado por todos los `FormControl` que representan a los elementos HTML del formulario.
+====
+
+. En la parte HTML del formulario:
+    .. En la etiqueta `<form>` de creación del formulario asociarlo con el objeto `FormGroup` creado en la parte TypeScript. Esto se hace añadiéndole  `[formGroup]="<nombre-del-objeto-FormGroup>"`.
+    .. Cada campo está conectado a su `FormControl` mediante un atributo `formControlName`
+
+A continuación se muestra un ejemplo y la correspondencia entre ellos:
+
+image::FormulariosReactivos.png[]
+
+Como en el `FormControl email` se ha indicado que es requerido, en el formulario aparece la indicación de obligatorio con el asterisco (*).
+
+TypeScript del componente:
+
+[source, ts]
+----
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-mi-form',
+  templateUrl: './mi-form.component.html',
+  styleUrls: ['./mi-form.component.css'],
+})
+export class MiFormComponent implements OnInit {
+  constructor(private fb: FormBuilder) {} <1>
+
+  ngOnInit(): void {}
+
+  formPersona: FormGroup = this.fb.group({ <2>
+    nombre: [{ value: 'John Smith', disabled: true }], <3>
+    email: [, [Validators.required, Validators.email]], <4>
+  });
+}
+----
+<1> Inyección de `FormBuilder`
+<2> Creación del `FormGroup` que representa al formulario
+<3> `FormControl` configurado a un valor y desactivado
+<4> `FormControl` que impone dos validadores de Angular (requerido y formato de email)
+
+HTML del componente
+[source, html]
+----
+<form [formGroup]="formPersona" fxLayout="column" fxFlexOffset="10"> <1>
+  <mat-form-field>
+    <mat-label>Nombre</mat-label
+    ><input matInput type="text" formControlName="nombre" /> <2>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Email</mat-label
+    ><input matInput type="text" formControlName="email" /> <3>
+  </mat-form-field>
+</form>
+----
+<1> Asociación del formulario al objeto `FormGroup formPersona` de la parte TypeScript
+<2> Asociación al `FormControl name` mediante `formControlName`
+<2> Asociación al `FormControl email` mediante `formControlName`
+
 ### Formulario de creación de solicitudes
 
 En este tutorial trabajaremos con formularios reactivos. Esto nos permitirá desviar la lógica asociada al formulario a la parte TypeScript del componente y dejar más limpia la parte HTML del componente. Cada objeto del formulario HTML tendrá su homólogo en la parte TypeScript, que permitirá acceder, modificar, y en general, controlar sus datos, quedando así el HTML y el TypeScript del formulario totalmente conectados. Esto supone:
 
 * Importar `ReactiveFormsModule` en el módulo de solicitudes para poder trabajar con formularios reactivos.
 * Crear un objeto formulario en la parte TypeScript del componente.
-
-.Formularios reactivos
-****
-$$$$ TO DO
-* definición del formgroup y correspondencia html
-* Inyección de fombuilder 
-* formcontrolname
-
-****
 
 A continuación se muestra un mock del aspecto deseado del formulario de creación de solicitudes integrado en la aplicación.
 
@@ -2428,25 +2497,39 @@ image::CarpetasEspacios.png[]
 
 #### Flujo de datos entre los componentes
 
-Los componentes individuales (formulario  y tabla de resultados) y el componente que los englobla tienen una forma de comunicarse y compartir datos. La organización y el flujo de datos entre componentes es el siguiente:
+Los componentes individuales (formulario  y tabla de resultados) y el componente que los englobla tienen una forma de comunicarse y compartir datos. En la figura siguiente vemos la siguiente organización y flujo de datos entre componentes:
 
-* La página de espacios incluye los selectores de sus componentes: en este caso el de filtrado y el de tabla de datos.
-* El objeto que contiene los datos de los espacios está en el componente de espacios, digamos el componente padre.
-* El componente padre pasa al componente hijo de tabla de datos los datos de los espacios. Lo hace como parámetro en el selector
-* El componente hijo de tabla de datos recibe en el TypeScript los datos de los espacios mediante un decorador `@Input()`
-* El componente hijo de filtrado de datos pasa los datos al padre emitiendo eventos y adjuntando datos
-* El componente padre recibe los datos del componente hijo de filtrado escuchando el evento.
-
-La figura siguiente ilustra los componentes, el flujo y la parte relevante del código para conseguirlo.
+* El componente  padre de la página de espacios incluye los selectores de sus componentes: en este caso el de filtrado y el de tabla de datos. (pasos 1 y 2).
+* El componente del formulario de filtrado define un evento `onSearchEspacio`, que mediante el decorador `@Output()` permite enviar datos al componente padre. El componente padre recibe el evento como `onSearchEspacio` (paso 3). (El objeto que contiene los datos de los espacios está en el componente de espacios, digamos el componente padre.)
+* Se configura `filtroBusqueda` para que sean los datos que se envíen al padre cuando se produczca el evento `onSearchEspacio` (pasos 4 y 6).
+* Se define y se implementa en el componente y el template del padre el método asociado a gestionar el evento `onSearchEspacio` (paso 5).
+* Se inicializa el valor de `espacios` en el componente padre mediante la llamada al servicio de búsqueda pasándole los parámetros de filtrado (paso 7).
+* El componente padre pasa al componente hijo de tabla de datos los datos de los espacios. Lo hace mediante la técnica de https://angular.io/guide/property-binding[ligado de propiedades] en el selector de inclusión al hijo (paso 8). El componente hijo de tabla de datos recibe en el TypeScript los datos de los espacios mediante un decorador `@Input()`
 
 image::FlujoPadreHijosCompleto.png[]
+
+La figura ilustra los componentes, el flujo y la parte relevante del código para conseguirlo.
+
 
 .Cómo compartir datos entre componentes padre/hijo
 ****
 
-$$ TO DO $$
+Los componentes padre/hijo usando los decoradores `@Input()` y `Output()`. Estos decoradores proporcionan la forma de comunicarse con el componente padre.
+
+Con `@Input()` el padre pasa un valor al hijo. El decorador `@Input()` se sitúa en el componente hijo y le indica a una propiedad (variable) que puede recibir datos del padre. El padre liga la propiedad del hijo a una variable suya añadiéndole al selector del hijo, la propiedad del hijo que está decorada con `@Input` junto al valor que quiere propocionar.
+
+A continuación se indica quién es quién en la inclusión del componente hijo en el template del padre.
+
+[width="100%",options="header"]
+|====================
+| Selector del hijo | Variable decorada del hijlo | Valor al que se inicializa | Resto |
+| `<app-tabla-espacios` |  `[espacios]=` | `"espacios"` | `></app-tabla-espacios>` |
+|====================
+
 
 image::FlujoPadreHijosBasico.png[]
+
+El decorador `Output()` en un componente hijo permite enviar datos desde el hijo al padre. El componente hijo usa el decorador `Output()` para disparar un evento personalizado y notificar al padre de un cambio. En el componente hijo se define un método donde se emitirá el evento incluyendo los valores que se quieren enviar al padre. En la plantilla del hijo habrá algún elemento al que asociarle la ejecución del método anterior desde el que se emite el evento al padre. La plantilla del padre responderá al evento y recibirá los datos, los cuales serán enviados como parámetro a un método implementado en la parte TypeScript del componente.
 
 [NOTE]
 ====
@@ -2479,13 +2562,6 @@ export class TablaEspaciosComponent implements OnInit {
 ----
 <1> Selector para usar este componente
 <2> Decorador `Input()` que define una variable `espacios` en la que se recibirán los espacios
-
-.El decorador `@Input`
-****
-El decorador `@Input` ofrece un medio para inyectar datos a un componente desde otro componente externo. El componente de destino asociará a este decorador una variable en la que se recibirán los datos enviados desde otros componentes. El componente que envía los datos envía los datos mediante un atributo HTML. El atributo de envío coincide con la variable usada en el `@Input`.
-
-$$$Figura
-****
 
 #### Refactorización en un componente dedicado a la tabla de datos
 
@@ -3144,7 +3220,7 @@ Comencemos creando el componente del cuadro de diálogo de eliminación. Se trat
 
 [NOTE]
 ====
-Como convenio para nuestras aplicaciones de STIC, la eliminación tendrá su propio componente y se realizará mediante un cuadro de diálogo. Ese componente de eliminación se situará dentro de una carpeta `components` dentro del bloque funcional al que esté referido (p.e. `solicitudes`).
+Como convenio para nuestras aplicaciones de UAL-STIC, la eliminación tendrá su propio componente y se realizará mediante un cuadro de diálogo. Ese componente de eliminación se situará dentro de una carpeta `components` dentro del bloque funcional al que esté referido (p.e. `solicitudes`).
 ====
 
 [source, bash]

@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.8.dev">
 <meta name="author" content="Servicio de las Tecnologías de la Información y las Comunicaciones - Universidad de Almería">
-<title>Gestión de espacios. Desarrollo de una aplicación en Angular (Tutorial en curso)</title>
+<title>Gestión de espacios. Desarrollo de una aplicación en Angular</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,7 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="book toc2 toc-right">
 <div id="header">
-<h1>Gestión de espacios. Desarrollo de una aplicación en Angular (Tutorial en curso)</h1>
+<h1>Gestión de espacios. Desarrollo de una aplicación en Angular</h1>
 <div class="details">
 <span id="author" class="author">Servicio de las Tecnologías de la Información y las Comunicaciones - Universidad de Almería</span><br>
 </div>
@@ -470,10 +470,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#truebarra-lateral-y-la-barra-de-pie">4.1. Barra lateral y la barra de pie</a></li>
 <li><a href="#truepágina-de-inicio">4.2. Página de inicio</a></li>
-<li><a href="#trueformulario-de-creación-de-solicitudes">4.3. Formulario de creación de solicitudes</a>
+<li><a href="#trueformularios-reactivos">4.3. Formularios reactivos</a></li>
+<li><a href="#trueformulario-de-creación-de-solicitudes">4.4. Formulario de creación de solicitudes</a>
 <ul class="sectlevel3">
-<li><a href="#trueañadiendo-mensajes-de-error-en-las-validaciones">4.3.1. Añadiendo mensajes de error en las validaciones</a></li>
-<li><a href="#truedesactivación-condicional-del-botón-crear">4.3.2. Desactivación condicional del botón Crear</a></li>
+<li><a href="#trueañadiendo-mensajes-de-error-en-las-validaciones">4.4.1. Añadiendo mensajes de error en las validaciones</a></li>
+<li><a href="#truedesactivación-condicional-del-botón-crear">4.4.2. Desactivación condicional del botón Crear</a></li>
 </ul>
 </li>
 </ul>
@@ -569,7 +570,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="trueresumen"><a class="anchor" href="#trueresumen"></a>Resumen</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Angular es uno de los frameworks Javascript más utilizados en el momento junto a React y Vue.js. Angular ofrece una solución completa para el manejo de rutas, formularios, inyección de dependencias y building, entre otros. Además, el uso en STIC de NestJS para backend, el cual tiene una arquitectura muy basada en Angular, ha propiciado que sea la tecnología actual elegida en STIC para el desarrollo frontend. Así, tenemos la arquitectura de Angular tanto en frontend como en backend, facilitando a los equipos de desarrollo el cambio entre desarrollo frontend y backend.</p>
+<p>Angular es uno de los frameworks Javascript más utilizados en el momento junto a React y Vue.js. Angular ofrece una solución completa para el manejo de rutas, formularios, inyección de dependencias y building, entre otros. Además, el uso en UAL-STIC de NestJS para backend, el cual tiene una arquitectura muy basada en Angular, ha propiciado que sea la tecnología actual elegida en UAL-STIC para el desarrollo frontend. Así, tenemos la arquitectura de Angular tanto en frontend como en backend, facilitando a los equipos de desarrollo el cambio entre desarrollo frontend y backend.</p>
 </div>
 <div class="paragraph">
 <p>En este tutorial se abordan los principales temas y desafíos con los que nos solemos encontrar en cada aplicación en el ámbito de gestión. Se hace a través del desarrollo de una aplicación de ejemplo sencilla y se tratan desde temas metodológicos, como la organización de carpetas y archivos del proyecto, hasta los temas particulares del desarrollo de aplicaciones CRUD, como formularios reactivos, manejo de rutas, paso de datos entre componentes e interacción con servicios REST.</p>
@@ -629,7 +630,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Disponibles el <a href="https://github.com/ualmtorres/angular-espacios.git">repositorio</a> usado en este tutorial.</p>
+<p>Disponible el <a href="https://github.com/ualmtorres/angular-espacios.git">repositorio</a> usado en este tutorial.</p>
 </div>
 </td>
 </tr>
@@ -641,7 +642,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="trueintroducción"><a class="anchor" href="#trueintroducción"></a>1. Introducción</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>$$$</p>
+<p>Angular es un framework JavaScript open source mantenido por Google. Es uno de los  frameworks Javascript más utilizados en el momento junto a React y Vue.js. Angular ofrece una solución completa para el manejo de rutas, formularios, inyección de dependencias y building, entre otros. Dado que en UAL-STIC se usa NestJS para backend, el cual tiene una arquitectura muy basada en Angular e Ionic para la APP, Angular es la tecnología más adeacuada para desarrollo frontend en UAL-STIC. De esta forma, tenemos la arquitectura de Angular tanto en frontend como en backend y en la APP.</p>
+</div>
+<div class="paragraph">
+<p>En este tutorial seguiremos los pasos para el desarrollo de una aplicación sencilla de gestión de espacios con el objeto de introducir los principales componentes y técnicas que se siguen en el desarrollo de una aplicación Angular. Trataremos la creación de una aplicación como un conjunto de componentes que se pueden comunicar entre sí, el uso de mecanismos de <em>routing</em> para la presentación de componentes en función de la URL, uso de servicios, separación de la lógica de la presentación, manejo de formularios reactivos y uso de Angular Material.</p>
+</div>
+<div class="paragraph">
+<p>Se trata sólo de una introducción a aspectos básicos. No obstante, temas tan interesantes, útiles y necesarios como la autenticación, el uso de guardas para la protección de rutas, interceptores, logging y testing, entre otros, no están presentes en este tutorial. En tutoriales posteriores se irán tratando estos y otros temas de interés.</p>
 </div>
 </div>
 </div>
@@ -743,7 +750,7 @@ export class AppRoutingModule { }</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Podíamos haber usado <a href="https://getbootstrap.com/docs/5.1/layout/grid/">Bootstrap</a> para la organización de los componentes en las pantalla de la aplicación. Sin embargo, usaremos Angular Flex-Layout porque es lo que usa <a href="http://angular-material.fusetheme.com/">Fuse Angular</a>, el template que se usa actualmente para el desarrollo de las aplicaciones de STIC.</p>
+<p>Podíamos haber usado <a href="https://getbootstrap.com/docs/5.1/layout/grid/">Bootstrap</a> para la organización de los componentes en las pantalla de la aplicación. Sin embargo, usaremos Angular Flex-Layout porque es lo que usa <a href="http://angular-material.fusetheme.com/">Fuse Angular</a>, el template que se usa actualmente para el desarrollo de las aplicaciones de UAL-STIC.</p>
 </div>
 </td>
 </tr>
@@ -1928,7 +1935,152 @@ export class HomeModule {}</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueformulario-de-creación-de-solicitudes"><a class="anchor" href="#trueformulario-de-creación-de-solicitudes"></a>4.3. Formulario de creación de solicitudes</h3>
+<h3 id="trueformularios-reactivos"><a class="anchor" href="#trueformularios-reactivos"></a>4.3. Formularios reactivos</h3>
+<div class="paragraph">
+<p>Los formularios reactivos ofrecen una solución limpia a la gestión de los datos que maneja un formulario (p.e. manipulación de su contenido y validación de datos). Por tanto, tendremos la lógica del formulario separada de su presentación.</p>
+</div>
+<div class="paragraph">
+<p>Para usar formularios reactivos en una aplicación tendremos que seguir estos pasos:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Importar el módulo <code>ReactiveFormsModule</code> en el módulo en el que esté el formulario.</p>
+</li>
+<li>
+<p>En la parte Typescript del formulario:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Inyectar <code>FormBuilder</code> en el constructor.</p>
+</li>
+<li>
+<p>Crear un objeto <code>FormGroup</code> que representa al formulario. En él se definen todos los campos que tendrá el formulario. <strong><code>FormGroup</code> permite la manipulación de los valores de los campos y permite obtener su validez</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>En realidad un objeto <code>FormGroup</code> está formado por una colección de objetos <code>FormControl</code>. Cada <code>FormControl</code> es el objeto TypeScript que representa a un elemento del formulario. Por tanto, el <code>FormGroup</code> está formado por todos los <code>FormControl</code> que representan a los elementos HTML del formulario.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>En la parte HTML del formulario:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>En la etiqueta <code>&lt;form&gt;</code> de creación del formulario asociarlo con el objeto <code>FormGroup</code> creado en la parte TypeScript. Esto se hace añadiéndole  <code>[formGroup]="&lt;nombre-del-objeto-FormGroup&gt;"</code>.</p>
+</li>
+<li>
+<p>Cada campo está conectado a su <code>FormControl</code> mediante un atributo <code>formControlName</code></p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A continuación se muestra un ejemplo y la correspondencia entre ellos:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/FormulariosReactivos.png" alt="FormulariosReactivos">
+</div>
+</div>
+<div class="paragraph">
+<p>Como en el <code>FormControl email</code> se ha indicado que es requerido, en el formulario aparece la indicación de obligatorio con el asterisco (*).</p>
+</div>
+<div class="paragraph">
+<p>TypeScript del componente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="ts" class="language-ts hljs">import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-mi-form',
+  templateUrl: './mi-form.component.html',
+  styleUrls: ['./mi-form.component.css'],
+})
+export class MiFormComponent implements OnInit {
+  constructor(private fb: FormBuilder) {} <i class="conum" data-value="1"></i><b>(1)</b>
+
+  ngOnInit(): void {}
+
+  formPersona: FormGroup = this.fb.group({ <i class="conum" data-value="2"></i><b>(2)</b>
+    nombre: [{ value: 'John Smith', disabled: true }], <i class="conum" data-value="3"></i><b>(3)</b>
+    email: [, [Validators.required, Validators.email]], <i class="conum" data-value="4"></i><b>(4)</b>
+  });
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Inyección de <code>FormBuilder</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Creación del <code>FormGroup</code> que representa al formulario</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>FormControl</code> configurado a un valor y desactivado</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>FormControl</code> que impone dos validadores de Angular (requerido y formato de email)</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>HTML del componente</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;form [formGroup]="formPersona" fxLayout="column" fxFlexOffset="10"&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+  &lt;mat-form-field&gt;
+    &lt;mat-label&gt;Nombre&lt;/mat-label
+    &gt;&lt;input matInput type="text" formControlName="nombre" /&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+  &lt;/mat-form-field&gt;
+  &lt;mat-form-field&gt;
+    &lt;mat-label&gt;Email&lt;/mat-label
+    &gt;&lt;input matInput type="text" formControlName="email" /&gt; <i class="conum" data-value="3"></i><b>(3)</b>
+  &lt;/mat-form-field&gt;
+&lt;/form&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Asociación del formulario al objeto <code>FormGroup formPersona</code> de la parte TypeScript</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Asociación al <code>FormControl name</code> mediante <code>formControlName</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Asociación al <code>FormControl email</code> mediante <code>formControlName</code></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="trueformulario-de-creación-de-solicitudes"><a class="anchor" href="#trueformulario-de-creación-de-solicitudes"></a>4.4. Formulario de creación de solicitudes</h3>
 <div class="paragraph">
 <p>En este tutorial trabajaremos con formularios reactivos. Esto nos permitirá desviar la lógica asociada al formulario a la parte TypeScript del componente y dejar más limpia la parte HTML del componente. Cada objeto del formulario HTML tendrá su homólogo en la parte TypeScript, que permitirá acceder, modificar, y en general, controlar sus datos, quedando así el HTML y el TypeScript del formulario totalmente conectados. Esto supone:</p>
 </div>
@@ -1941,17 +2093,6 @@ export class HomeModule {}</code></pre>
 <p>Crear un objeto formulario en la parte TypeScript del componente.</p>
 </li>
 </ul>
-</div>
-<div class="sidebarblock">
-<div class="content">
-<div class="title">Formularios reactivos</div>
-<div class="paragraph">
-<p> TO DO
-* definición del formgroup y correspondencia html
-* Inyección de fombuilder
-* formcontrolname</p>
-</div>
-</div>
 </div>
 <div class="paragraph">
 <p>A continuación se muestra un mock del aspecto deseado del formulario de creación de solicitudes integrado en la aplicación.</p>
@@ -2401,7 +2542,7 @@ export class CrearComponent implements OnInit {
 <p>A continuación veremos cómo mostrar mensajes de error en las validaciones y cómo desactivar el botón del formulario hasta que éste sea válido.</p>
 </div>
 <div class="sect3">
-<h4 id="trueañadiendo-mensajes-de-error-en-las-validaciones"><a class="anchor" href="#trueañadiendo-mensajes-de-error-en-las-validaciones"></a>4.3.1. Añadiendo mensajes de error en las validaciones</h4>
+<h4 id="trueañadiendo-mensajes-de-error-en-las-validaciones"><a class="anchor" href="#trueañadiendo-mensajes-de-error-en-las-validaciones"></a>4.4.1. Añadiendo mensajes de error en las validaciones</h4>
 <div class="paragraph">
 <p>Cuando no se cumple un validador, el campo en cuestión debería mostrar alguna señal. Necesitamos por tanto métodos que nos devuelvan si los campos son válidos o no. Pero en lugar de tener varios métodos que indiquen si un campo tiene errores o no, vamos a construir un método genérico, un método al que le podamos pasar un campo como parámetro y nos indique si el campo tiene errores o no. En nuestro caso, los campos tendrán errores si no se cumplen algunos de los validadores. No obstante, para mejorar la experiencia de usuario, no queremos que se muestren mensajes de error al abrir el formulario, cuando un usuario aún no ha introducido datos, ya que aunque no se cumplirán los validadores porque los campos aún están vacíos, no conviene abrir un formulario indicando que ya se tienen errores. Para mostrar un error sobre un campo deberíamos esperar a que al menos haya sido tocado. Por tanto, en el método de comprobación de las validaciones introduciremos además la condición de que los campos hayan sido tocados para que inicialmente no se consideren erróneos los campos que aún no han sido tocados.</p>
 </div>
@@ -2485,7 +2626,7 @@ export class CrearComponent implements OnInit {
 </div>
 </div>
 <div class="sect3">
-<h4 id="truedesactivación-condicional-del-botón-crear"><a class="anchor" href="#truedesactivación-condicional-del-botón-crear"></a>4.3.2. Desactivación condicional del botón Crear</h4>
+<h4 id="truedesactivación-condicional-del-botón-crear"><a class="anchor" href="#truedesactivación-condicional-del-botón-crear"></a>4.4.2. Desactivación condicional del botón Crear</h4>
 <div class="paragraph">
 <p>Otra funcionalidad interesante es hacer que el botón <code>Crear</code> no esté habilitado si el formulario no es válido. Dado que los formularios disponen de la propiedad <code>valid</code>  que indica si el formulario es válido, podemos aprovechar el valor de esta propiedad para controlar la activación del botón <code>Crear</code>. Para ello, comenzaremos añadiendo un método al TypeScript del componente que indique si el formulario es válido o no basándonse en la propiedad <code>valid</code> de los formularios.</p>
 </div>
@@ -4366,48 +4507,84 @@ $ ng g component main/espacios/components/form-buscar</code></pre>
 <div class="sect3">
 <h4 id="trueflujo-de-datos-entre-los-componentes"><a class="anchor" href="#trueflujo-de-datos-entre-los-componentes"></a>9.5.1. Flujo de datos entre los componentes</h4>
 <div class="paragraph">
-<p>Los componentes individuales (formulario  y tabla de resultados) y el componente que los englobla tienen una forma de comunicarse y compartir datos. La organización y el flujo de datos entre componentes es el siguiente:</p>
+<p>Los componentes individuales (formulario  y tabla de resultados) y el componente que los englobla tienen una forma de comunicarse y compartir datos. En la figura siguiente vemos la siguiente organización y flujo de datos entre componentes:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>La página de espacios incluye los selectores de sus componentes: en este caso el de filtrado y el de tabla de datos.</p>
+<p>El componente  padre de la página de espacios incluye los selectores de sus componentes: en este caso el de filtrado y el de tabla de datos. (pasos 1 y 2).</p>
 </li>
 <li>
-<p>El objeto que contiene los datos de los espacios está en el componente de espacios, digamos el componente padre.</p>
+<p>El componente del formulario de filtrado define un evento <code>onSearchEspacio</code>, que mediante el decorador <code>@Output()</code> permite enviar datos al componente padre. El componente padre recibe el evento como <code>onSearchEspacio</code> (paso 3). (El objeto que contiene los datos de los espacios está en el componente de espacios, digamos el componente padre.)</p>
 </li>
 <li>
-<p>El componente padre pasa al componente hijo de tabla de datos los datos de los espacios. Lo hace como parámetro en el selector</p>
+<p>Se configura <code>filtroBusqueda</code> para que sean los datos que se envíen al padre cuando se produczca el evento <code>onSearchEspacio</code> (pasos 4 y 6).</p>
 </li>
 <li>
-<p>El componente hijo de tabla de datos recibe en el TypeScript los datos de los espacios mediante un decorador <code>@Input()</code></p>
+<p>Se define y se implementa en el componente y el template del padre el método asociado a gestionar el evento <code>onSearchEspacio</code> (paso 5).</p>
 </li>
 <li>
-<p>El componente hijo de filtrado de datos pasa los datos al padre emitiendo eventos y adjuntando datos</p>
+<p>Se inicializa el valor de <code>espacios</code> en el componente padre mediante la llamada al servicio de búsqueda pasándole los parámetros de filtrado (paso 7).</p>
 </li>
 <li>
-<p>El componente padre recibe los datos del componente hijo de filtrado escuchando el evento.</p>
+<p>El componente padre pasa al componente hijo de tabla de datos los datos de los espacios. Lo hace mediante la técnica de <a href="https://angular.io/guide/property-binding">ligado de propiedades</a> en el selector de inclusión al hijo (paso 8). El componente hijo de tabla de datos recibe en el TypeScript los datos de los espacios mediante un decorador <code>@Input()</code></p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>La figura siguiente ilustra los componentes, el flujo y la parte relevante del código para conseguirlo.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="./images/FlujoPadreHijosCompleto.png" alt="FlujoPadreHijosCompleto">
 </div>
 </div>
+<div class="paragraph">
+<p>La figura ilustra los componentes, el flujo y la parte relevante del código para conseguirlo.</p>
+</div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Cómo compartir datos entre componentes padre/hijo</div>
 <div class="paragraph">
-<p> TO DO </p>
+<p>Los componentes padre/hijo usando los decoradores <code>@Input()</code> y <code>Output()</code>. Estos decoradores proporcionan la forma de comunicarse con el componente padre.</p>
 </div>
+<div class="paragraph">
+<p>Con <code>@Input()</code> el padre pasa un valor al hijo. El decorador <code>@Input()</code> se sitúa en el componente hijo y le indica a una propiedad (variable) que puede recibir datos del padre. El padre liga la propiedad del hijo a una variable suya añadiéndole al selector del hijo, la propiedad del hijo que está decorada con <code>@Input</code> junto al valor que quiere propocionar.</p>
+</div>
+<div class="paragraph">
+<p>A continuación se indica quién es quién en la inclusión del componente hijo en el template del padre.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Selector del hijo</th>
+<th class="tableblock halign-left valign-top">Variable decorada del hijlo</th>
+<th class="tableblock halign-left valign-top">Valor al que se inicializa</th>
+<th class="tableblock halign-left valign-top">Resto</th>
+<th class="tableblock halign-left valign-top"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;app-tabla-espacios</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[espacios]=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"espacios"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&gt;&lt;/app-tabla-espacios&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
 <div class="imageblock">
 <div class="content">
 <img src="./images/FlujoPadreHijosBasico.png" alt="FlujoPadreHijosBasico">
 </div>
+</div>
+<div class="paragraph">
+<p>El decorador <code>Output()</code> en un componente hijo permite enviar datos desde el hijo al padre. El componente hijo usa el decorador <code>Output()</code> para disparar un evento personalizado y notificar al padre de un cambio. En el componente hijo se define un método donde se emitirá el evento incluyendo los valores que se quieren enviar al padre. En la plantilla del hijo habrá algún elemento al que asociarle la ejecución del método anterior desde el que se emite el evento al padre. La plantilla del padre responderá al evento y recibirá los datos, los cuales serán enviados como parámetro a un método implementado en la parte TypeScript del componente.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -4463,17 +4640,6 @@ export class TablaEspaciosComponent implements OnInit {
 <td>Decorador <code>Input()</code> que define una variable <code>espacios</code> en la que se recibirán los espacios</td>
 </tr>
 </table>
-</div>
-<div class="sidebarblock">
-<div class="content">
-<div class="title">El decorador <code>@Input</code></div>
-<div class="paragraph">
-<p>El decorador <code>@Input</code> ofrece un medio para inyectar datos a un componente desde otro componente externo. El componente de destino asociará a este decorador una variable en la que se recibirán los datos enviados desde otros componentes. El componente que envía los datos envía los datos mediante un atributo HTML. El atributo de envío coincide con la variable usada en el <code>@Input</code>.</p>
-</div>
-<div class="paragraph">
-<p>$$$Figura</p>
-</div>
-</div>
 </div>
 </div>
 <div class="sect3">
@@ -5430,7 +5596,7 @@ export class SidebarComponent implements OnInit {
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Como convenio para nuestras aplicaciones de STIC, la eliminación tendrá su propio componente y se realizará mediante un cuadro de diálogo. Ese componente de eliminación se situará dentro de una carpeta <code>components</code> dentro del bloque funcional al que esté referido (p.e. <code>solicitudes</code>).</p>
+<p>Como convenio para nuestras aplicaciones de UAL-STIC, la eliminación tendrá su propio componente y se realizará mediante un cuadro de diálogo. Ese componente de eliminación se situará dentro de una carpeta <code>components</code> dentro del bloque funcional al que esté referido (p.e. <code>solicitudes</code>).</p>
 </div>
 </td>
 </tr>
@@ -6594,7 +6760,7 @@ http://localhost:3002/solicitudes</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-03-08 22:09:01 +0100
+Last updated 2022-03-10 13:09:18 +0100
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
