@@ -1,0 +1,32 @@
+name: Deploy docs
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  repository_dispatch:
+    types: [run_build]
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    container: asciidoctor/docker-asciidoctor
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          apk update
+          apk add rsync 
+      - name: Build Docs
+        run: |
+          asciidoctor index.adoc
+          find . -name .adoc -exec rm -rf '{}' \;
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        if: contains(github.ref,'refs/heads/master')
+        with:
+          branch: gh-pages
+          folder: .
+          clean: true

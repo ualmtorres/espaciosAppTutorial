@@ -67,6 +67,10 @@ En este tutorial seguiremos los pasos para el desarrollo de una aplicación senc
 
 Se trata sólo de una introducción a aspectos básicos. No obstante, temas tan interesantes, útiles y necesarios como la autenticación, el uso de guardas para la protección de rutas, interceptores, logging y testing, entre otros, no están presentes en este tutorial. En tutoriales posteriores se irán tratando estos y otros temas de interés.
 
+La aplicación a desarrollar ofrece básicamente dos funcionalidades:
+
+* Una relacionada con la consulta de espacios disponibles para reservar. Ofrecerá una lista de espacios con cada una de las reservas asignadas indicando para cada una de ellas el edificio y aula que ocupa, su fecha, hora, descripción, asignatura y profesor. Se permitirá su consulta mediante cada una de esas características.
+* Otra relacionada con la gestión de solicitudes. Permitirá las cuatro operaciones CRUD de creación, consulta, actualización y eliminación de solicitudes. De las solicitudes se guardarán datos personales de la persona que realiza la solicitud, el tipo de actividad, y el horario de la reserva. En el Anexo II
 
 ## Creación de la aplicación
 
@@ -4058,3 +4062,9 @@ http://localhost:3002/personas
 http://localhost:3002/espacios
 http://localhost:3002/solicitudes
 ----
+
+## Anexo II. Prototipo de la aplicación
+
+A continuación se muestra el prototipo de la aplicación. Se muestran las pantallas, operaciones y comandos que se pueden realizar, así como la conexión entre pantallas.
+
+image::espaciosApp.png[]
